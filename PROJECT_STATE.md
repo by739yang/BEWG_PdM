@@ -1,7 +1,7 @@
 # PROJECT_STATE.md —— 项目唯一事实来源（所有 AI 助手开工前必读）
 
 > 由人（王家兴）维护。AI 助手只能读 + 追加日志，不得改写"结论区"。
-> 最后更新：2026-09-15 22:10（PROTOCOL_v1 首跑完成，待 Codex 复核）
+> 最后更新：2026-09-15 22:30（PROTOCOL_v1.1 已冻结，双方开始盲跑）
 
 ## 0. 目录约定（2026-09-15 起生效，所有助手必须遵守）
     tasks/YYYY-MM-DD_codex.md        当天的任务单（由 DSH 起草、人确认）
@@ -83,8 +83,8 @@
 | SKAB 独立复现（Codex） | Codex | 已完成：复现失败，定位为协议未冻结 |
 | MetroPT-3 数据体检（Codex） | Codex | 已完成：1,516,948 行；实测约 0.1 Hz（官方称 1 Hz，存疑） |
 | 审查 DSH 技术结论（Codex） | Codex | 已完成：3 条意见，DSH 全部接受 |
-| 冻结 PROTOCOL_v1 | DSH 提出 / Codex 确认 | 待 Codex 确认 |
-| 按 PROTOCOL_v1 双方盲跑 | 双方 | DSH 侧已完成首跑；发现 A/B/C 三个协议问题，待 Codex 确认后跑 v1.1 |
+| 冻结 PROTOCOL_v1 | DSH 提出 / Codex 确认 | ✅ 完成，冻结为 v1.1（docs/PROTOCOL_v1.1.md） |
+| 按 PROTOCOL_v1.1 双方盲跑 | 双方 | 进行中（今晚） |
 
 ## 9. 一键复现（2026-09-15）
     cd C:\Users\boyi\Desktop\BEWG_PdM
