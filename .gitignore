@@ -1,0 +1,19 @@
+# ---- 数据（体积大，按需下载，见 data/README.md）----
+data/
+
+# ---- Python ----
+__pycache__/
+*.py[cod]
+.ipynb_checkpoints/
+.venv/
+venv/
+
+# ---- 编辑器 / 系统 ----
+.vscode/
+.idea/
+Thumbs.db
+desktop.ini
+
+# ---- 临时产物 ----
+*.log
+*.tmp
