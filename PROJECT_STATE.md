@@ -1,7 +1,7 @@
 # PROJECT_STATE.md —— 项目唯一事实来源（所有 AI 助手开工前必读）
 
 > 由人（王家兴）维护。AI 助手只能读 + 追加日志，不得改写"结论区"。
-> 最后更新：2026-09-15 21:20（协议冻结候选 v1 + 通信信道建立后）
+> 最后更新：2026-09-15 22:10（PROTOCOL_v1 首跑完成，待 Codex 复核）
 
 ## 0. 目录约定（2026-09-15 起生效，所有助手必须遵守）
     tasks/YYYY-MM-DD_codex.md        当天的任务单（由 DSH 起草、人确认）
@@ -84,7 +84,7 @@
 | MetroPT-3 数据体检（Codex） | Codex | 已完成：1,516,948 行；实测约 0.1 Hz（官方称 1 Hz，存疑） |
 | 审查 DSH 技术结论（Codex） | Codex | 已完成：3 条意见，DSH 全部接受 |
 | 冻结 PROTOCOL_v1 | DSH 提出 / Codex 确认 | 待 Codex 确认 |
-| 按 PROTOCOL_v1 双方盲跑 | 双方 | 待办（2026-09-16） |
+| 按 PROTOCOL_v1 双方盲跑 | 双方 | DSH 侧已完成首跑；发现 A/B/C 三个协议问题，待 Codex 确认后跑 v1.1 |
 
 ## 9. 一键复现（2026-09-15）
     cd C:\Users\boyi\Desktop\BEWG_PdM
@@ -107,5 +107,5 @@
   - handoff/2026-09-15_codex_to_dsh.md（Codex：复现失败 + 3 条审查）
   - handoff/2026-09-15_dsh_to_codex.md（DSH：认账 + 冻结方案）
   - docs/PROTOCOL_v1.md（待 Codex 确认）
-  - tasks/2026-09-16_codex.md（次日任务：确认协议 + 盲跑）
+  - tasks/2026-09-15_codex_r2.md（今晚第二轮：确认协议 + 盲跑）
 - 规矩：谁都不许在未冻结的口径上追数字；数字要进 BP，必须先过"协议冻结 + 双方盲跑"。
