@@ -84,7 +84,7 @@
 | MetroPT-3 数据体检（Codex） | Codex | 已完成：1,516,948 行；实测约 0.1 Hz（官方称 1 Hz，存疑） |
 | 审查 DSH 技术结论（Codex） | Codex | 已完成：3 条意见，DSH 全部接受 |
 | 冻结 PROTOCOL_v1 | DSH 提出 / Codex 确认 | ✅ 完成，冻结为 v1.1（docs/PROTOCOL_v1.1.md） |
-| 按 PROTOCOL_v1.1 双方盲跑 | 双方 | 进行中（今晚） |
+| 按 PROTOCOL_v1.1 双方盲跑 | 双方 | DSH 侧已出数（F2 召回 42.4%、TIA-H 17.6%），等 Codex 盲跑后比对 |
 
 ## 9. 一键复现（2026-09-15）
     cd C:\Users\boyi\Desktop\BEWG_PdM
