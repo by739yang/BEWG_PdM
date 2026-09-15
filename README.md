@@ -12,7 +12,6 @@
     results/2026-09-15/codex/     第二助手的产物（skab_repro / review_dsh / metropt3_audit）
     handoff/                      两个助手之间的对话（YYYY-MM-DD_<谁>_to_<谁>.md）
     docs/PROTOCOL_v1.md           冻结的评测协议（未冻结前数字禁止对外）
-    docs/01_项目速览.md          给王家兴看的一页纸（人话版）
     docs/02_倒排工期到10-07.md    里程碑与材料准备倒排
     logs/实验日志.md               追加式实验记录
     data/                         数据集（不进版本库，见 data/README.md）
