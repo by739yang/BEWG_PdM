@@ -1,7 +1,14 @@
 # PROJECT_STATE.md —— 项目唯一事实来源（所有 AI 助手开工前必读）
 
 > 由人（王家兴）维护。AI 助手只能读 + 追加日志，不得改写"结论区"。
-> 最后更新：2026-09-15 20:30（DSH / DeepSeek-Harness 写入）
+> 最后更新：2026-09-15 21:10（DSH 目录重构后）
+
+## 0. 目录约定（2026-09-15 起生效，所有助手必须遵守）
+    tasks/YYYY-MM-DD_codex.md        当天的任务单（由 DSH 起草、人确认）
+    src/<agent>/YYYY-MM-DD_*.py      当天的脚本，agent 取 dsh 或 codex
+    results/YYYY-MM-DD/<agent>/      当天的产物（表格、图、报告）
+    logs/实验日志.md                 追加式记录，只增不改
+同一天两个助手的产物天然隔离、互不覆盖；人只要打开 results/日期/ 就能看到当天谁干了什么。
 
 ## 1. 项目一句话
 面向污水处理厂关键设备（水泵、鼓风机、脱水机）的 AI 预测性维护系统：无监督异常检测 → 故障诊断 → 剩余寿命(RUL)预测 → 维护排程与成本测算。纯软件，无实物。
@@ -20,31 +27,18 @@
 2. 禁止使用"龙渊 / DeepLong"项目的任何素材（数据是白纸黑图摆拍、平台会漏水、归属为 5 人团队）。唯一可用的是那张获奖证书。
 3. 不得声称"已在某污水厂上线""已有客户订单"——我们没有。
 4. 不得改动 data/ 目录内容；结论数字必须能追溯到脚本 + 命令。
+5. 不得修改别人目录下的文件（见第 0 节）。
 
 ## 4. 环境
 - Python 3.12.10；torch 2.9.1+cu128（已装好，Blackwell sm_120 可用）；pandas / scikit-learn / scipy / matplotlib / tabulate
 - 显卡 RTX 5060 Laptop，8GB 显存；内存 16GB 单通道（易打满）；磁盘 C: 105GB / D: 157GB 可用
 - 注意：PyTorch 必须 cu128 版本，装成 CPU 版或旧版会报 no kernel image
 
-## 5. 目录结构
-    C:\Users\boyi\Desktop\BEWG_PdM\
-    ├── PROJECT_STATE.md      本文件（唯一事实来源）
-    ├── 协作约定.md           两个 AI 的分工与产物规则
-    ├── 实验日志.md           按模板追加，两个 AI 都往里写
-    ├── CODEX_TASK_TODAY.md   当天任务派发单
-    ├── data\SKAB-master\    真实数据集（SKAB，5.4MB，35 个 CSV）
-    ├── demo_pdm_v5.py        传统报警值 vs 自适应基线
-    ├── demo_dl.py            1D 卷积自编码器
-    ├── demo_changepoint.py   变点检测 + 融合
-    ├── diag*.py              诊断脚本（漂移 / 退化信号）
-    ├── results\             结果表 CSV/MD + 案例图
-    └── results_codex\       Codex 专属产物目录（DSH 不写这里）
+## 5. 数据资产与统一协议
+- SKAB（Skoltech Anomaly Benchmark，GitHub waico/SKAB）：真实水泵台架，1Hz × 8 路信号，人工注入故障并标注区间；35 个文件，其中 anomaly-free.csv 全正常。下载方式见 data/README.md。
+- 统一协议（所有方法必须一致）：逐文件因果自适应标准化（120s 滑窗 + 相对离散度下限）→ 滑窗特征 → 标定期取该文件 [120s, 40%] 段 → 阈值按 0.5% 误报率标定 → 1 分钟块判决。禁止用故障标签训练或调参。
 
-## 6. 数据资产与统一协议
-- SKAB（Skoltech Anomaly Benchmark，GitHub waico/SKAB）：真实水泵台架，1Hz × 8 路信号，人工注入故障并标注区间；35 个文件，其中 anomaly-free.csv 全正常。
-- **统一协议（所有方法必须一致）**：逐文件因果自适应标准化（120s 滑窗 + 相对离散度下限）→ 滑窗特征 → 标定期取该文件 [120s, 40%] 段 → 阈值按 0.5% 误报率标定 → 1 分钟块判决。禁止用故障标签训练或调参。
-
-## 7. 已完成实验与结论（2026-09-15，DSH）
+## 6. 已完成实验与结论（2026-09-15，DSH）
 | 方案 | 事件检出率 | 误报分钟比例 | 延迟中位 |
 |---|---|---|---|
 | 固定报警值（逐信号稳健 z，工业常规） | 82.4% | 19.7% | 60 s |
@@ -61,30 +55,35 @@
 
 已量化的两个真实陷阱：① 退化传感器（流量恒定在 32.0，IQR=0.004，常规 z 分数放大成 40σ）；② 热漂移（温度缓慢爬升，故障前正常段 z 已到 1.8）。
 
-## 8. 交付形态（最终定为三层证据结构）
+## 7. 交付形态（最终定为三层证据结构）
 1. 真实数据层：SKAB + MetroPT-3 → 证明问题真实、方法经真实数据检验（含失败案例）
 2. 仿真层：BSM2（IWA 标准污水厂模型）+ 退化模型 → 走通闭环（检测→诊断→RUL→排程→省钱测算），如实标注"仿真"
 3. 性能表征层：DET 曲线（每小时误报次数 vs 检出率与延迟）→ BP 核心图
 
-## 9. 待办与分工
+## 8. 待办与分工
 | 任务 | 负责 | 状态 |
 |---|---|---|
-| SKAB 基线实验（4 类方法 + 融合） | DSH | 已完成 |
-| 1D 卷积自编码器对比 | DSH | 已完成 |
+| SKAB 基线实验（4 类方法 + 融合） | DSH | 已完成（2026-09-15） |
+| 1D 卷积自编码器对比 | DSH | 已完成（2026-09-15） |
 | SKAB 基线独立复现验证 | Codex | 今天 |
 | MetroPT-3 下载 + 数据体检 | Codex | 今天 |
-| C-MAPSS RUL 基线 | DSH | 今天 |
-| DET 曲线 | DSH | 今天 |
-| BSM2 数字孪生闭环 | 待分配 | 待定 |
-| BP 四栏大纲 | 待分配 | 待定 |
+| 审查 DSH 技术结论 | Codex | 今天 |
+| C-MAPSS RUL 基线 | DSH | 待办 |
+| DET 曲线 | DSH | 待办 |
+| BSM2 数字孪生闭环 | 待分配 | 待办 |
+| BP 四栏大纲 | 待分配 | 待办 |
 | 报名口径 / 企业数据渠道电话 | 人 | 待办 |
 
-## 10. 一键复现
+## 9. 一键复现（2026-09-15）
     cd C:\Users\boyi\Desktop\BEWG_PdM
-    python demo_pdm_v5.py        # 传统报警值 vs 自适应基线
-    python demo_dl.py            # 卷积自编码器（需 torch cu128）
-    python demo_changepoint.py   # 变点检测 + 融合
+    python src/dsh/2026-09-15_05_main_comparison.py     # 传统报警值 vs 自适应基线
+    python src/dsh/2026-09-15_06_conv_autoencoder.py    # 卷积自编码器（需 torch cu128）
+    python src/dsh/2026-09-15_07_changepoint_fusion.py  # 变点检测 + 融合
 
-## 11. 仓库状态
-- 2026-09-15：git 已初始化（main 分支），首个提交完成（day1）。提交内容：脚本 + results/ + 项目文档 + 实验日志。data/ 与 _readout/ 未纳入（见 .gitignore）。
-- 远端仓库：待创建（私有），由人完成一次登录后即可推送。
+## 10. 版本管理
+- 仓库：C:\Users\boyi\Desktop\BEWG_PdM（main 分支），data/ 与 _readout/ 已排除。
+- 远端：比赛评审期间用私有仓库；远程建好后由人点一次授权即可推送。
+- 提交命令：
+      cd C:\Users\boyi\Desktop\BEWG_PdM
+      git add -A
+      git commit -m "dayN: 一句话说明今天做了什么"

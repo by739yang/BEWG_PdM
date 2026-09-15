@@ -10,7 +10,7 @@ from sklearn.decomposition import PCA
 from sklearn.ensemble import IsolationForest
 
 BASE = r'C:\Users\boyi\Desktop\BEWG_PdM\data\SKAB-master\data'
-OUT  = r'C:\Users\boyi\Desktop\BEWG_PdM\results'
+OUT  = r'C:\Users\boyi\Desktop\BEWG_PdM\results\2026-09-15\dsh'
 os.makedirs(OUT, exist_ok=True)
 FEATS = ['Accelerometer1RMS','Accelerometer2RMS','Current','Pressure','Temperature',
          'Thermocouple','Voltage','Volume Flow RateRMS']

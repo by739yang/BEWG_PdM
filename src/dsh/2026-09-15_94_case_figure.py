@@ -4,7 +4,7 @@ import matplotlib; matplotlib.use('Agg'); import matplotlib.pyplot as plt
 plt.rcParams['font.sans-serif']=['Microsoft YaHei']; plt.rcParams['axes.unicode_minus']=False
 from sklearn.decomposition import PCA
 BASE=r'C:\Users\boyi\Desktop\BEWG_PdM\data\SKAB-master\data'
-OUT=r'C:\Users\boyi\Desktop\BEWG_PdM\results'
+OUT=r'C:\Users\boyi\Desktop\BEWG_PdM\results\2026-09-15\dsh'
 FEATS=['Accelerometer1RMS','Accelerometer2RMS','Current','Pressure','Temperature','Thermocouple','Voltage','Volume Flow RateRMS']
 def load(fp):
     df=pd.read_csv(fp,sep=';'); df.columns=[c.strip() for c in df.columns]

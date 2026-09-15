@@ -6,7 +6,7 @@ from sklearn.decomposition import PCA
 from sklearn.ensemble import IsolationForest
 
 BASE = r'C:\Users\boyi\Desktop\BEWG_PdM\data\SKAB-master\data'
-OUT  = r'C:\Users\boyi\Desktop\BEWG_PdM\results'
+OUT  = r'C:\Users\boyi\Desktop\BEWG_PdM\results\2026-09-15\dsh'
 FEATS = ['Accelerometer1RMS','Accelerometer2RMS','Current','Pressure','Temperature',
          'Thermocouple','Voltage','Volume Flow RateRMS']
 WIN, SMOOTH, TARGET_FPR, REF_FRAC = 15, 15, 0.005, 0.20

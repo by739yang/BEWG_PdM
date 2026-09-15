@@ -3,7 +3,7 @@
 import numpy as np, pandas as pd, glob, os
 from sklearn.decomposition import PCA
 BASE=r'C:\Users\boyi\Desktop\BEWG_PdM\data\SKAB-master\data'
-OUT=r'C:\Users\boyi\Desktop\BEWG_PdM\results'
+OUT=r'C:\Users\boyi\Desktop\BEWG_PdM\results\2026-09-15\dsh'
 FEATS=['Accelerometer1RMS','Accelerometer2RMS','Current','Pressure','Temperature','Thermocouple','Voltage','Volume Flow RateRMS']
 REF=0.40; BURN=120; AW=120; TARGET_FPR=0.005; BLOCK=60
 def load(fp):

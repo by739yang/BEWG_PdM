@@ -10,7 +10,7 @@ import matplotlib; matplotlib.use('Agg'); import matplotlib.pyplot as plt
 plt.rcParams['font.sans-serif']=['Microsoft YaHei']; plt.rcParams['axes.unicode_minus']=False
 
 BASE=r'C:\Users\boyi\Desktop\BEWG_PdM\data\SKAB-master\data'
-OUT=r'C:\Users\boyi\Desktop\BEWG_PdM\results'; os.makedirs(OUT,exist_ok=True)
+OUT=r'C:\Users\boyi\Desktop\BEWG_PdM\results\2026-09-15\dsh'; os.makedirs(OUT,exist_ok=True)
 FEATS=['Accelerometer1RMS','Accelerometer2RMS','Current','Pressure','Temperature','Thermocouple','Voltage','Volume Flow RateRMS']
 REF=0.20; TARGET_FPR=0.005; PERSIST=3; AW=300
 

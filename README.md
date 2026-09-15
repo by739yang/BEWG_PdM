@@ -1,42 +1,32 @@
 # BEWG_PdM —— 面向污水厂关键设备的 AI 预测性维护系统
 
-> 参赛项目：北控水务杯第九届中国国际生态环境创新大赛 · **创意转化组** · 命题方向 **2-6（基于 AI 设备预测性维护与管理技术与解决方案）**
+> 参赛：北控水务杯第九届中国国际生态环境创新大赛 · 创意转化组 · 命题方向 2-6
 > 报名截止 2026-10-15 ｜ 纯软件、无实物 ｜ 团队项目
 
-## 这是什么
-面向污水处理厂关键设备（水泵、鼓风机、脱水机）的预测性维护系统：
-无监督异常检测 → 故障诊断 → 剩余寿命(RUL)预测 → 维护排程与成本测算。
+## 目录导航（按日期归档）
+    PROJECT_STATE.md              唯一事实来源：比赛信息、红线、数据协议、结论、待办
+    协作约定.md                    多助手分工与产物规则
+    tasks/                        每天的任务单    tasks/2026-09-15_codex.md
+    src/dsh/  src/codex/          每天的脚本      src/dsh/2026-09-15_05_main_comparison.py
+    results/2026-09-15/dsh/       当天结果表/图
+    results/2026-09-15/codex/     第二助手的产物
+    logs/实验日志.md               追加式实验记录
+    data/                         数据集（不进版本库，见 data/README.md）
 
-## 目录
-| 文件 | 说明 |
-|---|---|
-| PROJECT_STATE.md | **唯一事实来源**：比赛信息、红线、环境、数据协议、已完成的实验与结论、待办分工 |
-| 协作约定.md | 多个 AI 助手/成员的分工与产物规则 |
-| 实验日志.md | 按模板追加的实验记录（只增不改） |
-| CODEX_TASK_TODAY.md | 当日任务派发单 |
-| demo_pdm_v5.py | 传统报警值 vs 自适应基线 |
-| demo_dl.py | 1D 卷积自编码器（需 torch cu128） |
-| demo_changepoint.py | 变点检测 + 融合方案 |
-| diag*.py | 数据诊断（漂移、退化信号） |
-| results/ | 结果表与图表 |
-| results_codex/ | 第二助手（Codex）的产物目录 |
-
-## 数据
-公开真实工业数据，**不使用任何非公开或编造的数据**。下载方式见 data/README.md。
+## 当天工作怎么找
+打开 results/日期/ 就能看到当天两个助手各自产出了什么。
 
 ## 复现
-    cd BEWG_PdM
-    python demo_pdm_v5.py
-    python demo_dl.py
-    python demo_changepoint.py
+    cd C:\Users\boyi\Desktop\BEWG_PdM
+    python src/dsh/2026-09-15_05_main_comparison.py
+    python src/dsh/2026-09-15_06_conv_autoencoder.py
+    python src/dsh/2026-09-15_07_changepoint_fusion.py
 
 ## 环境
-Python 3.12 ｜ torch 2.9.1+cu128（RTX 5060 Laptop 8GB）｜ pandas / scikit-learn / scipy / matplotlib
+Python 3.12 ｜ torch 2.9.1+cu128（RTX 5060 Laptop）｜ pandas / scikit-learn / scipy / matplotlib
 
 ## 诚信声明
-本项目所有指标均由仓库内脚本可复现；仿真数据一律标注为"仿真"；
-未使用任何他人项目素材；团队获奖记录（首届北控水务杯智赋生态创新赛金奖、
-中国高校智能机器人创意大赛三等奖）系团队成果，如实注明。
+所有指标均由仓库内脚本可复现；仿真数据一律标注"仿真"；未使用任何他人项目素材；团队获奖记录系团队成果，如实注明。
 
 ## 开源说明
-比赛评审期间本仓库保持**私有**；提交后视情况转为公开。
+比赛评审期间本仓库保持私有。
