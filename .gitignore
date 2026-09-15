@@ -1,5 +1,6 @@
 # ---- 数据（体积大，按需下载，见 data/README.md）----
 data/
+_readout/
 
 # ---- Python ----
 __pycache__/

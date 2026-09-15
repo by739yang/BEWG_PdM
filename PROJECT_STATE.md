@@ -84,3 +84,7 @@
     python demo_pdm_v5.py        # 传统报警值 vs 自适应基线
     python demo_dl.py            # 卷积自编码器（需 torch cu128）
     python demo_changepoint.py   # 变点检测 + 融合
+
+## 11. 仓库状态
+- 2026-09-15：git 已初始化（main 分支），首个提交完成（day1）。提交内容：脚本 + results/ + 项目文档 + 实验日志。data/ 与 _readout/ 未纳入（见 .gitignore）。
+- 远端仓库：待创建（私有），由人完成一次登录后即可推送。
