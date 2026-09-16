@@ -1,0 +1,3 @@
+﻿note,denominator,threshold,true_events,detected,event_recall,alarm_events,fp_events,usable_hours,fp_per_healthy_hour,tia_h,delay_min_median
+主阈值=标定期0.995分位,running,13.1393,4,0,0.0,13,13,1561.3,0.0083,0.0135,
+主阈值=标定期0.995分位,all_stable,13.1393,4,0,0.0,13,13,3601.2,0.0036,0.0071,

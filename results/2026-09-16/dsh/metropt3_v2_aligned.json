@@ -1,0 +1,56 @@
+{
+  "threshold_main": 13.139,
+  "official_windows_source": "Data Description_Metro.pdf（UCI 791 官方说明）Failure Information 表",
+  "windows": [
+    {
+      "id": "F1",
+      "start": "2020-04-18 00:00",
+      "end": "2020-04-18 23:59"
+    },
+    {
+      "id": "F2",
+      "start": "2020-05-29 23:30",
+      "end": "2020-05-30 06:00"
+    },
+    {
+      "id": "F3",
+      "start": "2020-06-05 10:00",
+      "end": "2020-06-07 14:30"
+    },
+    {
+      "id": "F4",
+      "start": "2020-07-15 14:30",
+      "end": "2020-07-15 19:00"
+    }
+  ],
+  "main": [
+    {
+      "note": "主阈值=标定期0.995分位",
+      "denominator": "running",
+      "threshold": 13.1393,
+      "true_events": 4,
+      "detected": 0,
+      "event_recall": 0.0,
+      "alarm_events": 13,
+      "fp_events": 13,
+      "usable_hours": 1561.3,
+      "fp_per_healthy_hour": 0.0083,
+      "tia_h": 0.0135,
+      "delay_min_median": null
+    },
+    {
+      "note": "主阈值=标定期0.995分位",
+      "denominator": "all_stable",
+      "threshold": 13.1393,
+      "true_events": 4,
+      "detected": 0,
+      "event_recall": 0.0,
+      "alarm_events": 13,
+      "fp_events": 13,
+      "usable_hours": 3601.2,
+      "fp_per_healthy_hour": 0.0036,
+      "tia_h": 0.0071,
+      "delay_min_median": null
+    }
+  ]
+}
