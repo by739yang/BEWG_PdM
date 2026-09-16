@@ -78,8 +78,8 @@
 | SKAB 基线独立复现验证 | Codex | 今天 |
 | MetroPT-3 下载 + 数据体检 | Codex | 今天 |
 | 审查 DSH 技术结论 | Codex | 今天 |
-| C-MAPSS RUL 基线 | DSH | 待办 |
-| DET 曲线 | DSH | 待办 |
+| C-MAPSS RUL 基线（原计划 P2 内容，暂缓） | DSH | 待办 |
+| DET 曲线（SKAB） | DSH | 已完成（2026-09-16，12 点与 Codex 零偏差） |
 | BSM2 数字孪生闭环 | 待分配 | 待办 |
 | BP 四栏大纲 | 待分配 | 待办 |
 | 报名口径 / 企业数据渠道电话 | 人 | 待办 |
