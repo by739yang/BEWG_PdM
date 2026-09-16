@@ -1,0 +1,16 @@
+{
+  "dataset": "MetroPT-3",
+  "blocks": 25521,
+  "block": "10min",
+  "threshold": 3.9355,
+  "cal_blocks": 9392,
+  "alarm_events": 21,
+  "fp_events": 21,
+  "healthy_hours": 3994.5,
+  "fp_per_healthy_hour": 0.005,
+  "tia_h": 0.0029,
+  "true_events": 4,
+  "detected": 0,
+  "event_recall": 0.0,
+  "delay_hours_median": null
+}
