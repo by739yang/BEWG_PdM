@@ -2,7 +2,7 @@
 """MetroPT-3 v2 评估（口径对齐版）：官方故障窗口 + 两种分母同时报告 + 30 点 DET"""
 import pandas as pd, numpy as np, os, json
 OUT='results/2026-09-16/dsh'
-FW=json.load(open('data/metropt3/fault_windows.json',encoding='utf-8'))
+FW=json.load(open('docs/metropt3_fault_windows.json',encoding='utf-8'))
 fw=[(pd.Timestamp(x['start']),pd.Timestamp(x['end'])) for x in FW['windows']]
 sc=pd.read_csv(os.path.join(OUT,'metropt3_score_minutes_dsh.csv.gz'),index_col=0,parse_dates=True)['score']
 idx=sc.index
