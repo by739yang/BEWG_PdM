@@ -1,0 +1,5 @@
+archive=C:\Users\boyi\.cache\BEWG_PdM\metropt3\metropt3_dataset.zip
+source=validated legacy cache: C:\Users\boyi\AppData\Local\Temp\BEWG_PdM_codex\metropt3_dataset.zip
+bytes=218381995
+sha256=aab991a970e58210de853bb8078ce0e63abb4d9412fdc5c79792dae3d8e1721a
+members=Data Description_Metro.pdf | MetroPT3(AirCompressor).csv

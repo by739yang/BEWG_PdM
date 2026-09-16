@@ -1,0 +1,5 @@
+﻿event_id,truth_start,truth_end,fault,threshold,hit,alarm_onset,alarm_end,delay_minutes,eligible_event_minutes
+F1,2020-04-18 00:00:00,2020-04-18 23:59:00,air leak / high stress,6.0,0,,,,1436
+F2,2020-05-29 23:30:00,2020-05-30 06:00:00,air leak / high stress,6.0,1,2020-05-29 23:15:00,2020-05-30 06:52:00,-15.0,390
+F3,2020-06-05 10:00:00,2020-06-07 14:30:00,air leak / high stress,6.0,1,2020-06-05 09:50:00,2020-06-06 15:56:00,-10.0,2841
+F4,2020-07-15 14:30:00,2020-07-15 19:00:00,air leak / high stress,6.0,0,,,,269
