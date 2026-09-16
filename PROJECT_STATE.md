@@ -89,7 +89,9 @@
 | 9/16：SKAB 收口独立复核 | Codex | 已完成（三条意见已采纳，见 PROTOCOL_v1.5.md） |
 | 9/16 P1：MetroPT-3 独立基线（DSH） | DSH | v2 用官方窗口重评：DET 最高召回 100% @误报 0.0586/可用小时(all_stable)，但延迟中位 +966 分钟；与 Codex 曲线在 75% 处交叉 |
 | 9/16 P1：MetroPT-3 评价口径修订（Δlate=60min、分母二选一） | DSH 提议 / Codex 确认 | 待确认 |
-| 9/17 P1 收尾：MetroPT-3 基线重写 + 双边 DET 比对 | DSH | 待办 |
+| 9/17 P1 收尾：MetroPT-3 口径确认后冻结数字 | DSH + Codex | 待办（等两条口径确认） |
+| 9/17 P2-1：诊断模块 v1（UCI Hydraulic 部件状态分类） | DSH | 待办 |
+| 9/17 P2-2：剩余寿命基线 + C-MAPSS 数据获取 | Codex | 待办（任务单已发） |
 | SKAB 独立复现（Codex） | Codex | 已完成：复现失败，定位为协议未冻结 |
 | MetroPT-3 数据体检（Codex） | Codex | 已完成：1,516,948 行；实测约 0.1 Hz（官方称 1 Hz，存疑） |
 | 审查 DSH 技术结论（Codex） | Codex | 已完成：3 条意见，DSH 全部接受 |
