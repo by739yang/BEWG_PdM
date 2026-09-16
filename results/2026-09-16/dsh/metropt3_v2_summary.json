@@ -1,0 +1,16 @@
+{
+  "true_events": 4,
+  "detected": 0,
+  "event_recall": 0.0,
+  "alarm_events": 13,
+  "fp_events": 13,
+  "usable_hours": 1562.6,
+  "fp_per_healthy_hour": 0.008319645028478786,
+  "tia_h": 0.013535422488640484,
+  "delay_min_median": null,
+  "dataset": "MetroPT-3",
+  "block": "1min",
+  "threshold": 13.139,
+  "cal_minutes": 91766,
+  "fault_windows_source": "DSH 凭公开论文记忆填写，待 Codex 官方来源替换"
+}
