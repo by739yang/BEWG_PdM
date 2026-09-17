@@ -1,7 +1,7 @@
 # PROJECT_STATE.md —— 项目唯一事实来源（所有 AI 助手开工前必读）
 
 > 由人（王家兴）维护。AI 助手只能读 + 追加日志，不得改写"结论区"。
-> 最后更新：2026-09-16 中午（进入 P1：MetroPT-3 真实故障验证 + DET 曲线）
+> 最后更新：2026-09-16 晚（SKAB 已冻结；MetroPT-3 口径收尾；P2 任务已排期）
 
 ## 0. 目录约定（2026-09-15 起生效，所有助手必须遵守）
     tasks/YYYY-MM-DD_codex.md        当天的任务单（由 DSH 起草、人确认）
@@ -74,39 +74,34 @@
 ## 8. 待办与分工
 | 任务 | 负责 | 状态 |
 |---|---|---|
-| SKAB 基线实验（4 类方法 + 融合） | DSH | 已完成（2026-09-15） |
-| 1D 卷积自编码器对比 | DSH | 已完成（2026-09-15） |
-| SKAB 基线独立复现验证 | Codex | 今天 |
-| MetroPT-3 下载 + 数据体检 | Codex | 今天 |
-| 审查 DSH 技术结论 | Codex | 今天 |
-| C-MAPSS RUL 基线（原计划 P2 内容，暂缓） | DSH | 待办 |
-| DET 曲线（SKAB） | DSH | 已完成（2026-09-16，12 点与 Codex 零偏差） |
+| SKAB 基线、1D 卷积自编码器与变点方法 | DSH | 已完成（2026-09-15） |
+| SKAB 冻结协议与双方独立盲跑 | DSH + Codex | ✅ 已完成；当前唯一口径为 docs/PROTOCOL_v1.5.md，v1.4 实验整数与连续指标零偏差 |
+| SKAB DET 曲线定稿 | DSH + Codex | ✅ 已完成（2026-09-16，12 个点零偏差） |
+| MetroPT-3 数据获取、体检和 Codex 探索性基线 | Codex | 已完成（2026-09-16）；主阈值召回 2/4，数字未冻结 |
+| MetroPT-3 DSH 独立基线 v2 与官方窗口重评 | DSH | 已完成探索性重评；最高表面召回 4/4，但延迟中位 +966 分钟，不得直接作为预测性召回宣传 |
+| MetroPT-3 评价口径：Δlate=60 min、双分母及共同评估掩码 | DSH 提议 / Codex 确认 | Codex 已在 handoff/2026-09-16_codex_to_dsh_r2.md 确认；待双方按共同掩码重算并严格对齐分钟整数 |
+| MetroPT-3 冻结数字 | DSH + Codex | 待办；口径和健康分钟数严格一致后方可写入第 12 节 |
+| 9/17 P2-1：UCI Hydraulic 部件状态分类 | DSH | 待办 |
+| 9/17 P2-2：C-MAPSS RUL 基线与数据获取 | Codex | 待办（任务单已发，尚未开工） |
 | BSM2 数字孪生闭环 | 待分配 | 待办 |
 | BP 四栏大纲 | 待分配 | 待办 |
 | 报名口径 / 企业数据渠道电话 | 人 | 待办 |
-| 9/16 P1：MetroPT-3 真实故障基线 | Codex | 已完成（召回 2/4，误报 0.325/健康小时，TIA-H 27.2%） |
-| 9/16 P1：DET 曲线定稿（SKAB 冻结数据） | DSH | ✅ 完成（12 个点与 Codex 零偏差） |
-| 9/16：SKAB 收口独立复核 | Codex | 已完成（三条意见已采纳，见 PROTOCOL_v1.5.md） |
-| 9/16 P1：MetroPT-3 独立基线（DSH） | DSH | v2 用官方窗口重评：DET 最高召回 100% @误报 0.0586/可用小时(all_stable)，但延迟中位 +966 分钟；与 Codex 曲线在 75% 处交叉 |
-| 9/16 P1：MetroPT-3 评价口径修订（Δlate=60min、分母二选一） | DSH 提议 / Codex 确认 | 待确认 |
-| 9/17 P1 收尾：MetroPT-3 口径确认后冻结数字 | DSH + Codex | 待办（等两条口径确认） |
-| 9/17 P2-1：诊断模块 v1（UCI Hydraulic 部件状态分类） | DSH | 待办 |
-| 9/17 P2-2：剩余寿命基线 + C-MAPSS 数据获取 | Codex | 待办（任务单已发） |
-| SKAB 独立复现（Codex） | Codex | 已完成：复现失败，定位为协议未冻结 |
-| MetroPT-3 数据体检（Codex） | Codex | 已完成：1,516,948 行；实测约 0.1 Hz（官方称 1 Hz，存疑） |
-| 审查 DSH 技术结论（Codex） | Codex | 已完成：3 条意见，DSH 全部接受 |
-| 冻结 PROTOCOL_v1 | DSH 提出 / Codex 确认 | ✅ 完成，冻结为 v1.1（docs/PROTOCOL_v1.1.md） |
-| 按 PROTOCOL_v1.1 双方盲跑 | 双方 | ✅ 收口：v1.4 三方法全指标零偏差（DSH 侧修了三处实现错） |
-
-## 9. 一键复现（2026-09-15）
+## 9. 一键复现（更新于 2026-09-16）
     cd C:\Users\boyi\Desktop\BEWG_PdM
-    python src/dsh/2026-09-15_05_main_comparison.py     # 传统报警值 vs 自适应基线
-    python src/dsh/2026-09-15_06_conv_autoencoder.py    # 卷积自编码器（需 torch cu128）
-    python src/dsh/2026-09-15_07_changepoint_fusion.py  # 变点检测 + 融合
+    python -m pip install -r requirements.txt
+
+    # SKAB 冻结协议：双方实现与交叉比对
+    python src/codex/2026-09-15_05_protocol_v11.py
+    python src/dsh/2026-09-15_16_protocol_v14.py
+    python src/dsh/2026-09-15_17_crosscheck_v14.py
+
+    # MetroPT-3 Codex 探索性基线（尚未冻结）
+    python src/codex/2026-09-16_00_fetch_metropt3.py
+    python src/codex/2026-09-16_01_metropt3_baseline.py
 
 ## 10. 版本管理
 - 仓库：C:\Users\boyi\Desktop\BEWG_PdM（main 分支），data/ 与 _readout/ 已排除。
-- 远端：比赛评审期间用私有仓库；远程建好后由人点一次授权即可推送。
+- 远端：GitHub 私有仓库 `origin` 已配置，当前 `main` 与 `origin/main` 同步。
 - 提交命令：
       cd C:\Users\boyi\Desktop\BEWG_PdM
       git add -A
@@ -114,12 +109,12 @@
 
 ## 11. 通信与协议（2026-09-15 新增）
 - 两个助手之间的对话放 handoff/：YYYY-MM-DD_<发件人>_to_<收件人>.md，只增不改。
-- 冻结的协议放 docs/PROTOCOL_v1.md；双方确认后如需改动，必须出 v2 并写明原因。
-- 当前状态：
-  - handoff/2026-09-15_codex_to_dsh.md（Codex：复现失败 + 3 条审查）
-  - handoff/2026-09-15_dsh_to_codex.md（DSH：认账 + 冻结方案）
-  - docs/PROTOCOL_v1.md（待 Codex 确认）
-  - tasks/2026-09-15_codex_r2.md（今晚第二轮：确认协议 + 盲跑）
+- SKAB 当前唯一冻结实施口径为 `docs/PROTOCOL_v1.5.md`；后续如需改动，必须新建版本并写明原因。
+- MetroPT-3 另立协议，当前仍处于双方口径对齐与共同掩码重算阶段，尚未冻结。
+- 当前关键文件：
+  - `docs/PROTOCOL_v1.5.md`（SKAB 当前冻结实施口径）
+  - `handoff/2026-09-16_dsh_to_codex_r10.md`（DSH：MetroPT-3 两条待确认口径）
+  - `handoff/2026-09-16_codex_to_dsh_r2.md`（Codex：接受两条口径并补充冻结边界）
 - 规矩：谁都不许在未冻结的口径上追数字；数字要进 BP，必须先过"协议冻结 + 双方盲跑"。
 
 ## 12. 已冻结结论（SKAB，PROTOCOL_v1.4，2026-09-16 00:00）

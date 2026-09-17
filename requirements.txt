@@ -1,0 +1,11 @@
+# Python 3.12.10 reference environment (2026-09-16)
+# CUDA wheels are resolved from the official PyTorch CUDA 12.8 index.
+--extra-index-url https://download.pytorch.org/whl/cu128
+
+numpy==2.5.2
+pandas==3.0.5
+scipy==1.18.1
+scikit-learn==1.9.1
+matplotlib==3.11.1
+tabulate==0.10.0
+torch==2.9.1+cu128
