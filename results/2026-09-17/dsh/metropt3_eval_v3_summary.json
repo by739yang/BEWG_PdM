@@ -1,0 +1,123 @@
+{
+  "threshold_main": 13.139,
+  "masks": {
+    "A_post_first_fault": {
+      "domain": 159515,
+      "healthy_all_stable": 132963,
+      "healthy_running": 64352,
+      "fault_minutes_in_domain": 4960,
+      "switch_in_domain": 21596
+    },
+    "B_codex_style_excluding_cal": {
+      "domain": 132088,
+      "healthy_all_stable": 109203,
+      "healthy_running": 54426,
+      "fault_minutes_in_domain": 4960,
+      "switch_in_domain": 17929
+    }
+  },
+  "main": {
+    "A": {
+      "domain": "A_post_first_fault",
+      "threshold": 13.1393,
+      "alarm_events": 13,
+      "timely": 0,
+      "late": 0,
+      "miss": 4,
+      "main_recall": 0.0,
+      "fp_events": 13,
+      "all_stable_minutes": 132963,
+      "fp_per_hour_all_stable": 0.0059,
+      "tia_all_stable": 0.0114,
+      "running_minutes": 64352,
+      "fp_per_hour_running": 0.0121,
+      "tia_running": 0.0196,
+      "delay_timely_min": [],
+      "events": [
+        {
+          "truth_start": "2020-04-18 00:00:00",
+          "truth_end": "2020-04-18 23:59:00",
+          "timely": false,
+          "late": false,
+          "delay_min": null,
+          "late_delay_min": null
+        },
+        {
+          "truth_start": "2020-05-29 23:30:00",
+          "truth_end": "2020-05-30 06:00:00",
+          "timely": false,
+          "late": false,
+          "delay_min": null,
+          "late_delay_min": null
+        },
+        {
+          "truth_start": "2020-06-05 10:00:00",
+          "truth_end": "2020-06-07 14:30:00",
+          "timely": false,
+          "late": false,
+          "delay_min": null,
+          "late_delay_min": null
+        },
+        {
+          "truth_start": "2020-07-15 14:30:00",
+          "truth_end": "2020-07-15 19:00:00",
+          "timely": false,
+          "late": false,
+          "delay_min": null,
+          "late_delay_min": null
+        }
+      ]
+    },
+    "B": {
+      "domain": "B_codex_style_excluding_cal",
+      "threshold": 13.1393,
+      "alarm_events": 13,
+      "timely": 0,
+      "late": 0,
+      "miss": 4,
+      "main_recall": 0.0,
+      "fp_events": 13,
+      "all_stable_minutes": 109203,
+      "fp_per_hour_all_stable": 0.0071,
+      "tia_all_stable": 0.0137,
+      "running_minutes": 54426,
+      "fp_per_hour_running": 0.0143,
+      "tia_running": 0.0228,
+      "delay_timely_min": [],
+      "events": [
+        {
+          "truth_start": "2020-04-18 00:00:00",
+          "truth_end": "2020-04-18 23:59:00",
+          "timely": false,
+          "late": false,
+          "delay_min": null,
+          "late_delay_min": null
+        },
+        {
+          "truth_start": "2020-05-29 23:30:00",
+          "truth_end": "2020-05-30 06:00:00",
+          "timely": false,
+          "late": false,
+          "delay_min": null,
+          "late_delay_min": null
+        },
+        {
+          "truth_start": "2020-06-05 10:00:00",
+          "truth_end": "2020-06-07 14:30:00",
+          "timely": false,
+          "late": false,
+          "delay_min": null,
+          "late_delay_min": null
+        },
+        {
+          "truth_start": "2020-07-15 14:30:00",
+          "truth_end": "2020-07-15 19:00:00",
+          "timely": false,
+          "late": false,
+          "delay_min": null,
+          "late_delay_min": null
+        }
+      ]
+    }
+  }
+}
