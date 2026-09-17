@@ -103,6 +103,7 @@
 ## 10. 版本管理
 - 仓库：C:\Users\boyi\Desktop\BEWG_PdM（main 分支），data/ 与 _readout/ 已排除。
 - 远端：GitHub 私有仓库 `origin` 已配置，当前 `main` 与 `origin/main` 同步。
+- 推送规则：DSH 默认直接 commit + push（2026-09-17 王家兴确认）；推送失败必须当场说明。
 - 提交命令：
       cd C:\Users\boyi\Desktop\BEWG_PdM
       git add -A
