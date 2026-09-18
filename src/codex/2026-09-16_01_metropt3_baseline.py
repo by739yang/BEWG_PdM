@@ -54,6 +54,7 @@ QUARANTINE_HOURS = 2.0
 HISTORY_DAYS = 14
 ENTER_HOLD = pd.Timedelta(minutes=5)
 EXIT_HOLD = pd.Timedelta(minutes=10)
+EXIT_RATIO = 0.8
 COOLDOWN = pd.Timedelta(minutes=30)
 MAX_CONTIGUOUS_GAP = pd.Timedelta(minutes=2)
 HIT_LEAD = pd.Timedelta(minutes=60)
@@ -250,55 +251,73 @@ def walk_forward(minutes: pd.DataFrame) -> tuple[pd.DataFrame, list[dict]]:
 
 
 def eventize(scored: pd.DataFrame, threshold: float) -> list[tuple[pd.Timestamp, pd.Timestamp]]:
+    """Convert a minute-score stream to alarm events using the frozen state machine.
+
+    Holds and cooldown are counted in score rows (one row = one minute in the
+    protocol stream).  An event starts on the fifth consecutive score above the
+    threshold.  While active, ten consecutive scores below 0.8 * threshold are
+    included in the event; it ends immediately after the tenth low row.  The
+    following 30 rows are a frozen cooldown with the entry counter held at zero.
+    """
     events: list[tuple[pd.Timestamp, pd.Timestamp]] = []
     active = False
-    candidate_start: pd.Timestamp | None = None
-    low_start: pd.Timestamp | None = None
+    enter_count = 0
+    exit_count = 0
+    cooldown_remaining = 0
     alarm_start: pd.Timestamp | None = None
-    cooldown_until = pd.Timestamp.min
-    prev_time: pd.Timestamp | None = None
     last_time: pd.Timestamp | None = None
     prev_epoch: str | None = None
+    enter_samples = int(ENTER_HOLD / pd.Timedelta(minutes=1))
+    exit_samples = int(EXIT_HOLD / pd.Timedelta(minutes=1))
+    cooldown_samples = int(COOLDOWN / pd.Timedelta(minutes=1))
 
     for t, row in scored.iterrows():
         epoch = str(row["epoch"])
         eligible = bool(row["stable"]) and np.isfinite(row["score"])
-        high = eligible and float(row["score"]) >= threshold
-        discontinuity = prev_time is not None and ((t - prev_time) > pd.Timedelta(minutes=15) or epoch != prev_epoch)
-        if discontinuity:
-            if active and alarm_start is not None:
-                events.append((alarm_start, prev_time + pd.Timedelta(minutes=1)))
+        value = float(row["score"]) if eligible else np.nan
+        high = eligible and value > threshold
+        low = eligible and value < EXIT_RATIO * threshold
+
+        # Maintenance/walk-forward epochs remain hard reset boundaries.  Missing
+        # clock minutes inside an epoch do not create a second event-machine
+        # convention: the protocol counts rows in the supplied minute stream.
+        if prev_epoch is not None and epoch != prev_epoch:
+            if active and alarm_start is not None and last_time is not None:
+                events.append((alarm_start, last_time + pd.Timedelta(minutes=1)))
             active = False
-            candidate_start = low_start = alarm_start = None
-            cooldown_until = pd.Timestamp.min
+            enter_count = 0
+            exit_count = 0
+            cooldown_remaining = 0
+            alarm_start = None
 
         if active:
-            if high:
-                low_start = None
-            elif eligible:
-                if low_start is None:
-                    low_start = t
-                if t - low_start + pd.Timedelta(minutes=1) >= EXIT_HOLD:
+            if low:
+                exit_count += 1
+                if exit_count >= exit_samples:
                     assert alarm_start is not None
-                    events.append((alarm_start, low_start))
+                    event_end = t + pd.Timedelta(minutes=1)
+                    events.append((alarm_start, event_end))
                     active = False
                     alarm_start = None
-                    candidate_start = None
-                    cooldown_until = t + COOLDOWN
-                    low_start = None
+                    enter_count = 0
+                    exit_count = 0
+                    cooldown_remaining = cooldown_samples
+            else:
+                exit_count = 0
         else:
-            if t >= cooldown_until:
-                if high:
-                    if candidate_start is None or (prev_time is not None and t - prev_time > MAX_CONTIGUOUS_GAP):
-                        candidate_start = t
-                    if t - candidate_start + pd.Timedelta(minutes=1) >= ENTER_HOLD:
-                        active = True
-                        alarm_start = candidate_start
-                        low_start = None
-                elif eligible:
-                    candidate_start = None
+            if cooldown_remaining > 0:
+                cooldown_remaining -= 1
+                enter_count = 0
+            elif high:
+                enter_count += 1
+                if enter_count >= enter_samples:
+                    active = True
+                    alarm_start = t
+                    enter_count = 0
+                    exit_count = 0
+            else:
+                enter_count = 0
 
-        prev_time = t
         prev_epoch = epoch
         last_time = t
 
@@ -403,7 +422,7 @@ def write_report(output: Path, raw: pd.DataFrame, minutes: pd.DataFrame, scored:
         "3. **特征/分数**：7 个模拟量、`TP3-Reservoirs`、`TP3-H1`、60 分钟三状态占比和切换次数；每个工况分别做 median/IQR 鲁棒标准化，分数为最大三个 |z| 的 RMS。",
         "4. **标定**：初始段固定为 2020-02-01 至 02-08（无此前维护记录，明确是部署回退）；维护锚点后等待 12 小时，再取固定 7 天健康标定。锚点为官方资料中的 2020-04-30 12:00、2020-06-08 16:00、2020-07-16 00:00。",
         "5. **walk-forward**：每 24 小时仅用过去数据重估；固定标定集加过去 14 天获准更新样本。分数>=4 的分钟触发 2 小时 quarantine，候选及 quarantine 内样本不更新模型。",
-        "6. **事件状态机**：连续高分满 5 分钟进入，连续低分满 10 分钟退出，退出后冷却 30 分钟；全部是经过时间规则。主工作点阈值预先固定为 6.0。",
+        "6. **事件状态机**：连续高分满 5 分钟并以第 5 分钟为起点，连续低于 0.8×阈值满 10 分钟退出，退出后冷却 30 分钟；全部是经过时间规则。主工作点阈值预先固定为 6.0。",
         "7. **命中**：因官方标签是粗时间区间，告警起点落在 `[故障开始-60min, 故障结束]` 才命中；延迟可为负（提前预警）。持续很久并在更早开始的告警不会自动并入故障。",
         "8. **健康指标**：独立误报事件按未匹配真值的告警事件计数；TIA-H 是健康、稳定、可评估分钟中的告警占比。二者必须成对报告。",
         "",
@@ -461,6 +480,7 @@ def write_report(output: Path, raw: pd.DataFrame, minutes: pd.DataFrame, scored:
             "history_days": HISTORY_DAYS,
             "enter_hold_minutes": ENTER_HOLD.total_seconds() / 60,
             "exit_hold_minutes": EXIT_HOLD.total_seconds() / 60,
+            "exit_ratio": EXIT_RATIO,
             "cooldown_minutes": COOLDOWN.total_seconds() / 60,
             "hit_lead_minutes": HIT_LEAD.total_seconds() / 60,
             "features": FEATURES,

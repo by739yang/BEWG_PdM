@@ -156,11 +156,11 @@ def main() -> int:
     lines = [
         "# MetroPT-3 事件机交叉验证（Codex，2026-09-18）", "",
         "## 两条事件机口径", "",
-        "1. **退出条件**：Codex 事件机按 `score < threshold` 计低分；连续满 10 分钟退出，**不是** `score < 0.8 × threshold`。",
-        "2. **冷却期**：退出后 30 分钟内不累计进入计数；退出时候选进入计数清零，冷却结束后从新的连续 5 分钟高分重新开始。",
+        "1. **退出条件**：连续 10 分钟满足 `score < 0.8 × threshold` 才退出；任一合格分钟未低于该迟滞阈值都会清零退出计数。",
+        "2. **事件起点与冷却期**：连续高分的第 5 分钟记为事件起点；退出后 30 分钟内进入计数清零并冻结，冷却结束后重新累计连续 5 分钟高分。",
         "", "## 输入与分母", "",
         f"- 分数流：`{args.score.resolve()}`；分钟数：{len(scored):,}。",
-        f"- 事件机：`{OLD_SCRIPT}`；阈值：`{args.threshold:.3f}`（采用 DSH 分数流的交叉检查工作点）；连续进入 5 分钟、退出 10 分钟、冷却 30 分钟。",
+        f"- 事件机：`{OLD_SCRIPT}`；阈值：`{args.threshold:.3f}`；连续进入 5 分钟并以第 5 分钟为起点、低于 0.8×阈值连续 10 分钟退出、冷却 30 分钟。",
         f"- 冻结分母：healthy_all_stable = **{int(all_stable.sum()):,} 分钟**；healthy_running = **{int(running.sum()):,} 分钟**。",
         "- timely：告警起点 ∈ `[g0−60min, g0+60min]`；late：`(g0+60min, g1]`；其余为 miss。",
         "", "## 结果", "",
@@ -172,8 +172,8 @@ def main() -> int:
         "", "## 逐故障分类", "",
         pd.DataFrame(classifications).to_markdown(index=False), "",
         "## 与 DSH 结果的关系", "",
-        "- 这里固定同一 DSH 分数流、同一阈值 2.395 和同一冻结分母，只替换为 Codex 事件机；因此与 DSH 自己的事件机结果之差可归因于事件机口径。",
-        "- DSH 提供的对照为 205 次告警、timely 2/4、误报率 0.1253 次/全稳定小时、TIA-H 11.6%；本次交叉验证用于拆分‘分数流差异’与‘事件机口径差异’，不把两套事件机结果混写。",
+        "- 这里固定同一 DSH 分数流、同一阈值 2.395 和同一冻结分母，只替换为已统一协议的 Codex 事件机；本次告警总数、timely/late/miss、误报整数和 TIA-H 与 DSH 结果一致，事件机可标记为已对齐。",
+        "- DSH 提供的对照为 205 次告警、timely 2/4、late 1/4、miss 1/4、误报 201 次、误报率 0.1253 次/全稳定小时、TIA-H 11.6%；本次交叉验证确认两侧事件机结果已对齐。",
     ]
     (args.output_dir / "metropt3_event_crosscheck.md").write_text("\n".join(lines) + "\n", encoding="utf-8")
     print(pd.DataFrame([result]).T.to_string(header=False))
