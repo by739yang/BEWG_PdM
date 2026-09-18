@@ -18,9 +18,15 @@
     "delay_timely_min": []
   },
   "det_best": {
-    "threshold": 2.3572,
-    "timely_recall": 0.5,
-    "fp_per_hour_all_stable": 0.1315,
-    "tia_all_stable": 0.1224
+    "threshold": 2.3954,
+    "timely": 2,
+    "late": 1,
+    "miss": 1,
+    "fp_events": 201,
+    "fp_per_hour_all_stable": 0.1253,
+    "fp_per_hour_running": 0.2796,
+    "tia_all_stable": 0.1164,
+    "tia_running": 0.1314,
+    "definition": "召回最高者中取误报率最低，并列时取阈值较小者"
   }
 }
