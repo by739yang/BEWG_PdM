@@ -83,4 +83,7 @@ with open(os.path.join(OUT,'decision_policy_v6.md'),'w',encoding='utf-8') as f:
     f.write(R.to_markdown(index=False)+'\n\n## 读法\n- 紧急召回 = 抓住的紧急单元 / 全部紧急单元；\n'
             '- 「动用非紧急」是按浪费剩余寿命计代价的误动作；\n'
             '- 成本参数为占位值，比例关系比绝对值可信。\n')
+Fte[['unit','cycle','pred','p20','p40','p60','trueRUL','trueRUL_end']].to_csv(
+    os.path.join(OUT,'decision_v6_predictions.csv.gz'),compression='gzip',index=False)
+print('逐周期预测已落盘')
 print('耗时 %.0fs' % (time.time()-t0))

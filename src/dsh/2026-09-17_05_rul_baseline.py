@@ -36,7 +36,13 @@ def build_all(df, zdf):
             for c in SENS:
                 w=zg[c].iloc[:i+1]
                 f[c+'_last']=w.iloc[-1]; f[c+'_mean']=w.tail(WIN).mean(); f[c+'_std']=w.tail(WIN).std()
-                f[c+'_slope']=float(w.tail(5).mean()-w.tail(10).head(5).mean())
+                # 精确最小二乘斜率（等价卷积，向量化：用累计和替代逐点 polyfit）
+                L=30; seg=w.tail(L).values
+                if len(seg)>=L:
+                    idx=np.arange(L); Sx=idx.sum(); Sxx=(idx*idx).sum()
+                    Sy=seg.sum(); Sxy=(idx*seg).sum()
+                    f[c+'_slope']=float((L*Sxy-Sx*Sy)/(L*Sxx-Sx*Sx))
+                else: f[c+'_slope']=0.0
             rows.append(f); keys.append((u,i))
     return pd.DataFrame(rows), keys
 Xall,keys=build_all(tr,tr_z)
