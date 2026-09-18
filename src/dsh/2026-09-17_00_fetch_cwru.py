@@ -11,7 +11,11 @@ paths=[x['path'] for x in t['tree'] if x['type']=='blob' and x['path'].endswith(
 norm=['Data/1730 RPM/1730_Normal.npz']
 print('Normal 候选:', norm[:3])
 targets=[('Normal',norm[0]),('IR_7','Data/1730 RPM/1730_IR_7_DE48.npz'),
-         ('OR6_7','Data/1730 RPM/1730_OR@6_7_DE48.npz'),('B_7','Data/1730 RPM/1730_B_7_DE48.npz')]
+         ('OR6_7','Data/1730 RPM/1730_OR@6_7_DE48.npz'),('B_7','Data/1730 RPM/1730_B_7_DE48.npz'),
+         ('IR_14','Data/1730 RPM/1730_IR_14_DE48.npz'),('OR6_14','Data/1730 RPM/1730_OR@6_14_DE48.npz'),
+         ('B_14','Data/1730 RPM/1730_B_14_DE48.npz'),
+         ('N1750','Data/1750 RPM/1750_Normal.npz'),('IR_7_1750','Data/1750 RPM/1750_IR_7_DE48.npz'),
+         ('OR6_7_1750','Data/1750 RPM/1750_OR@6_7_DE48.npz'),('B_7_1750','Data/1750 RPM/1750_B_7_DE48.npz')]
 CH=3_500_000
 for label,p in targets:
     url=BASE+urllib.parse.quote(p)
