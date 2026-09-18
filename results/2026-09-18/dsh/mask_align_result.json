@@ -1,0 +1,14 @@
+{
+  "score_finite_new": 252720,
+  "score_finite_old": 252720,
+  "A": {
+    "eval_domain": 159515,
+    "healthy_all_stable": 132963,
+    "healthy_running": 64352
+  },
+  "B": {
+    "eval_domain": 132088,
+    "healthy_all_stable": 109203,
+    "healthy_running": 54426
+  }
+}

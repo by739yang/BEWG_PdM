@@ -1,0 +1,24 @@
+{
+  "A": {
+    "eval_domain": 159515,
+    "score_finite": 113790,
+    "stable_state": 138983,
+    "running_state": 65677,
+    "in_fault_window": 4960,
+    "in_quarantine": 121421,
+    "healthy_all_stable": 108854,
+    "healthy_running": 50912
+  },
+  "B": {
+    "eval_domain": 132088,
+    "score_finite": 113790,
+    "stable_state": 115087,
+    "running_state": 56410,
+    "in_fault_window": 4960,
+    "in_quarantine": 121421,
+    "healthy_all_stable": 108854,
+    "healthy_running": 50912
+  },
+  "calibration_minutes_in_A": 27427,
+  "rows": 252720
+}

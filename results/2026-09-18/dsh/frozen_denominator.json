@@ -1,0 +1,20 @@
+{
+  "A": {
+    "eval_domain": 159515,
+    "healthy_all_stable_交集": 96270,
+    "healthy_running_交集": 43136,
+    "我_alone_all_stable": 132963,
+    "它_alone_all_stable": 108854,
+    "我_alone_running": 64352,
+    "它_alone_running": 50912
+  },
+  "B": {
+    "eval_domain": 132088,
+    "healthy_all_stable_交集": 96270,
+    "healthy_running_交集": 43136,
+    "我_alone_all_stable": 109203,
+    "它_alone_all_stable": 108854,
+    "我_alone_running": 54426,
+    "它_alone_running": 50912
+  }
+}

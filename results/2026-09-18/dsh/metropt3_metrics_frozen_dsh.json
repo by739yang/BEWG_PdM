@@ -1,0 +1,26 @@
+{
+  "frozen_denominator": {
+    "all_stable_minutes": 96270,
+    "running_minutes": 43136
+  },
+  "main_threshold": {
+    "threshold": 13.1393,
+    "alarm_events": 13,
+    "timely": 0,
+    "late": 0,
+    "miss": 4,
+    "timely_recall": 0.0,
+    "fp_events": 13,
+    "fp_per_hour_all_stable": 0.0081,
+    "fp_per_hour_running": 0.0181,
+    "tia_all_stable": 0.0045,
+    "tia_running": 0.0042,
+    "delay_timely_min": []
+  },
+  "det_best": {
+    "threshold": 2.3572,
+    "timely_recall": 0.5,
+    "fp_per_hour_all_stable": 0.1315,
+    "tia_all_stable": 0.1224
+  }
+}

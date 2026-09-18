@@ -1,0 +1,29 @@
+{
+  "cache_dir": "C:\\Users\\boyi\\.cache\\BEWG_PdM\\cmapss",
+  "files": [
+    {
+      "file": "train_FD001.txt",
+      "bytes": 3515356,
+      "sha256": "963b5e22825b34d8b21c69e1aeb4af3e647050eb672ee8834ba4b5d91d2de0f8",
+      "url": "https://raw.githubusercontent.com/edwardzjl/CMAPSSData/master/train_FD001.txt"
+    },
+    {
+      "file": "test_FD001.txt",
+      "bytes": 2228855,
+      "sha256": "3cda7109ce17bafb5443f2ac926cfcf88154b941b8c4cf95eb55d1ddd6f52851",
+      "url": "https://raw.githubusercontent.com/edwardzjl/CMAPSSData/master/test_FD001.txt"
+    },
+    {
+      "file": "RUL_FD001.txt",
+      "bytes": 429,
+      "sha256": "a19c8ec94931949d0485bdc35118206e9c81c4547b422efb9cf86f4ceddbceca",
+      "url": "https://raw.githubusercontent.com/edwardzjl/CMAPSSData/master/RUL_FD001.txt"
+    },
+    {
+      "file": "readme.txt",
+      "bytes": 2442,
+      "sha256": "4f5270554b775c67e73aff383c5436fd329d6e4cc3d3a116913276fae511269b",
+      "url": "https://raw.githubusercontent.com/edwardzjl/CMAPSSData/master/readme.txt"
+    }
+  ]
+}

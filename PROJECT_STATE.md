@@ -80,7 +80,10 @@
 | MetroPT-3 数据获取、体检和 Codex 探索性基线 | Codex | 已完成（2026-09-16）；主阈值召回 2/4，数字未冻结 |
 | MetroPT-3 DSH 独立基线 v2 与官方窗口重评 | DSH | 已完成探索性重评；最高表面召回 4/4，但延迟中位 +966 分钟，不得直接作为预测性召回宣传 |
 | MetroPT-3 评价口径：Δlate=60 min、双分母及共同评估掩码 | DSH 提议 / Codex 确认 | Codex 已在 handoff/2026-09-16_codex_to_dsh_r2.md 确认；待双方按共同掩码重算并严格对齐分钟整数 |
-| MetroPT-3 冻结数字 | DSH + Codex | 挂起：Codex 离线，掩码整数无法双边对齐，暂不冻结 |
+| MetroPT-3 冻结分母 | DSH 提议 / Codex 确认 | 已提出：取双方掩码交集（all_stable 96,270 分钟 / running 43,136 分钟），待 Codex 确认 |
+| MetroPT-3 冻结数字 | DSH + Codex | DSH 已在冻结分母上重算：timely 2/4、误报 0.1253/全稳定小时、TIA-H 11.6%；待 Codex 复算一致后写入第 12 节 |
+| 9/18 Codex：修 RUL 流程（其模型差于平凡对照）+ 冻结分母重算 | Codex | 任务单已发 |
+| 9/18 DSH：诊断模块跨记录验证 + 决策层链路 | DSH | 待办 |
 | 9/17 P2-1：诊断模块 v1（改用 CWRU 轴承故障分类） | DSH | 已完成（同记录时间切分下准确率/宏F1 1.000，局限已标注） |
 | 9/17 P2-2：C-MAPSS RUL 基线与数据获取 | DSH 接手（Codex 网络中断） | 已完成：梯度提升 RMSE 19.73 / PHM08 1077；待独立复核 |
 | UCI Hydraulic 原始数据获取（代理限制，暂缓） | DSH | 待办：需找支持 Range 的镜像 |
