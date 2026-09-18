@@ -1,0 +1,52 @@
+[
+  {
+    "label": "DSH机+DSH分",
+    "threshold": 2.395,
+    "alarm_events": 205,
+    "timely": 2,
+    "late": 1,
+    "fp": 201,
+    "fp_per_hour": 0.1252726706138984,
+    "tia": 0.11641217409369482
+  },
+  {
+    "label": "DSH机+Codex分",
+    "threshold": 2.0,
+    "alarm_events": 589,
+    "timely": 1,
+    "late": 1,
+    "fp": 586,
+    "fp_per_hour": 0.36522281084449987,
+    "tia": 0.6939856653162979
+  },
+  {
+    "label": "DSH机+Codex分",
+    "threshold": 4.0,
+    "alarm_events": 1049,
+    "timely": 2,
+    "late": 0,
+    "fp": 1045,
+    "fp_per_hour": 0.6512932377687753,
+    "tia": 0.3232886672899138
+  },
+  {
+    "label": "DSH机+Codex分",
+    "threshold": 6.0,
+    "alarm_events": 1107,
+    "timely": 2,
+    "late": 0,
+    "fp": 1103,
+    "fp_per_hour": 0.687441570582736,
+    "tia": 0.18246598109483744
+  },
+  {
+    "label": "DSH机+Codex分",
+    "threshold": 10.0,
+    "alarm_events": 868,
+    "timely": 2,
+    "late": 0,
+    "fp": 864,
+    "fp_per_hour": 0.5384855095045186,
+    "tia": 0.12093071569543991
+  }
+]
