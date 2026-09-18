@@ -3,6 +3,13 @@
 > 由人（王家兴）维护。AI 助手只能读 + 追加日志，不得改写"结论区"。
 > 最后更新：2026-09-16 晚（SKAB 已冻结；MetroPT-3 口径收尾；P2 任务已排期）
 
+## 00. 新会话冷启动（任何助手开工先照这个顺序读）
+1. 本文件（PROJECT_STATE.md）：第 16 节是已冻结结论，第 8 节是任务表与分工，第 13 节是每日工作流。
+2. 协作约定.md：目录归属、交接规则（2026-09-18 起全部走 handoff/ 文件，不再粘贴长文本）。
+3. tasks/<当天日期>_codex.md：当天任务单（含补充任务）。
+4. handoff/ 里最新一条写给你的消息（文件名形如 YYYY-MM-DD_dsh_to_codex_rN.md）。
+5. docs/PROTOCOL_v1.5.md 与 docs/metropt3_fault_windows.json：冻结口径与官方故障窗来源。
+
 ## 0. 目录约定（2026-09-15 起生效，所有助手必须遵守）
     tasks/YYYY-MM-DD_codex.md        当天的任务单（由 DSH 起草、人确认）
     src/<agent>/YYYY-MM-DD_*.py      当天的脚本，agent 取 dsh 或 codex
