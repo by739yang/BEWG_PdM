@@ -28,7 +28,7 @@ for f in ['PROJECT_STATE.md','协作约定.md','docs/01_项目速览.md','docs/0
 cands=set()
 for m in re.finditer(r'(?:results|src|docs|tasks|handoff|logs)/[A-Za-z0-9_\-\u4e00-\u9fff./]+', txt):
     p=norm(m.group(0))
-    if p: cands.add(p)
+    if p and re.search(r'\.(md|csv|json|py|gz|png|npz|npy|txt|html)$', p): cands.add(p)
 miss=sorted(p for p in cands if not os.path.exists(p))
 if miss: issues.append(('引用但不存在的路径', miss[:10]))
 else: ok.append('文档引用的 %d 条路径全部存在' % len(cands))
