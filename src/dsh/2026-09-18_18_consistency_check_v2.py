@@ -17,7 +17,7 @@ j['det_best']=dict(threshold=float(best.threshold), timely=int(best.timely), lat
 json.dump(j,open('results/2026-09-18/dsh/metropt3_metrics_frozen_dsh.json','w',encoding='utf-8'),ensure_ascii=False,indent=2)
 
 issues=[]; ok=[]
-STRIP=' '+chr(96)+chr(34)+chr(39)+'，。）)、,。；:;'
+STRIP=' '+chr(96)+chr(34)+chr(39)+chr(46)+'，。）)、,。；:;'
 def norm(p):
     p=p.strip(STRIP)
     if any(x in p for x in ['<','>','YYYY','（',' ','日期','当天','agent','当天日期']): return None
