@@ -11,15 +11,28 @@
 - 验收：与 DSH 逐项偏差 ≤10%，并给出偏差归因；对照行必须保留
 
 ### Q2 独立复核决策层 v6（会计口径 + 成本敏感性）
-- 读：results/2026-09-18/dsh/decision_policy_v6.md、decision_policy_v6.csv、decision_sensitivity_grid.csv（待 DSH 更新为 v6 网格）
+- 读：results/2026-09-18/dsh/decision_policy_v6.md、decision_policy_v6.csv、decision_sensitivity_v6.csv、decision_sensitivity_v6.md（**v6 口径已定稿，2026-09-19 更新**）
 - 做：自己实现"紧急单元"会计口径与三种策略对比，独立复算单台成本与紧急召回
 - 产物：results/<日期>/codex/decision_v6_repro.{csv,md}
 - 验收：整数与关键比例一致；若不一致，指出你认为 DSH 哪一步口径有误
 
 ### Q3 整链脚本的独立审计
-- 读：DSH 即将产出的 src/dsh/2026-09-<日期>_<n>_pipeline.py（检测→诊断→RUL→决策一条命令）
+- 读：src/dsh/2026-09-18_14_pipeline.py（检测→诊断→RUL→决策一条命令，**已产出**）与 run_all.py（一键复现）、docs/06_复现指南.md
 - 做：只做代码与数据流审计（不重跑全链），回答三问：① 有没有信息泄漏（用未来数据）② 有没有用不存在的标签做训练/调参 ③ 有没有把仿真/占位参数当真实结果输出
 - 产物：results/<日期>/codex/pipeline_audit.md
+
+### Q4 独立复核诊断模块的两组结论
+- 读：results/2026-09-19/dsh/cwru_adapt_metrics.csv（归一化策略对照）、results/2026-09-18/dsh/cwru_multiseverity_metrics.csv（多尺寸训练）
+- 做：自己从零实现 CWRU 特征与分类（可用简化特征），复核两个结论：
+  ① 多尺寸训练有效（E4 7+14→21mil 宏F1 约 0.62，明显高于 E3 7→14mil 约 0.45~0.54）
+  ② 归一化要挑对象（只归相对量：跨转速 0.899、跨尺寸 +0.037；全归一化：跨转速掉到 0.550）
+- 产物：results/<日期>/codex/diag_repro.{csv,md}
+- 验收：结论方向一致即可（数值允许差异），若方向相反必须给出证据
+
+### Q5 核对它自己的数字与文件一致性（10 分钟）
+- 读：PROJECT_STATE.md 第 16 节双模型对比表；results/2026-09-18/codex/metropt3_ownmodel_unified_primary.json
+- 做：核对表中"Codex 路线"那一行的每个数字是否与你落盘文件严格一致；不一致就指出
+- 产物：results/<日期>/codex/self_consistency.md
 
 ## 规则提醒（写给它看的）
 - 不要改 src/dsh/ 与 results/*/dsh/；不要动 data/
