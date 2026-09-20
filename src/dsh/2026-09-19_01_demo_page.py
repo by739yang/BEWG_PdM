@@ -22,6 +22,8 @@ sweepimg=base64.b64encode(open(f'{D20}/bsm1_sweep_3in1.png','rb').read()).decode
 sw=pd.read_csv(f'{D20}/bsm1_amp_sweep.csv')
 inf=pd.read_csv(f'{D20}/bsm1_influent_robustness.csv')
 infimg=base64.b64encode(open(f'{D20}/bsm1_influent_robustness.png','rb').read()).decode()
+rs=pd.read_csv(f'{D20}/bsm1_rain_storm.csv')
+rsimg=base64.b64encode(open(f'{D20}/bsm1_rain_storm.png','rb').read()).decode()
 def tbl(df, cols=None, n=None):
     d=df if cols is None else df[cols]
     if n: d=d.head(n)
@@ -93,6 +95,10 @@ h.append('<h2 style="margin-top:16px">进水工况泛化（三种进水窗口，
 h.append('<img src="data:image/png;base64,%s">'%infimg)
 h.append(tbl(inf[['工况窗口','健康SO3均值','健康持续低于0_5','健康误报_自适应','健康误报_冻结','检出延迟天','失效前提前量']]))
 h.append('<div class="warn"><b>三条要一起看的结论：</b>① 三种工况都检出了退化（无漏检）；② 「120 天 0 误报」只在 A 窗成立（B/C 窗健康运行误报 4 / 3 次），不能用它宣称稳健；③ B、C 窗进水使健康运行 SO3 本底降到 1.01 / 0.61 mg/L，健康运行本身就长期低于 0.5 mg/L 的绝对危险线 —— 绝对阈值判据在该工况下失真，危险线必须按工况自身的健康基线标定。</div>')
+h.append('<h2 style="margin-top:16px">雨/暴雨冲击工况（三种进水模式，同一退化配置）</h2>')
+h.append('<img src="data:image/png;base64,%s">'%rsimg)
+h.append(tbl(rs[['工况','健康误报_自适应','健康误报_冻结','自适应首报','冻结首报','检出延迟天','健康滚动5天中位数','退化滚动5天中位数']]))
+h.append('<div class="warn"><b>两个方向要一起看：</b>① 负面：冻结通道健康误报 26 / 18 / 26 次（对照 BSM2 A 窗 0 次），「0 误报」再次被证伪；自适应通道在干天循环与暴雨工况下完全漏检。② 正面：分布位置统计量在同一工况内健康与退化可分离 3-5 倍（0.85/1.10/1.38 对 4.49/4.65/4.78），远优于单点事件机 —— 这正是我们下一步要把冻结通道换成「滚动 N 天中位数 / 工况健康基线」比值判据的实验依据。</div>')
 h.append('<h2 style="margin-top:16px">五条设计原则（均为本项目实验独立得出）</h2>')
 h.append('<ul style="font-size:13px;line-height:1.9">')
 h.append('<li><b>① 双基线并行：</b>短窗自适应管突变（对慢漂移免疫），冻结基线管慢漂移（对突变不灵敏）；取并集报警并标注来源。</li>')
