@@ -24,5 +24,5 @@
 
 ## 收工
 1. logs/实验日志.md 追加一条（五段式）；
-2. handoff/2026-09-20_codex_to_dsh_r2.md 写回，只把文件名告诉王家兴，不粘贴正文；
+2. handoff/2026-09-20_codex_to_dsh_r2.md 写回，只把文件名告诉项目负责人，不粘贴正文；
 3. 未完成的 Q 留在 tasks/codex_batch_queue.md。
