@@ -6,7 +6,7 @@
    本脚本同时跑 C-MAPSS 已验证模型的维护策略对比作为 RUL 段演示
 ④ 决策：优先级 + 维护窗口 + 成本模型（占位参数）
 附：自审计清单（查泄漏 / 查未来数据 / 查把占位参数当结论）"""
-import numpy as np, pandas as pd, json, os, time
+import numpy as np, pandas as pd, json, os, time, hashlib
 t0=time.time(); OUT='results/2026-09-18/dsh'; R='results'
 FW=json.load(open('docs/metropt3_fault_windows.json',encoding='utf-8'))
 fw=[(pd.Timestamp(x['start']),pd.Timestamp(x['end'])) for x in FW['windows']]
@@ -17,7 +17,11 @@ J=pd.read_csv(f'{OUT}/minute_mask_intersection.csv.gz',parse_dates=['ts']).merge
 fault=np.zeros(len(J),bool)
 for a,b in fw: fault |= np.asarray((J.ts>=a)&(J.ts<=b))
 base=(J.B_ds&J.B_cx&J.fin_ds&J.fin_cx&(~fault)&J.stable_ds&J.stable_cx).values
-sv=np.nan_to_num(J.score.values,nan=0.0); THR=2.395
+sv=np.nan_to_num(J.score.values,nan=0.0)
+# THR=2.395：在官方 4 个故障窗上按 DET 规则（timely 召回最高、并列取误报最低、再并列取阈值较小）
+# 选出的工作点 -> 属标签辅助选点，4 个窗同时用于选点与汇报，因此下列四事件指标是「同集工作点表现」，不是独立前瞻验证。
+# 无标签 0.995 标定分位的阈值是 13.139（见 metropt3_metrics_frozen_dsh.json 的 main_threshold：timely 0/4、误报 13 次）。
+THR=2.395
 def events(thr,ENTER=5,EXIT=10,RATIO=0.8,COOL=30):
     over=sv>thr; n=len(sv); ev=[]; st=0; r=0; s0=0; last=-10**9
     for t in range(n):
@@ -45,11 +49,13 @@ for s,e in ev: alarm[s:min(e,len(J))]=True
 alarms=pd.DataFrame([dict(告警起点=str(J.ts.iloc[s]),告警结束=str(J.ts.iloc[min(e,len(J)-1)]),
     持续分钟=int((J.ts.iloc[min(e,len(J)-1)]-J.ts.iloc[s]).total_seconds()//60),
     峰值分数=round(float(sv[s:e].max()) if e>s else 0.0,2)) for s,e in ev])
-print('① 检测：告警 %d 个；timely %d/4、late %d/4；误报率 %.4f 次/全稳定小时；TIA-H %.1f%%'
-      % (len(ev),timely,late,(len(ev)-timely-late)/max(base.sum()/60,1e-9),100*(alarm&base).sum()/base.sum()))
+fp_ev=sum(1 for s,e in ev if not any(g0-pd.Timedelta(minutes=60)<=J.ts.iloc[s]<=g1 for g0,g1 in fw))  # 与冻结口径一致：告警起点不在任何命中窗内
+print('① 检测：告警 %d 个；timely %d/4、late %d/4；误报 %d 次（%.4f 次/全稳定小时）；TIA-H %.1f%%'
+      % (len(ev),timely,late,fp_ev,fp_ev/max(base.sum()/60,1e-9),100*(alarm&base).sum()/base.sum()))
+print('   口径声明：阈值 %.3f 为标签辅助选出的 DET 工作点，四事件指标属同集表现；无标签 0.995 标定分位工作点为 13.139（timely 0/4）' % THR)
 # ---------- ② 诊断 ----------
 def diagnose(signal_kind):
-    if signal_kind=='MetroPT-3': return '空气泄漏（官方四事件均为该模式，单模式）'
+    if signal_kind=='MetroPT-3': return '空气泄漏（数据集级故障类型占位：官方四事件均为该模式，且不区分误报，非训练所得诊断器）'
     if signal_kind=='CWRU-振动': return '轴承类故障（内圈/外圈/滚动体/正常，四分类；跨尺寸泛化有限）'
     return '未知（接口占位）'
 alarms['诊断']=diagnose('MetroPT-3')
@@ -61,7 +67,7 @@ for s,e in ev:
     x=np.arange(len(y),dtype=float); x=x-x.mean()
     slope=float((x*(y-y.mean())).sum()/(x*x).sum())
     if slope>1e-3 and sv[min(e-1,len(sv)-1)]>THR: rising.append(s)
-print('③ RUL：205 个告警中满足"分数持续上升"的 %d 个 → 结论：瞬态告警不挂 RUL，改由退化型数据提供' % len(rising))
+print('③ RUL：%d 个告警中满足"分数持续上升"的 %d 个 → 结论：瞬态告警不挂 RUL（本条为事后门禁 retrospective，使用了告警时点之后的数据，不可用作在线判据）' % (len(ev),len(rising)))
 # C-MAPSS 侧：已验证模型 + 成本敏感性结论（读取已落盘结果，不重训）
 try:
     sens=json.load(open(f'{OUT}/decision_sensitivity_v6_summary.json',encoding='utf-8'))
@@ -89,19 +95,24 @@ alarms['建议窗口']=[nextwin(pd.Timestamp(t)) or '无' for t in alarms.告警
 alarms['优先级']=np.where(alarms.峰值分数>=THR*3,'P1-紧急',np.where(alarms.峰值分数>=THR*2,'P2-计划','P3-观察'))
 alarms.to_csv(f'{OUT}/pipeline_alarms.csv',index=False,encoding='utf-8-sig')
 # ---------- 自审计 ----------
-audit=[dict(检查项='检测阈值来源',结论='标定期 0.995 分位（2020-02-01 起、前 12h 预热剔除）',是否通过=True),
+audit=[dict(检查项='检测阈值来源',结论='THR=2.395 为官方 4 故障窗标签辅助选出的 DET 工作点；无标签 0.995 标定分位=13.139（timely 0/4）',是否通过=True),
+ dict(检查项='是否独立前瞻验证',结论='否：4 个故障窗同时用于选点与汇报，属同集工作点表现；无标签工作点作为无偏参照单列',是否通过=False),
  dict(检查项='特征是否只用过去数据',结论='每日 walk-forward 重估，仅用过去 14 天；因果标准化',是否通过=True),
  dict(检查项='评估分母是否用交集',结论='双方掩码交集 96,270 分钟，未使用任何单方口径',是否通过=True),
  dict(检查项='命中判据是否允许迟到',结论='timely 限定在 [g0-60min, g0+60min]，late 单列',是否通过=True),
  dict(检查项='是否把占位参数当结论',结论='成本参数标注为占位，仅用比例与敏感性网格；金额不得对外',是否通过=True),
  dict(检查项='诊断模块泛化声明',结论='跨尺寸宏F1 0.536，已明确标注为局限',是否通过=True),
- dict(检查项='RUL 是否挂错对象',结论='瞬态告警不挂 RUL（205 个中 0 个满足上升条件），改由退化数据提供',是否通过=True),
- dict(检查项='未复核项',结论='精确斜率版 RUL（15.27）与决策层 v6 敏感性网格尚未经第二套实现复核，已入 Codex 队列',是否通过=False)]
+ dict(检查项='RUL 是否挂错对象',结论='瞬态告警不挂 RUL（%d 个中 %d 个满足上升条件），改由退化数据提供；该门禁为事后(retrospective)' % (len(ev),len(rising)),是否通过=True),
+ dict(检查项='未复核项',结论='已在 2026-09-20 批次 2 复核：RUL 复现成功（GBR 15.634 对 15.27，偏差 2.4%）；决策层 v6 精确复现（20/20 行、15/15 格）',是否通过=True),
+ dict(检查项='占位参数机器可读标记',结论='成本参数已在 json 中标注 placeholder=true，金额不得对外',是否通过=True)]
 A=pd.DataFrame(audit)
-summary=dict(检测=dict(告警数=len(ev),timely=timely,late=late,冻结分母分钟=int(base.sum())),
+h=hashlib.md5(open(f'{R}/2026-09-16/dsh/metropt3_score_minutes_dsh.csv.gz','rb').read()).hexdigest()[:12]
+summary=dict(检测=dict(告警数=len(ev),timely=timely,late=late,误报事件=fp_ev,阈值=THR,
+                    阈值性质='标签辅助 DET 工作点（同集表现）',无标签工作点阈值=13.139,冻结分母分钟=int(base.sum())),
   诊断=diagnose('MetroPT-3'), RUL=dict(rulsrc=rulsrc,AI占优格数=f'{ai_win}/{tot}'),
    决策=dict(优先级分布=alarms.优先级.value_counts().to_dict(),可用窗口数=len(wins)),
-   成本参数=PR,耗时秒=round(time.time()-t0,1))
+   成本参数=PR,cost_parameters_are_placeholders=True,币种='CNY',口径版本='PROTOCOL_v1.5 + MetroPT-3 冻结口径 2026-09-18',
+   输入哈希_分数流=h,备注='误报=告警起点不在任何命中窗内；四事件指标为同集工作点表现，非独立前瞻验证',耗时秒=round(time.time()-t0,1))
 json.dump(summary,open(f'{OUT}/pipeline_summary.json','w',encoding='utf-8'),ensure_ascii=False,indent=2)
 with open(f'{OUT}/pipeline_run.md','w',encoding='utf-8') as f:
     f.write('# 澜脉 · 端到端链路 v1（一条命令）\n\n命令：python src/dsh/2026-09-18_14_pipeline.py\n\n')
