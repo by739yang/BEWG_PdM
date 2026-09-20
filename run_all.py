@@ -14,6 +14,7 @@ STAGES=[
  dict(name='pipeline',   title='端到端链路（检测→诊断→RUL→决策）', script='src/dsh/2026-09-18_14_pipeline.py', full=False),
  dict(name='check',      title='一致性自检', script='src/dsh/2026-09-18_18_consistency_check_v2.py', full=False),
  dict(name='demo',       title='生成单页演示', script='src/dsh/2026-09-19_01_demo_page.py', full=False),
+ dict(name='dual_baseline', title='双基线检测模块（MetroPT-3 + BSM1 120 天）', script='src/dsh/dual_baseline.py', full=True),
  dict(name='skab',       title='SKAB 冻结协议（v1.4）', script='src/dsh/2026-09-15_16_protocol_v14.py', full=True),
  dict(name='rul',        title='C-MAPSS RUL 基线（精确斜率版）', script='src/dsh/2026-09-17_05_rul_baseline.py', full=True),
  dict(name='diag_cross', title='诊断跨记录验证（多尺寸）', script='src/dsh/2026-09-18_15_cwru_multiseverity.py', full=True),
