@@ -54,6 +54,7 @@ img{width:100%;border-radius:8px}
 h=[]
 h.append('<!doctype html><html lang="zh-CN"><head><meta charset="utf-8"><title>澜脉 · 演示</title>'+css+'</head><body><div class="wrap">')
 h.append('<h1>澜脉 · 污水厂设备预测性维护</h1>')
+h.append('<div class="card" style="background:#12507b;color:#fff;font-size:14px"><b>想看仿真的实际效果？</b>双击打开 <b>demo/lanmai_twin.html</b> —— 交互式数字孪生演示台：切换 6 个场景、可拖时间轴/自动播放，看曝气能力退化时模型分数怎么变、第几天报警、第几天真实失效、提前量多少。本页是汇总材料，那一页是可以动手点的演示。</div>')
 h.append('<div class="sub">纯软件 · 无硬件改造 · 演示数据来自公开真实工业数据集（SKAB / MetroPT-3 / CWRU / C-MAPSS）与 IWA BSM1 数字孪生仿真｜生成时间 2026-09-20</div>')
 h.append('<div class="card"><h2>一、检测：设备健康告警（MetroPT-3 空压机，约 5.8 个月）</h2><div class="kpis">')
 h.append('<div class="kpi"><div class="v">%d</div><div class="l">告警事件总数（由结果对象生成，不硬编码）</div></div>'%pipe['检测']['告警数'])

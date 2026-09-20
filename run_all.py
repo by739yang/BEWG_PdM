@@ -19,6 +19,7 @@ STAGES=[
  dict(name='rul',        title='C-MAPSS RUL 基线（精确斜率版）', script='src/dsh/2026-09-17_05_rul_baseline.py', full=True),
  dict(name='diag_cross', title='诊断跨记录验证（多尺寸）', script='src/dsh/2026-09-18_15_cwru_multiseverity.py', full=True),
  dict(name='diag_norm',  title='诊断归一化策略对照', script='src/dsh/2026-09-19_02_cwru_domain_adapt.py', full=True),
+ dict(name='demo_twin', title='交互式数字孪生演示台', script='src/dsh/2026-09-20_15_demo_twin.py', full=True),
  dict(name='alarm_strategy_bsm1', title='组合报警策略评估', script='src/dsh/2026-09-20_14_alarm_strategy.py', full=True),
  dict(name='ratio_rule_bsm1', title='比值判据跨工况检验', script='src/dsh/2026-09-20_13_ratio_rule.py', full=True),
  dict(name='rain_storm_bsm1', title='BSM1 雨/暴雨冲击工况分析', script='src/dsh/2026-09-20_12_bsm1_rain_storm.py', full=True),
