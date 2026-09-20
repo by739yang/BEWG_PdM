@@ -226,6 +226,10 @@ if __name__ == '__main__':
     os.makedirs(OUT, exist_ok=True)
     NL = chr(10) + chr(10)
     t1, _ = demo_metropt3(); t2 = demo_bsm1(); t3 = diag_bsm1(); t4, t5 = diag_drift()
+    for name, tb in [('dual_baseline_metropt3', t1), ('dual_baseline_bsm1', t2),
+                     ('dual_baseline_diag_reference', t3), ('dual_baseline_diag_drift', t4),
+                     ('dual_baseline_drift_buckets', t5)]:
+        tb.to_csv(os.path.join(OUT, name + '.csv'), index=False, encoding='utf-8-sig')
     for title, tb in [('=== 数据源 1：MetroPT-3（突变类故障）===', t1),
                       ('=== 数据源 2：BSM1 120 天（慢漂移）===', t2),
                       ('=== BSM1 诊断 A：冻结参考域选择 ===', t3),

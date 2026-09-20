@@ -19,6 +19,7 @@ STAGES=[
  dict(name='rul',        title='C-MAPSS RUL 基线（精确斜率版）', script='src/dsh/2026-09-17_05_rul_baseline.py', full=True),
  dict(name='diag_cross', title='诊断跨记录验证（多尺寸）', script='src/dsh/2026-09-18_15_cwru_multiseverity.py', full=True),
  dict(name='diag_norm',  title='诊断归一化策略对照', script='src/dsh/2026-09-19_02_cwru_domain_adapt.py', full=True),
+ dict(name='figures_bsm1', title='BSM1 数字孪生闭环四图', script='src/dsh/2026-09-20_08_bsm1_figure.py', full=True),
  dict(name='figures',    title='材料四图', script='src/dsh/2026-09-18_16_figures.py', full=True),
 ]
 DATA=[

@@ -1,0 +1,4 @@
+﻿rule,healthy_alarms,healthy_first,degraded_alarms,degraded_first,degraded_delay_days
+rolling-5d-median > 1.3x ref (=2.62),0,,1785,101.41,81.41
+rolling-5d-median > 1.5x ref (=3.02),0,,780,111.88,91.88
+rolling-5d-median > 2.0x ref (=4.03),0,,0,,
