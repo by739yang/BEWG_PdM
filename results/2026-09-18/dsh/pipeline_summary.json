@@ -30,6 +30,7 @@
   "cost_parameters_are_placeholders": true,
   "币种": "CNY",
   "口径版本": "PROTOCOL_v1.5 + MetroPT-3 冻结口径 2026-09-18",
+  "RUL门禁": "retrospective：使用告警时点之后的数据，不可用于在线决策",
   "输入哈希_分数流": "ade8c0e00922",
   "备注": "误报=告警起点不在任何命中窗内；四事件指标为同集工作点表现，非独立前瞻验证",
   "耗时秒": 2.2

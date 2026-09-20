@@ -37,13 +37,13 @@ for tag,keep,f in SCEN:
     thr=float(pd.Series(np.asarray(topk_score(ZR,3),dtype=float).ravel()).quantile(0.999))
     s=np.asarray(topk_score(frozen_z(X,CH,REF,state=hod(X),state_ref=hod(REF),floor=FL),3),dtype=float).ravel()
     m=s>thr; r=runs(m); d=np.asarray(X.t_day)
-    rm=pd.Series(s).rolling(5*1440,min_periods=288).median().values
+    rm=pd.Series(s, index=X.index).rolling('5D', min_periods=192).median().values   # 时间窗，勿用点数（本数据 96 点/天）
     first=None; c=0
     for i,v in enumerate(m):
         c=c+1 if v else 0
         if c>=ENTER: first=float(d[i-ENTER+1]); break
     j110=int(np.searchsorted(d,110.0))
-    late=float(np.nanmedian(rm[max(0,j110-720):j110+720]))
+    late=float(np.nanmedian(rm[max(0,j110-192):j110+192]))   # +-2 天（本数据 96 点/天）
     rows.append(dict(场景=tag, 最终KLa比例=keep, 健康运行=bool(keep>=1.0), 冻结阈值=round(thr,3),
                      越限样本数=int(m.sum()), 最长连续越限=int(max(r) if r else 0),
                      满足持续性=bool(first is not None), 冻结首报天=(None if first is None else round(first,2)),

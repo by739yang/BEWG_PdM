@@ -200,9 +200,8 @@ def diag_drift():
     arr = lambda x: np.asarray(x, dtype=float).ravel()
     sB = arr(topk_score(frozen_z(B, ch, REF, state=hod(B), state_ref=hod(REF), floor=_scale_floor(B, ch)), 3))
     sD = arr(topk_score(frozen_z(D, ch, REF, state=hod(D), state_ref=hod(REF), floor=_scale_floor(D, ch)), 3))
-    W = 5 * 1440
-    mB = pd.Series(sB).rolling(W, min_periods=W // 5).median().values
-    mD = pd.Series(sD).rolling(W, min_periods=W // 5).median().values
+    mB = pd.Series(sB, index=B.index).rolling('5D', min_periods=192).median().values   # 5 天时间窗（本数据 96 点/天）
+    mD = pd.Series(sD, index=D.index).rolling('5D', min_periods=192).median().values
     dB = np.asarray(B.t_day); dD = np.asarray(D.t_day)
     base = float(np.nanmedian(mB[dB >= 30]))
     g = []
@@ -253,7 +252,7 @@ if __name__ == '__main__':
     W('## 4. 诊断 B：慢漂移的签名是分布平移，不是单点越限' + NL + t4.to_markdown(index=False) + NL + t5.to_markdown(index=False) + NL)
     W('以稳态段为参考时，退化运行的分数中位数随 KLa 衰减单调抬升（2.15 -> 2.29 -> 2.44 -> 2.95），健康运行平稳（2.00 -> 2.07 -> 1.91 -> 2.02）；' + NL)
     W('但 p99.9 单点阈值（20.2）远高于这一平移量，因此单点事件机对慢漂移只能靠瞬态越限捕捉（1 次，延迟 20.3 天）。' + NL)
-    W('滚动 5 天中位数偏移判据在健康运行 0 误报，但在本案幅值/斜率下要到第 101 天才越限 -> **慢漂移的可检测时间受信噪比限制，不是判据形式问题**。' + NL)
+    W('**口径更正（2026-09-20 晚，Codex 复核发现）**：本判据原先用 rolling(7200) 点（=75 天窗）计算，见下方更正值。改为 5 天时间窗后，滚动中位数越限**并不特异**：健康运行同样越限（k=1.3 时 2004 个样本、首次在第 59.09 天），退化运行检出延迟 33.82 天。因此该统计量只能作为严重度/趋势指标，不能作为报警判据。' + NL)
     W('## 5. 本模块给出的三条设计原则' + NL)
     W('1. 双基线并行：短窗自适应抓突变（对慢漂移免疫），冻结基线抓慢漂移（对突变不够灵敏）。' + NL)
     W('2. 冻结参考域必须取自"验收合格且已进入稳态"的历史段；投运暂态段会把阈值压得过低，导致长期误报。' + NL)

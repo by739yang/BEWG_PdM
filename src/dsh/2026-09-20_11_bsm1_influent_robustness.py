@@ -61,7 +61,7 @@ def analyse(tag, fb, fd):
     fp={chn:int(((Ar.channel==chn).sum()) if len(Ar) else 0) for chn in ['adaptive','frozen']}
     FL=_scale_floor(D,CH)
     s=np.asarray(topk_score(frozen_z(D,CH,REF,state=hod(D),state_ref=hod(REF),floor=FL),3),dtype=float).ravel()
-    rm=pd.Series(s).rolling(5*1440,min_periods=288).median().values
+    rm=pd.Series(s, index=D.index).rolling('5D', min_periods=192).median().values
     j=int(np.searchsorted(np.asarray(D.t_day),110.0))
     v=(D.SO3<0.5).rolling(96,min_periods=24).mean(); idx=[i for i in range(len(v)) if v.iloc[i]>=1.0 and D.t_day.iloc[i]>DEG_START]
     fail=(idx[0]/96.0 if idx else None)
@@ -75,7 +75,7 @@ def analyse(tag, fb, fd):
                 检出延迟天=(None if al is None else round(al-DEG_START,2)),
                 失效点SO3_0_5=(None if fail is None else round(fail,2)),
                 失效前提前量=(None if (fail is None or al is None) else round(fail-al,2)),
-                第110天滚动5天中位数=round(float(np.nanmedian(rm[max(0,j-720):j+720])),2),
+                第110天滚动5天中位数=round(float(np.nanmedian(rm[max(0,j-192):j+192])),2),
                 退化末期SO3均值=round(float(D[D.t_day>100].SO3.mean()),3))
 rows=[]
 for w,st in WIN.items():

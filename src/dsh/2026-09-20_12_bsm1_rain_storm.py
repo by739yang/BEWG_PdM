@@ -18,7 +18,7 @@ NICE={'R1_dry':'R1 干天循环','R2_dry_rain':'R2 干+雨循环','R3_add_storm'
 def load(f):
     """读进水文件。已核对的坑：① 随包 raininfluent.csv 的 Q 列（第 15 列）比 dryinfluent.csv 小 1000 倍
     （同为第 0 行：dry=21474 m3/d，rain=21.47），直接喂入会让水力为负并报 splitter 错误；
-    ② 该文件 Q 列第 996 行为 NaN。这里统一：rain 的 Q 列乘 1000，所有列 NaN 线性插值。"""
+    ② 该文件 Q 列有 3 个 NaN（0-based 行号 996/998/999，见 Codex Q9 独立复核）。这里统一：rain 的 Q 列乘 1000，所有列 NaN 线性插值。"""
     d=np.genfromtxt(os.path.join(PKG,'data',f), delimiter=',', skip_header=1).astype(float)
     if 'rain' in f:
         d[:,15] *= 1000.0
@@ -70,8 +70,8 @@ from dual_baseline import dual_detect, frozen_z, topk_score, _scale_floor
 def prep(df):
     x=df.copy(); x.index=pd.to_datetime(x.t_day*86400,unit='s'); return x
 hod=lambda X: ((X.t_day*24)%24).astype(int).values
-def rollmed(s, X, day=110.0, half=720):
-    rm=pd.Series(s).rolling(5*1440,min_periods=288).median().values
+def rollmed(s, X, day=110.0, half=192):   # +-2 天（本数据 96 点/天）
+    rm=pd.Series(s, index=X.index).rolling('5D', min_periods=192).median().values
     j=int(np.searchsorted(np.asarray(X.t_day),day))
     return round(float(np.nanmedian(rm[max(0,j-half):j+half])),2)
 def analyse(tag):
@@ -147,13 +147,13 @@ W('# BSM1 雨/暴雨冲击工况报告（DSH，2026-09-20）'+NL)
 W('三种进水模式各跑健康 + 退化两条 120 天轨迹，退化配置相同（第 20 天起 KLa 衰减至 40%、100 天斜坡）：'+NL)
 W('- R1 干天循环：dryinfluent 14 天块循环；R2 干+雨循环：dry 14 天 + rain 14 天交替；'+NL)
 W('- R3 干+雨+暴雨：在 R2 基础上每 28 天周期第 20-22 天插 2 天暴雨（ASM1 溶质+TSS 乘 0.4、流量乘 2.5）。'+NL)
-W('**数据处理（必须记录）**：随包 raininfluent.csv 的 Q 列比 dryinfluent.csv 小 1000 倍（同为第 0 行：dry=21474 m3/d、rain=21.47），且 Q 列第 996 行为 NaN；直接喂入会让水力为负并报 splitter 错误。脚本内统一乘 1000 并线性插值补齐。'+NL)
+W('**数据处理（必须记录）**：随包 raininfluent.csv 的 Q 列比 dryinfluent.csv 小 1000 倍（同为第 0 行：dry=21474 m3/d、rain=21.47），Q 列另有 3 个 NaN（0-based 996/998/999，Codex Q9 独立复核确认）；直接喂入会在第 996 步报 splitter 负流量错误。脚本内统一乘 1000 并线性插值补齐。'+NL)
 W('## 1. 结果'+NL+T.to_markdown(index=False)+NL)
 W('## 2. 结论'+NL)
 W('**① 雨/暴雨工况下「健康运行 0 误报」完全不再成立**：冻结通道误报 26 / 18 / 26 次（120 天），自适应通道 2 / 4 / 1 次；对照 BSM2 动态进水 A 窗为 2 / 0。与 18.2 的刀锋边缘、18.3 的跨工况不稳健一致——冻结通道的零误报是特定工况的巧合。'+NL)
 W('**② 自适应通道在干天循环与暴雨工况下完全漏检**（R1、R3 无自适应告警），只在 R2 报出。'+NL)
 W('**③ 检出延迟仍由工况成分主导**：同一退化配置下为 37.45 / 2.44 / 0.04 天，差异来自进水模式而非退化。'+NL)
-W('**④ 分布位置统计量的可分离性**：健康 vs 退化的滚动 5 天中位数见上表两列。'+NL)
+W('**④ 分布位置统计量的可分离性**：健康运行 1.25 / 1.64 / 2.37 对退化运行 7.48 / 8.08 / 7.95（3-6 倍）。注意这是**分布位置**的差别；把它直接当越限判据并不成立（见第 18.5 节）。'+NL)
 W('## 3. 局限'+NL)
 W('- 暴雨为自建合成扰动（简单稀释），非 BSM1 官方 storm 文件（随包未提供）；'+NL)
 W('- 三种模式各只有一条 120 天轨迹；进水由 14 天块拼接，非真实季节序列。'+NL)

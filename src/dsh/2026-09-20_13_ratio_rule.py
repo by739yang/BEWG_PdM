@@ -27,8 +27,8 @@ PAIRS=[
 def prep(df):
     x=df.copy(); x.index=pd.to_datetime(x.t_day*86400,unit='s'); return x
 hod=lambda X: ((X.t_day*24)%24).astype(int).values
-def rollmed(v):
-    return pd.Series(v).rolling(5*1440,min_periods=288).median().values
+def rollmed(v, X):   # 5 天时间窗（本数据 96 点/天，用点数会变成 75 天）
+    return pd.Series(v, index=X.index).rolling('5D', min_periods=192).median().values
 rows=[]
 for tag,fb,fd in PAIRS:
     pb=os.path.join(OUT,fb); pd_=os.path.join(OUT,fd)
@@ -40,7 +40,7 @@ for tag,fb,fd in PAIRS:
     sH=sc(B); sD=sc(D)
     ref_thr=float(np.quantile(np.asarray(topk_score(frozen_z(REF,CH,REF,state=hod(REF),state_ref=hod(REF),floor=FL),3),dtype=float).ravel(),0.999))
     evH=make_events(pd.Series(sH), ref_thr)      # 单点事件机（现行做法）在健康运行上的告警数
-    rH=rollmed(sH); rD=rollmed(sD)
+    rH=rollmed(sH,B); rD=rollmed(sD,D)
     dB=np.asarray(B.t_day); dD=np.asarray(D.t_day)
     mref=(dB>=30)&(dB<45)
     base=float(np.nanmedian(rH[mref]))
@@ -91,11 +91,10 @@ SUM=pd.DataFrame([dict(k=k, 健康越限合计=round(float(T['健康越限占比
     检出数=int(T['检出延迟_k%.1f'%k].notna().sum()),
     检出延迟中位=(round(float(T['检出延迟_k%.1f'%k].median()),1) if T['检出延迟_k%.1f'%k].notna().any() else None)) for k in KS])
 W('## 2. 权衡汇总'+NL+SUM.to_markdown(index=False)+NL)
-W('## 3. 结论'+NL)
-W('**① 误报侧：比值判据在 12 个工况的健康运行上越限时长全部为 0.000**（k=1.3 起即成立），而同工况下现行单点事件机的健康误报为 0 / 4 / 3 / 0 / 0 / 0 / 0 / 0 / 0 / 26 / 18 / 26 次。误报侧是压倒性改善。'+NL)
-W('**② 灵敏度侧：代价很大。** k=2.0 时 12 个退化场景只有 4 个在 120 天内检出，且延迟 68-98 天；k=1.3 时检出数上升但仍远晚于单点事件机（后者在相同场景为 0-37 天）。'+NL)
-W('**③ 工程结论（诚实版）：比值判据不适合单独作为慢漂移的报警判据**，它更适合做「严重度分级 / 长期趋势监控」；即时报警仍要靠单点事件机，并接受其工况依赖的误报（第五条原则要求阈值按工况基线标定）。'+NL)
-W('**④ 这也修正了 18.4 的乐观读法**：3-5 倍的「可分离」是同一工况内健康与退化的对比，但它不足以在 120 天内把慢漂移推到 k 倍基线的报警线之上。'+NL)
+W('**① 误报侧：没有任何优势。** 真 5 天窗下，健康运行第 45-120 天的越限时长占比在 12 个工况为 0.514–0.948（k=1.3），没有一个工况为 0；k=1.3/1.5/2.0/3.0 的健康越限合计为 7.558 / 6.570 / 3.296 / 0.907。对照同一批工况的单点事件机健康误报合计约 47 次。'+NL)
+W('**② 灵敏度侧也没有优势。** 检出 12/12，但延迟中位 25.0 天（k=1.3/1.5）、30.1（k=2.0）、41.8（k=3.0）；25.0 天正是评估窗起点（第 45 天）对应的下限，说明该统计量在退化轨迹上一开始就已越限，与慢漂移检测无关。单点事件机的对应中位是 20.3 天。'+NL)
+W('**③ 工程结论：本判据作为越限报警判据不成立**（既不特异也不灵敏）。它的可用价值只剩严重度/趋势字段：分布位置随退化幅值单调（18.2：健康 1.38 -> -80%/100 天 5.11），可作检修排程输入，但不得作为报警流。'+NL)
+W('**④ 口径更正记录（两处，均因 Codex 批次 3 复核发现）**：① 滚动窗原先写成 5x1440=7200 点，而本数据是 96 点/天（15 分钟步长），实际是 75 天窗 —— 健康零越限 + 长延迟全部来自这个过平滑窗，改正后结论反转；② 首次实现的评估窗从第 20 天起，导致 8 个场景出现检出延迟 0.01 天的假象（实为投运暂态），已统一改为第 45 天之后评估。'+NL)
 W('## 4. 局限'+NL)
 W('- 基线取自各工况自己的健康运行参考窗（投运标定假设）；实际部署时该窗必须真的健康且已进稳态（第三条原则）。'+NL)
 W('- 每个工况只有一条轨迹，未做随机重复。'+NL)

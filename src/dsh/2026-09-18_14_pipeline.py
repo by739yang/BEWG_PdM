@@ -102,7 +102,7 @@ audit=[dict(检查项='检测阈值来源',结论='THR=2.395 为官方 4 故障�
  dict(检查项='命中判据是否允许迟到',结论='timely 限定在 [g0-60min, g0+60min]，late 单列',是否通过=True),
  dict(检查项='是否把占位参数当结论',结论='成本参数标注为占位，仅用比例与敏感性网格；金额不得对外',是否通过=True),
  dict(检查项='诊断模块泛化声明',结论='跨尺寸宏F1 0.536，已明确标注为局限',是否通过=True),
- dict(检查项='RUL 是否挂错对象',结论='瞬态告警不挂 RUL（%d 个中 %d 个满足上升条件），改由退化数据提供；该门禁为事后(retrospective)' % (len(ev),len(rising)),是否通过=True),
+ dict(检查项='RUL 是否挂错对象',结论='瞬态告警不挂 RUL（%d 个中 %d 个满足上升条件），改由退化数据提供；该门禁为事后(retrospective)：使用告警时点之后的数据，不可用于在线决策' % (len(ev),len(rising)),是否通过=True),
  dict(检查项='未复核项',结论='已在 2026-09-20 批次 2 复核：RUL 复现成功（GBR 15.634 对 15.27，偏差 2.4%）；决策层 v6 精确复现（20/20 行、15/15 格）',是否通过=True),
  dict(检查项='占位参数机器可读标记',结论='成本参数已在 json 中标注 placeholder=true，金额不得对外',是否通过=True)]
 A=pd.DataFrame(audit)
@@ -112,6 +112,7 @@ summary=dict(检测=dict(告警数=len(ev),timely=timely,late=late,误报事件=
   诊断=diagnose('MetroPT-3'), RUL=dict(rulsrc=rulsrc,AI占优格数=f'{ai_win}/{tot}'),
    决策=dict(优先级分布=alarms.优先级.value_counts().to_dict(),可用窗口数=len(wins)),
    成本参数=PR,cost_parameters_are_placeholders=True,币种='CNY',口径版本='PROTOCOL_v1.5 + MetroPT-3 冻结口径 2026-09-18',
+   RUL门禁='retrospective：使用告警时点之后的数据，不可用于在线决策',
    输入哈希_分数流=h,备注='误报=告警起点不在任何命中窗内；四事件指标为同集工作点表现，非独立前瞻验证',耗时秒=round(time.time()-t0,1))
 json.dump(summary,open(f'{OUT}/pipeline_summary.json','w',encoding='utf-8'),ensure_ascii=False,indent=2)
 with open(f'{OUT}/pipeline_run.md','w',encoding='utf-8') as f:

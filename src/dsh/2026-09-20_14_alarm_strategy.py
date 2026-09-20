@@ -29,7 +29,8 @@ PAIRS=[
 def prep(df):
     x=df.copy(); x.index=pd.to_datetime(x.t_day*86400,unit='s'); return x
 hod=lambda X: ((X.t_day*24)%24).astype(int).values
-def rollmed(v): return pd.Series(v).rolling(5*1440,min_periods=288).median().values
+def rollmed(v, X):   # 5 天时间窗（本数据 96 点/天，用点数会变成 75 天）
+    return pd.Series(v, index=X.index).rolling('5D', min_periods=192).median().values
 def episodes(mask, d, lo, hi):
     m=np.asarray(mask)&(d>=lo)&(d<=hi); out=[]; c=0
     for i,v in enumerate(m):
@@ -48,13 +49,13 @@ for tag,fb,fd in PAIRS:
     sH=sc(B); sD=sc(D)
     ref_thr=float(np.quantile(np.asarray(topk_score(frozen_z(REF,CH,REF,state=hod(REF),state_ref=hod(REF),floor=FL),3),dtype=float).ravel(),0.999))
     evH=make_events(pd.Series(sH), ref_thr); evD=make_events(pd.Series(sD), ref_thr)
-    rH=rollmed(sH); rD=rollmed(sD); dB=np.asarray(B.t_day); dD=np.asarray(D.t_day)
+    rH=rollmed(sH,B); rD=rollmed(sD,D); dB=np.asarray(B.t_day); dD=np.asarray(D.t_day)
     base=float(np.nanmedian(rH[(dB>=30)&(dB<45)]))
     thrR=K_RATIO*base; thrA=K_AND*base
     def near(r, d, day, half=1.0):
         m=(d>=day-half)&(d<=day+half)&np.isfinite(r)
         return bool(np.max(r[m])>thrA) if m.any() else False
-    spH=[float(dB[i]) for i,_ in evH]
+    spH=[float(dB[i]) for i,_ in evH if 45.0<=float(dB[i])<=120.0]   # 与退化侧同口径：统一评估窗第 45-120 天
     spD=[float(dD[i]) for i,_ in evD if float(dD[i])>20.0]
     p1H=[x for x in spH if near(rH,dB,x)]
     p1D=[x for x in spD if near(rD,dD,x)]
@@ -110,11 +111,11 @@ W('三级上报定义：**P1-紧急** = 单点事件机报警 且 同刻（±1 �
 W('标定全部只用健康运行第 30-45 天（无标签）；健康运行评估窗与退化检出评估窗同前（第 45-120 天）。'+NL)
 W('## 1. 分策略汇总'+NL+SUM.to_markdown(index=False)+NL)
 W('## 2. 分工况明细'+NL+T.to_markdown(index=False)+NL)
-W('## 3. 结论'+NL)
-W('**① 误报侧**：健康运行上报合计 —— 单点事件机 77 次、并集 77 次（比值判据 0 次，不新增误报）、P1 与门 26 次。与门能砍掉约 2/3 的误报，但**归不了零**：雨/暴雨三个工况的单点报警里有 24 次同时满足「比值已抬升 1.15 倍」（R1 10 次、R2 6 次、R3 8 次）。'+NL)
-W('**② 检出侧**：并集与单点一致（12/12，延迟中位 20.3 天）；P1 与门只有 7/12 —— 四档慢漂移（-20%~-80%/100 天）**全部漏检**，因为它们的比值抬升来得太晚。'+NL)
-W('**③ 口径警告**：单点事件机那 20.3 天的「检出延迟」在慢漂移场景里**不代表真实预警能力**——18.2 已证明冻结通道首报时刻由共同外部成分主导（所有幅值都报在同一时刻），18.3 又证明它随工况漂移。禁止把 20.3 天当作预警提前量对外宣传。'+NL)
-W('**④ 推荐策略（上报与派工分开）**：**上报用并集**（不漏检，且比值判据不增加误报），**派工用与门分级**——P1（单点 ∧ 比值抬升）直接派工，P2（仅单点）先复核/排计划，P3（仅比值）进趋势观察。这样派工层面的噪音从 77 降到 26，而慢漂移仍由 P3 兜住。'+NL)
+W('**① 与门没有实质收益。** 真 5 天窗 + 统一评估窗（第 45-120 天）下，健康运行上报合计：单点事件机 47、比值越限段 51、并集 98、P1 与门 46 —— 与门只把 47 降到 46（约 2%），因为比值统计量在健康运行上本身就常年越限。'+NL)
+W('**② 检出侧三者相同。** 单点 / 并集 / P1 与门均为 12/12，延迟中位 20.3 天；比值判据 12/12、25.0 天。'+NL)
+W('**③ 因此组合的价值在分级而不在砍误报**：并集把上报量翻倍（47 -> 98）却不多出检出，与门几乎不降误报 —— 组合并不能改善误报/延迟权衡。'+NL)
+W('**④ 结论（修正后）**：报警流只用单点事件机，阈值按工况自身健康基线标定（第五条原则）；滚动中位数只作为严重度/趋势字段随报警附注，不单独成为报警或与门条件。'+NL)
+W('**⑤ 口径更正**：原先用 5x1440=7200 点窗（本数据 96 点/天 -> 实际 75 天窗），且只对退化侧应用第 45 天评估窗；两处已修正，原「与门砍 2/3 误报、慢漂移全漏」的说法作废。'+NL)
 W('## 4. 局限'+NL)
 W('- 三个倍数（1.15 / 1.3 / 5 天窗）未做敏感性扫描；每个工况只有一条 120 天轨迹。'+NL)
 f.close(); print('report + figure written')
