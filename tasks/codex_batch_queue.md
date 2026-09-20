@@ -69,3 +69,57 @@
 - 允许简化打分链路，但要写明简化处与所用分位/事件机参数
 - 产物：results/<日期>/codex/dual_baseline_repro.md
 - 验收：结论方向一致；若方向相反必须给出证据与反例
+
+
+## 批次 3（2026-09-20 晚预备，王家兴说「再让他工作一次」时派发）
+**派发顺序与预算**：Q9（数据坑独立确认，约 10 分钟）→ Q10（P1–P5 修正审计，约 15 分钟）→ Q12（全量复现审计，约 10 分钟）→ Q8（判据链独立复核，约 40 分钟）→ Q11（消融两口径，约 30 分钟，有余力再取）。
+前四项都是对**已入库产物**的独立核对，不需要重新仿真、不需要下载数据。做不完按顺序停，未完成项留在这里等下一批。
+
+### Q9 独立确认 raininfluent.csv 的数据坑（新增 2026-09-20）
+- 读：src/dsh/2026-09-20_12_bsm1_rain_storm.py 的 load() 注释；PROJECT_STATE.md 第 18.4 节；results/2026-09-20/dsh/bsm1_rain_storm_report.md
+- 做：从 bsm2_python 包数据目录（用 python 命令行打印 os.path.dirname(bsm2_python.__file__) 定位）**独立核对**三件事：
+  ① raininfluent.csv 与 dryinfluent.csv 的第 16 列（1-based，即去掉时间列后的 Q 列）量级差异（报出两文件第 0 行与该列均值的实际数字）；
+  ② raininfluent.csv 中 NaN 的列号与行号、个数；
+  ③ 实测一次：把未修正的 rain 数据喂给 bsm2_python.BSM1OL 短跑若干步，记录报错文本与出现步数（跑不动就说明卡在哪）
+- 产物：results/2026-09-20/codex/raininfluent_audit.md（含实测数字与报错原文）
+- 验收：给出实测数字；与 DSH 的说法（Q 列小 1000 倍、Q 列第 996 行 1 个 NaN）一致或指出不一致
+
+### Q10 审计 DSH 声称的 P1–P5 修正是否真的落地（新增 2026-09-20）
+- 读：src/dsh/2026-09-18_14_pipeline.py、results/2026-09-18/dsh/pipeline_summary.json、results/2026-09-18/dsh/pipeline_run.md、PROJECT_STATE.md 第 16 节与第 19 节
+- 做：逐条核对 DSH 在批次 2 之后声称修好的 5 处，每处给「已生效 / 未生效 / 部分生效」+ 证据（文件与行号）：
+  ① 阈值来源文案：应写「2.395 为官方 4 故障窗标签辅助选出的 DET 工作点」，且明确无标签 0.995 标定分位为 13.139（不是旧文案「标定期 0.995 分位」）
+  ② 自动审计清单里应新增「是否独立前瞻验证 = 否」一行
+  ③ RUL 门禁应标注为事后（retrospective）且说明不可用于在线决策
+  ④ 诊断输出应改标为「数据集级故障类型占位」，不得写成模型诊断结果
+  ⑤ 误报应改为按冻结口径直接计算（告警起点不在任何命中窗内）且等于 201，与 results/2026-09-18/dsh/metropt3_metrics_frozen_dsh.json 的 det_best.fp_events 一致；摘要 JSON 应有 cost_parameters_are_placeholders / 口径版本 / 输入哈希字段
+- 产物：results/2026-09-20/codex/pipeline_fix_audit.md
+- 验收：逐条判定 + 证据；若发现只是文案改了但数字/口径没变，明确指出
+
+### Q12 独立复现审计（另一套会话里跑一遍全链）（新增 2026-09-20）
+- 读：run_all.py、docs/06_复现指南.md、results/2026-09-20/dsh/full_repro_log.txt（DSH 实跑：18 阶段 225 秒全通过）
+- 做：在你自己会话里跑 python run_all.py --full，然后核对关键数字与冻结文件是否一致：
+  ① results/2026-09-18/dsh/metropt3_metrics_frozen_dsh.json 的 det_best（timely 2 / 误报 201 / 0.1253 / TIA-H 11.6%）与 main_threshold（13.139）
+  ② results/2026-09-17/dsh/rul_baseline_metrics.csv 的 GBR RMSE 与 PHM08
+  ③ results/2026-09-20/dsh/ 下 BSM1 系列 CSV 是否被重跑覆盖且行列数不变（报出你观察到的文件数与总耗时）
+- 产物：results/2026-09-20/codex/full_repro_audit.md（含你的阶段耗时表与不一致项）
+- 验收：给出「与 DSH 日志一致 / 不一致」的逐项判定；环境差异（缺数据集等）如实写明
+
+### Q8 独立复核判据链：比值判据与组合报警策略（新增 2026-09-20）
+- 读：results/2026-09-20/dsh/bsm1_ratio_rule_report.md、alarm_strategy_report.md、PROJECT_STATE.md 第 18.5 / 18.6 节
+- 数据（已入库，直接读）：results/2026-09-20/dsh/bsm1_120d_{baseline,degraded}.csv、bsm1_win{B,C}_*_{baseline,degraded}.csv、bsm1_sweep_*.csv、bsm1_R{1,2,3}_*_{baseline,degraded}.csv
+- 做：用你自己的最小链路（冻结参考域取健康运行第 30-45 天、按一天中的时段分层或你等效的做法、滚动 5 天中位数、基线取该参考窗），复核三条方向：
+  ① 健康运行第 45-120 天的越限时长（k=1.3~2.0）接近 0，而单点事件机式阈值告警在部分工况的健康运行上明显更多
+  ② 比值判据的检出延迟显著大于单点事件机式判据（同一批退化轨迹）
+  ③ 「单点 且 比值已抬升」的与门能减少健康上报，但会漏掉慢漂移档（-20%~-80%/100 天）
+- 允许简化链路，但必须写明：分层方式、滚动窗长度、基线估计口径、事件/越限判定参数
+- 产物：results/2026-09-20/codex/ratio_rule_repro.csv、ratio_rule_repro.md
+- 验收：三条方向逐条给结论；方向相反必须给出证据与反例
+
+### Q11 消融两口径重跑（Q6 的后续，有余力再做）
+- 读：results/2026-09-20/codex/ablation_repro.md（你自己批次 2 的反例）、src/codex/2026-09-20_03_ablation_repro.py
+- 做：在同一条自有链路上，把四个变体（V0 基线 / V1 无工况条件化 / V2 去派生特征 / V3 max 聚合）跑**两套公平口径**：
+  ① 四变体共用同一阈值（批次 2 已做，保留作对照）
+  ② 每个变体用自己的健康期重新标定阈值（0.995 分位或等价口径）
+  报出两套口径下的 timely / late / miss / 误报事件数，并回答：「无工况条件化 = 0 告警」「去派生特征 = timely 归零」在任何一套口径下是否成立
+- 产物：results/2026-09-20/codex/ablation_two_regimes.{csv,md}
+- 验收：两套口径数字齐全；对两条强结论给出「成立 / 不成立 / 取决于口径」的明确判定
