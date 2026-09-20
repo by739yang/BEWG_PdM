@@ -1,0 +1,10 @@
+﻿normalization,experiment,split,model,train_windows,test_windows,accuracy,macro_f1
+raw,E3,7mil→14mil,RandomForest,827,825,0.435152,0.390206
+raw,E4,7+14mil→21mil,RandomForest,1575,788,0.539340,0.549792
+raw,E5,1730rpm→1750rpm,RandomForest,2364,943,0.937434,0.936508
+selective,E3,7mil→14mil,RandomForest,827,825,0.432727,0.381407
+selective,E4,7+14mil→21mil,RandomForest,1575,788,0.507614,0.522332
+selective,E5,1730rpm→1750rpm,RandomForest,2364,943,0.951220,0.950804
+full,E3,7mil→14mil,RandomForest,827,825,0.425455,0.401136
+full,E4,7+14mil→21mil,RandomForest,1575,788,0.147208,0.299964
+full,E5,1730rpm→1750rpm,RandomForest,2364,943,0.769883,0.708518

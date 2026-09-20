@@ -1,0 +1,3 @@
+﻿dataset,threshold,exceedance_samples,longest_exceedance_run,alarm_events,first_alarm_day
+healthy,20.181292,6,3,0,
+mild_keep80_ramp100,20.187789,8,4,1,40.281250

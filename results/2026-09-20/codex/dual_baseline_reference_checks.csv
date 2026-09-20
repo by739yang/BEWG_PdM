@@ -1,0 +1,5 @@
+﻿dataset,ref_window,threshold,exceedance_samples,longest_exceedance_run,alarm_events,alarms_after_ref,first_alarm_day
+healthy,day 0-10,4.406948,6156,339,75,75,10.416667
+healthy,day 30-45,20.181292,6,3,0,0,
+degraded,day 0-10,5.357534,3425,139,80,80,10.427083
+degraded,day 30-45,21.155031,9,4,1,0,15.864583
