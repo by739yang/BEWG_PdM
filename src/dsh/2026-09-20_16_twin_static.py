@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
-"""生成静态版数字孪生演示页（纯图片，无 JS）与总览图
-产物：demo/lanmai_twin_static.html、results/2026-09-20/dsh/twin_<场景>.png、twin_overview.png
+"""生成数字孪生演示台的每场景效果图与总览图（供标签页版页面与材料使用）
+产物：results/2026-09-20/dsh/twin_<场景>.png、twin_overview.png
+页面本身由 src/dsh/2026-09-20_17_twin_css.py 生成（demo/lanmai_twin.html）
 用法：python src/dsh/2026-09-20_16_twin_static.py"""
 import sys, os, io, base64, numpy as np, pandas as pd
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
@@ -66,23 +67,3 @@ for k,(sid,title,note,fb,fd,alarm,fail) in enumerate(SCEN):
     a.text(2,2.9,'报警 %s ｜ 失效 %s ｜ 提前量 %s 天' % (('%.1f'%alarm) if alarm else '无',('%.1f'%fail) if fail else '无',('%.1f'%(fail-alarm)) if (alarm and fail) else '-'),fontsize=8)
 plt.tight_layout(); ov=os.path.join(OUT,'twin_overview.png'); plt.savefig(ov,dpi=110); plt.close()
 print('  已出总览图', ov)
-def b64(p): return base64.b64encode(open(p,'rb').read()).decode()
-cards=[]
-for r in rows:
-    kpi=('<tr><td>报警时刻</td><td>%s</td><td>真实失效</td><td>%s</td><td>提前量</td><td>%s 天</td></tr>' % (
-        ('%.2f 天'%r['alarm']) if r['alarm'] else '无（健康运行）', ('%.2f 天'%r['fail']) if r['fail'] else '无',
-        ('%.2f'%r['lead']) if r['lead'] is not None else '-'))
-    cards.append('<div class="card"><h2>%s</h2><img src="data:image/png;base64,%s"><table>%s<tr><td colspan="6" class="n">%s</td></tr></table></div>'%(r['title'],b64(r['png']),kpi,r['note']))
-html=('<!doctype html><html lang="zh-CN"><head><meta charset="utf-8"><title>澜脉 · 数字孪生效果（静态版）</title><style>'
- 'body{font-family:-apple-system,"Microsoft YaHei",sans-serif;margin:0;background:#f5f7fa;color:#1a2733}'
- '.wrap{max-width:1180px;margin:0 auto;padding:20px}.card{background:#fff;border-radius:10px;padding:16px 18px;margin-bottom:16px;box-shadow:0 1px 3px rgba(0,0,0,.07)}'
- 'h1{font-size:21px;margin:0 0 6px}h2{font-size:15px;color:#12507b;margin:0 0 8px}img{width:100%;border-radius:8px}'
- 'table{border-collapse:collapse;width:100%;font-size:13px}td,th{border-bottom:1px solid #e6ecf2;padding:5px 8px}'
- 'td:first-child,td:nth-child(3),td:nth-child(5){color:#5b6b7c;width:12%}.n{color:#6b7b8c;font-size:12.5px;line-height:1.7}'
- '.sub{color:#5b6b7c;font-size:13px;margin-bottom:16px}</style></head><body><div class="wrap">'
- '<h1>澜脉 · 数字孪生效果（静态版，纯图片，无需脚本）</h1>'
- '<div class="sub">IWA BSM1 仿真，120 天，设备=曝气系统。上曲线：反应池溶解氧 DO₃ 与曝气能力 KLa；下曲线：模型健康分数与判据阈值。黄色竖线=模型报警，红色竖线=真实失效。'
- '总览图：results/2026-09-20/dsh/twin_overview.png。交互版：demo/lanmai_twin.html（需浏览器支持脚本）。</div>'
- +''.join(cards)+'</div></body></html>')
-io.open('demo/lanmai_twin_static.html','w',encoding='utf-8').write(html)
-print('已生成 demo/lanmai_twin_static.html %.0f KB' % (os.path.getsize('demo/lanmai_twin_static.html')/1024))
