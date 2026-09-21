@@ -19,6 +19,8 @@ STAGES=[
  dict(name='rul',        title='C-MAPSS RUL 基线（精确斜率版）', script='src/dsh/2026-09-17_05_rul_baseline.py', full=True),
  dict(name='diag_cross', title='诊断跨记录验证（多尺寸）', script='src/dsh/2026-09-18_15_cwru_multiseverity.py', full=True),
  dict(name='diag_norm',  title='诊断归一化策略对照', script='src/dsh/2026-09-19_02_cwru_domain_adapt.py', full=True),
+ dict(name='sludge_sweep', title='污泥线幅值/速率扫描', script='src/dsh/2026-09-21_12_sludge_sweep.py', full=True),
+ dict(name='sludge_decision', title='污泥线决策层（维护策略对比）', script='src/dsh/2026-09-21_13_sludge_decision.py', full=True),
  dict(name='sludge_line', title='污泥线闭环（路线 A）', script='src/dsh/2026-09-21_11_sludge_line_loop_v2.py', full=True),
  dict(name='online_chain', title='在线链路多轨迹评估（门禁+RUL）', script='src/dsh/2026-09-21_08_online_chain_multitraj.py', full=True),
  dict(name='calib_window_sensitivity', title='标定期敏感性（5 段健康期）', script='src/dsh/2026-09-21_07_calib_window_sensitivity.py', full=True),
