@@ -14,7 +14,9 @@ SCEN=[('healthy','健康运行（无退化）','设备正常：SO3 平稳，模�
  ('storm','雨/暴雨工况 -40% / 100 天','换成干天+雨天循环、每 28 天插 2 天暴雨的进水工况：健康运行时单一阈值就报了 26 次 —— 阈值必须按工况自身基线标定。',20.04,95.32)]
 def b64(p): return base64.b64encode(open(p,'rb').read()).decode()
 
-tabs=''.join('<input type="radio" name="sc" id="r%d"%s><label for="r%d">%s</label>'%(i,' checked' if i==0 else '',i,s[1]) for i,s in enumerate(SCEN))
+inputs=''.join('<input type="radio" name="sc" id="r%d"%s>'%(i,' checked' if i==0 else '') for i in range(len(SCEN)))
+labels=''.join('<label for="r%d">%s</label>'%(i,s[1]) for i,s in enumerate(SCEN))
+tabs=inputs+'<div class="tabs">'+labels+'</div>'
 panes=[]
 for i,(sid,title,note,alarm,fail) in enumerate(SCEN):
     img=b64(os.path.join(OUT,'twin_%s.png'%sid))
@@ -23,13 +25,13 @@ for i,(sid,title,note,alarm,fail) in enumerate(SCEN):
       '<table><tr><td>模型报警时刻</td><td><b>%s</b></td><td>真实失效时刻</td><td><b>%s</b></td><td>预警提前量</td><td><b>%s 天</b></td></tr>'
       '<tr><td colspan="6" class="n">%s</td></tr></table></div>'%(
       i,title,img,('%.2f 天'%alarm) if alarm else '无（健康运行不报警）',('%.2f 天'%fail) if fail else '无',lead,note))
-css_tabs=''.join('#r%d:checked~.tabs label[for="r%d"]{background:#12507b;color:#fff;border-color:#3f8ec9}'%(i,i) for i in range(len(SCEN)))
+css_tabs=''.join('#r%d:checked~.tabs label[for="r%d"]{background:#12507b;color:#fff;border-color:#3f8ec9;box-shadow:0 2px 6px rgba(18,80,123,.35)}'%(i,i) for i in range(len(SCEN)))
 css_panes=''.join('#r%d:checked~.panes #p%d{display:block}'%(i,i) for i in range(len(SCEN)))
 html=('<!doctype html><html lang="zh-CN"><head><meta charset="utf-8"><title>澜脉 · 数字孪生演示台（标签页版）</title><style>'
  'body{font-family:-apple-system,"Microsoft YaHei",sans-serif;margin:0;background:#f5f7fa;color:#1a2733}'
  '.wrap{max-width:1180px;margin:0 auto;padding:20px}h1{font-size:21px;margin:0 0 6px}'
  '.sub{color:#5b6b7c;font-size:13px;margin-bottom:16px}'
- 'input[type=radio]{display:none}.tabs{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:14px}'
+ 'input[type=radio]{position:absolute;opacity:0;width:0;height:0}.hint{font-size:13px;color:#12507b;font-weight:600;margin:0 0 8px}.tabs{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:16px}.tabs label{display:inline-block;min-width:170px;text-align:center;background:#fff;border:2px solid #cfdae5;border-radius:10px;padding:11px 15px;font-size:13.5px;cursor:pointer;color:#2c3e50;user-select:none;box-shadow:0 1px 2px rgba(0,0,0,.05)}.tabs label:hover{border-color:#3f8ec9;background:#f2f8ff}.tabs label:active{transform:translateY(1px)}'
  '.tabs label{background:#fff;border:1px solid #d5dee7;border-radius:8px;padding:8px 13px;font-size:13px;cursor:pointer;color:#2c3e50}'
  '.tabs label:hover{border-color:#3f8ec9}'
  '.panes .pane{display:none;background:#fff;border-radius:10px;padding:16px 18px;box-shadow:0 1px 3px rgba(0,0,0,.07)}'
@@ -43,7 +45,7 @@ html=('<!doctype html><html lang="zh-CN"><head><meta charset="utf-8"><title>澜�
  '<h1>澜脉 · 数字孪生演示台（IWA BSM1 仿真，120 天）</h1>'
  '<div class="sub">点下面的标签切换 6 个场景。图上半：反应池溶解氧 DO₃（蓝）+ 曝气能力 KLa（绿）；下半：模型健康分数 + 判据阈值（红虚线）。黄竖线=模型报警，红竖线=真实失效。'
  '本页为纯 HTML+图片，不需要脚本；动画版见 demo/lanmai_twin_anim.html。</div>'
- +tabs+'<div class="panes">'+''.join(panes)+'</div>'
+ +'<div class="hint">👇 点下面任意一个按钮切换场景（当前选中的按钮是深蓝色）</div>'+tabs+'<div class="panes">'+''.join(panes)+'</div>'
  '<div class="qa"><h2>评委常问的三问</h2><table>'
  '<tr><th>问题</th><th>怎么答</th><th>别说什么</th></tr>'
  '<tr><td>凭什么说能预判维修/报废？</td><td>不预测“哪天坏”，而是预测“离越过危险线还剩多少天”。危险线可测量（反应池溶解氧（DO）持续越限），所以剩余寿命可验证：本例机理-溶解氧外推误差 <b>4.04 天</b>，通用健康指数误差 20.55 天。</td><td>准确率 95%、一定提前 X 天</td></tr>'
