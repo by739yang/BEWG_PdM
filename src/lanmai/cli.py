@@ -31,14 +31,26 @@ def cmd_calibrate(args):
     r0, r1 = [float(x) for x in args.ref.split(',')]
     chans = [c.strip() for c in args.channels.split(',')] if args.channels else \
             [c for c in df.columns if c != args.state_col and pd.api.types.is_numeric_dtype(df[c])]
+    segs=None
+    if getattr(args, 'ref_segments', None):
+        segs=[]
+        for part in args.ref_segments.split(';'):
+            a_, b_ = part.split(',')
+            segs.append((float(a_), float(b_)))
     base = calibrate(df, chans, state_kind=args.state, state_col=args.state_col, nbin=args.nbin,
-                     quantile_channel=args.quantile_channel, ref_frac=(r0, r1), win_days=args.win_days,
+                     quantile_channel=args.quantile_channel, ref_frac=(r0, r1), ref_segments=segs,
+                     thr_policy=args.thr_policy, win_days=args.win_days,
                      q=args.q, event=dict(enter=args.enter, exit_=args.exit, ratio=args.ratio, cooldown=args.cooldown))
     base['meta']['source'] = os.path.abspath(args.data)
     print('参考窗：%s → %s（%d 行）' % (base['meta']['参考窗起点'], base['meta']['参考窗终点'], base['meta']['参考窗行数']))
+    for r in base['threshold'].get('per_segment', []):
+        print('  参考段 %-12s 行 %6d-%6d（%6d 行）阈值 %.3f' % (r['段'], r['起始行'], r['结束行'], r['行数'], r['阈值']))
+    tr=base['threshold'].get('阈值范围')
+    if tr: print('  -> 阈值策略 %s；范围 最小 %.3f / 中位 %.3f / 最大 %.3f（极差比 %.2f 倍）'
+                 % (base['threshold']['policy'], tr['最小'], tr['中位'], tr['最大'], tr['极差比']))
     print('判据阈值（冻结分数 %.3f 分位）= %.3f' % (args.q, base['threshold']['value']))
     for w in base['warnings']:
-        print('  ⚠ %s' % w)
+        print('  [警告] %s' % w)
     _json(base, args.out); print('基线已写入', args.out)
 
 def cmd_watch(args):
@@ -77,6 +89,8 @@ def main(argv=None):
             sp.add_argument('--out', required=True); sp.add_argument('--state', default='none', choices=['none', 'hour', 'col', 'quantile'])
             sp.add_argument('--state-col', default=None); sp.add_argument('--nbin', type=int, default=4)
             sp.add_argument('--quantile-channel', default=None); sp.add_argument('--ref', default='0,0.3')
+            sp.add_argument('--ref-segments', default=None, help='多段健康期，如 0,0.1;0.2,0.3;0.45,0.55（分号分隔）')
+            sp.add_argument('--thr-policy', default='median', choices=['median','upper'], help='多段阈值汇总：median 折中 / upper 保守压误报')
             sp.add_argument('--win-days', type=float, default=2.0); sp.add_argument('--q', type=float, default=0.999)
             sp.add_argument('--enter', type=int, default=4); sp.add_argument('--exit', type=int, default=8, dest='exit')
             sp.add_argument('--ratio', type=float, default=0.8); sp.add_argument('--cooldown', type=int, default=8)

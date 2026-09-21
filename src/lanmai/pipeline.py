@@ -18,8 +18,11 @@ def inspect(df):
                 通道统计=stats)
 
 def calibrate(df, channels, state_kind='none', state_col=None, nbin=4, quantile_channel=None,
-              ref_frac=(0.0, 0.3), win_days=DEF_ADAPT['win_days'], q=DEF_THR_Q, event=None,
-              trend_warn=0.5):
+              ref_frac=(0.0, 0.3), ref_segments=None, thr_policy='median',
+              win_days=DEF_ADAPT['win_days'], q=DEF_THR_Q, event=None, trend_warn=0.5):
+    """ref_segments: [(lo, hi), ...] 多段健康期（按行分数比例）；给定时逐段标定阈值，
+    再按 thr_policy（median 折中 / upper 保守压误报）汇总；同时报告阈值影响范围。
+    单段模式仍走 ref_frac。"""
     event = dict(DEF_EVENT if event is None else event)
     n = len(df); i0 = int(n * ref_frac[0]); i1 = max(i0 + 20, int(n * ref_frac[1]))
     ref = df.iloc[i0:i1]
@@ -35,14 +38,39 @@ def calibrate(df, channels, state_kind='none', state_col=None, nbin=4, quantile_
                             % (c, span_rel))
     Zref = pd.DataFrame({c: frozen_z(ref, c, frozen[c], st_ref, floor[c]) for c in channels})
     score_ref = topk_score(Zref, 3)
-    thr = float(score_ref.quantile(q))
+
+    def _thr_of(lo, hi):
+        r = df.iloc[lo:hi]
+        if len(r) < 20: return None
+        Z = pd.DataFrame({c: frozen_z(r, c, frozen[c], st_local(lo, hi), floor[c]) for c in channels})
+        return float(topk_score(Z, 3).quantile(q))
+    def st_local(lo, hi):
+        return st.iloc[lo:hi]
+    seg_rows=[]
+    if ref_segments:
+        for (lo_f, hi_f) in ref_segments:
+            lo, hi = int(len(df)*lo_f), max(int(len(df)*lo_f)+20, int(len(df)*hi_f))
+            v=_thr_of(lo, hi)
+            if v is not None:
+                seg_rows.append(dict(段='%.2f-%.2f' % (lo_f, hi_f), 起始行=lo, 结束行=hi, 行数=hi-lo, 阈值=round(v,3)))
+    if seg_rows:
+        vals=[r['阈值'] for r in seg_rows]
+        thr = float(max(vals)) if thr_policy=='upper' else float(pd.Series(vals).median())
+    else:
+        thr = float(score_ref.quantile(q))
     base_ratio = float(score_ref.median()) if float(score_ref.median()) > 0 else 1.0
     return dict(meta=dict(时间起点=str(df.index[0]), 时间终点=str(df.index[-1]), 行数=int(n),
                           参考窗起点=str(ref.index[0]), 参考窗终点=str(ref.index[-1]), 参考窗行数=int(len(ref))),
                 channels=list(channels), state=dict(kind=state_kind, col=state_col, nbin=nbin),
                 floor=floor, frozen={c: {str(k): v for k, v in frozen[c].items()} for c in channels},
                 adaptive=dict(win_days=float(win_days)),
-                threshold=dict(q=float(q), value=float(thr)), event=event,
+                threshold=dict(q=float(q), value=float(thr), policy=(thr_policy if seg_rows else 'single'),
+                               per_segment=seg_rows,
+                               阈值范围=(None if not seg_rows else dict(最小=min(r['阈值'] for r in seg_rows),
+                                                                     中位=float(pd.Series([r['阈值'] for r in seg_rows]).median()),
+                                                                     最大=max(r['阈值'] for r in seg_rows),
+                                                                     极差比=round(max(r['阈值'] for r in seg_rows)/max(min(r['阈值'] for r in seg_rows),1e-9),2)))),
+                event=event,
                 ratio=dict(window_days=3.0, base_median=base_ratio, level1=1.15, level3=1.25),
                 warnings=warnings)
 
