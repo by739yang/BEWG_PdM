@@ -1,0 +1,15 @@
+﻿chain,calibration,threshold,events,timely,late,miss,false_events,status,calibration_minutes
+DSH deposited score,label-assisted DET,2.395400,243,2,1,1,240,F1:miss;F2:timely;F3:late;F4:timely,
+DSH deposited score,unlabeled initial q0.995,13.139308,13,0,0,4,13,F1:miss;F2:miss;F3:miss;F4:miss,
+DSH deposited score,W1 q0.995,13.137391,13,0,0,4,13,F1:miss;F2:miss;F3:miss;F4:miss,92485.000000
+DSH deposited score,W2 q0.995,22.356948,1,0,0,4,1,F1:miss;F2:miss;F3:miss;F4:miss,43841.000000
+DSH deposited score,W3 q0.995,19.456509,10,0,0,4,10,F1:miss;F2:miss;F3:miss;F4:miss,6467.000000
+DSH deposited score,W4 q0.995,18.626148,10,0,0,4,10,F1:miss;F2:miss;F3:miss;F4:miss,43602.000000
+DSH deposited score,W5 q0.995,5.781711,49,0,0,4,49,F1:miss;F2:miss;F3:miss;F4:miss,56373.000000
+Codex independent score,label-assisted DET (scale control only),2.395400,619,2,2,0,615,F1:timely;F2:timely;F3:late;F4:late,
+Codex independent score,unlabeled initial q0.995,41.692880,16,0,0,4,16,F1:miss;F2:miss;F3:miss;F4:miss,
+Codex independent score,W1 q0.995,41.692880,16,0,0,4,16,F1:miss;F2:miss;F3:miss;F4:miss,75689.000000
+Codex independent score,W2 q0.995,35.529407,57,0,1,3,56,F1:late;F2:miss;F3:miss;F4:miss,31049.000000
+Codex independent score,W3 q0.995,31.092713,86,3,0,1,83,F1:timely;F2:timely;F3:timely;F4:miss,5718.000000
+Codex independent score,W4 q0.995,21.661328,140,4,0,0,136,F1:timely;F2:timely;F3:timely;F4:timely,28975.000000
+Codex independent score,W5 q0.995,15.007246,309,4,0,0,305,F1:timely;F2:timely;F3:timely;F4:timely,39777.000000

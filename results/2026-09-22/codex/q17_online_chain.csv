@@ -1,0 +1,8 @@
+﻿track,first_channel,alarm_day,S1,M1,attach_rul,score_ratio,mechanism_ratio,online_rul,true_rul,abs_error,retro_rul
+baseline_start20,adaptive,40.239583,True,True,True,1.371852,0.528816,4.859280,7.104167,2.244886,0.000000
+start40,adaptive,40.218750,True,True,True,1.250487,0.797052,,31.145833,,14.413145
+start60,adaptive,60.614583,True,False,False,2.105871,1.506558,,20.677083,,
+phase3,frozen,37.281250,True,True,True,1.355289,0.540626,,12.052083,,0.000000
+phase7,adaptive,33.208333,False,True,False,0.805850,0.586353,,28.125000,,
+standard40,frozen,57.447917,True,False,False,1.342201,0.920609,,35.885417,,
+fast80_40d,adaptive,27.333333,False,True,False,0.761729,0.456644,,2.052083,,

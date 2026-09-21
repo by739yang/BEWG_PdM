@@ -1,0 +1,54 @@
+{
+  "QW_m3d": 385.0,
+  "wet_healthy_ref_median": 13.487046401890613,
+  "wet_degraded_late_median": 20.6494926832746,
+  "wet_cross_window_increase_pct": 53.10611432596508,
+  "wet_final_healthy": 13.579217702910158,
+  "wet_final_degraded": 21.12119038600974,
+  "wet_same_time_increase_pct": 55.54055357315071,
+  "dry_healthy_ref_median": 3776.372992529372,
+  "dry_degraded_late_median": 3805.516075842459,
+  "dry_cross_window_change_pct": 0.7717215267331712,
+  "dry_final_healthy": 3802.180956814844,
+  "dry_final_degraded": 3802.1809568148446,
+  "dry_same_time_change_pct": 2.220446049250313e-14,
+  "failure_day": 109.0,
+  "detector": {
+    "frozen": {
+      "threshold": 3.617539608756963,
+      "events": 20,
+      "pre_events": 18,
+      "first_post": 61.33333333333333
+    },
+    "adaptive": {
+      "threshold": 5.149838083931481,
+      "events": 0,
+      "pre_events": 0,
+      "first_post": null
+    }
+  },
+  "true_rul": 47.66666666666667,
+  "rul_5d_time": 269.24997058708476,
+  "rul_2d_time": 63.29770330781413,
+  "rul_1d_time": 46.666666666667254,
+  "rul_5d_legacy_points": 273.08077494099797,
+  "rul_2d_legacy_points": 63.9165451540824,
+  "rul_1d_legacy_points": 46.67708333333721,
+  "best_fixed": {
+    "policy": "fixed30",
+    "planned": 5161,
+    "failures": 40,
+    "waste_days": 0.0,
+    "total_placeholder": 43288000.0,
+    "per_unit_year_placeholder": 108220.0
+  },
+  "rul_policy": {
+    "policy": "RUL",
+    "planned": 3854,
+    "failures": 0,
+    "waste_days": 30832.0,
+    "total_placeholder": 32681920.0,
+    "per_unit_year_placeholder": 81704.8
+  },
+  "rul_saving_pct": 24.50120125669931
+}
