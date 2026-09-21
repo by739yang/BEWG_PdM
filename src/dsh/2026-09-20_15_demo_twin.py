@@ -6,22 +6,23 @@
 import sys, os, io, json, numpy as np, pandas as pd
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 from dual_baseline import frozen_z, topk_score, _scale_floor
-OUT='results/2026-09-20/dsh'
+OUT='results/2026-09-20/dsh'; OUT2='results/2026-09-21/dsh'
 CH=['SO3','SO4','SO5','SNH_eff','Ntot_eff','TSS_eff','sludge_h']
 os.makedirs('demo', exist_ok=True)
 
 # 场景：(id, 标题, 一句话说明, 健康文件, 退化文件, 告警天, 失效天, 机理RUL估计, RUL真值, 诚实边界)
 SCEN=[
- ('healthy','健康运行','设备正常：出水 SO3 平稳，模型健康分数一直在阈值之下。','bsm1_120d_baseline.csv',None,None,None,None,None,
+ ('healthy','健康运行','设备正常：反应池溶解氧 DO₃ 平稳，模型健康分数一直在阈值之下。','bsm1_120d_baseline.csv',None,None,None,None,None,
   '这是"误报检验"场景：冻结通道在 120 天里报 0 次。'),
- ('deg20','慢退化 -20%','曝气能力在 100 天里缓慢衰减 20%：出水指标几乎不变，但模型分数开始抬升。','bsm1_120d_baseline.csv','bsm1_sweep_keep80_ramp100.csv',40.28,110.34,None,None,
-  '退化很慢时，报警确实来了，但出水指标到第 110 天才越线 —— 提前量 70 天，代价是这 70 天里指标看不出问题。'),
- ('deg40','慢退化 -40%','曝气能力 100 天衰减 40%：第 40 天报警，第 47 天出水指标失效。','bsm1_120d_baseline.csv','bsm1_120d_degraded.csv',40.28,47.34,3.24,7.27,
+ ('deg20','慢退化 -20%','曝气能力在 100 天里缓慢衰减 20%：反应池溶解氧（DO）几乎不变，但模型分数开始抬升。','bsm1_120d_baseline.csv','bsm1_sweep_keep80_ramp100.csv',40.28,110.34,None,None,
+  '退化很慢时，报警确实来了，但反应池溶解氧（DO）到第 110 天才越线 —— 提前量 70 天，代价是这 70 天里指标看不出问题。'),
+ ('deg40','慢退化 -40%','曝气能力 100 天衰减 40%：第 40 天报警，第 47 天反应池溶解氧（DO）失效。','bsm1_120d_baseline.csv','bsm1_120d_degraded.csv',40.28,47.34,3.24,7.27,
   '这是最完整的一例：报警 → 剩余寿命 → 维护窗口。机理-溶解氧外推 3.24 天，真值 7.27 天，误差 4.04 天。'),
  ('deg80','慢退化 -80%','衰减幅度加大到 80%：分数抬得更快，但报警时刻仍在第 40 天附近 —— 报警"时刻"不含严重度信息。','bsm1_120d_baseline.csv','bsm1_sweep_keep20_ramp100.csv',40.28,44.33,None,None,
   '这一例专门说明第 18.2 节的核心发现：单点越限的"时刻"与退化幅值无关，严重度要靠分布位置或机理量表达。'),
  ('fast80','快退化 -80%/40 天','同样衰减 80%，但压缩到 40 天完成：第 20 天报警、第 29 天失效，提前量只有 2 天。','bsm1_120d_baseline.csv','bsm1_sweep_keep20_ramp040.csv',20.32,29.39,None,None,
   '退化越快，提前量越小（2.06 天）。这说明"能不能预判"高度依赖退化速率。'),
+ ('std40','标准进水（BSM1 干天）退化 -40%','换成 BSM1 自带的干天进水（设计负荷）：溶解氧 1.94→0.16，出水氨氮均值 5.69→18.28 mg/L，第 57.45 天报警、第 93.33 天曝气功能失效。','bsm1std_baseline.csv','bsm1std_degraded.csv',57.45,93.33,None,None,'本工况自适应通道漏检；出水氨氮相对自身基线翻 3.2 倍。'),
  ('storm','雨/暴雨工况 -40%','换成干天+雨天循环、每 28 天插 2 天暴雨的进水工况：健康运行时单一阈值就报了 26 次。','bsm1_R3_add_storm_baseline.csv','bsm1_R3_add_storm_degraded.csv',20.04,95.32,None,None,
   '这一例说明"0 误报"不跨工况：同一条阈值在雨/暴雨工况的健康运行上就报 26 次 —— 所以阈值必须按工况自身基线标定。'),
 ]
@@ -31,8 +32,12 @@ def prep(df):
 hod=lambda X: ((X.t_day*24)%24).astype(int).values
 
 def build(sid, fb, fd):
-    B=prep(pd.read_csv(os.path.join(OUT,fb)))
-    D=prep(pd.read_csv(os.path.join(OUT,fd))) if fd else None
+    def fp_(f):
+        for d in (OUT,OUT2):
+            if os.path.exists(os.path.join(d,f)): return os.path.join(d,f)
+        raise FileNotFoundError(f)
+    B=prep(pd.read_csv(fp_(fb)))
+    D=prep(pd.read_csv(fp_(fd))) if fd else None
     REF=B[(B.t_day>=30)&(B.t_day<45)]; FL=_scale_floor(B,CH)
     def sc(X):
         return np.asarray(topk_score(frozen_z(X,CH,REF,state=hod(X),state_ref=hod(REF),floor=FL),3),dtype=float).ravel()
@@ -95,7 +100,7 @@ th,td{border-bottom:1px solid #22303f;padding:5px 8px;text-align:left}th{color:#
     <div class="t" id="tlab" style="min-width:90px;text-align:right">第 120.0 天</div>
   </div>
   <div class="kpis" style="margin-top:12px">
-    <div class="kpi"><div class="v" id="k_so3">-</div><div class="l">出水 SO3（mg/L）</div></div>
+    <div class="kpi"><div class="v" id="k_so3">-</div><div class="l">反应池溶解氧 DO₃（mg/L）</div></div>
     <div class="kpi"><div class="v" id="k_kla">-</div><div class="l">曝气能力 KLa（相对健康值）</div></div>
     <div class="kpi"><div class="v" id="k_score">-</div><div class="l">模型健康分数（阈值 <span id="k_thr">-</span>）</div></div>
     <div class="kpi"><div class="v" id="k_alarm">-</div><div class="l">模型报警时刻</div></div>
@@ -111,7 +116,7 @@ th,td{border-bottom:1px solid #22303f;padding:5px 8px;text-align:left}th{color:#
   <canvas id="cv1" class="plot"></canvas>
   <canvas id="cv2" class="plot2"></canvas>
   <div class="note" style="margin-top:6px">
-    <b>上：</b>出水 SO3（蓝，越低于 0.5 越接近失效）与曝气能力 KLa（绿，退化时下降）；
+    <b>上：</b>反应池溶解氧 DO₃（蓝，越低于 0.5 越接近失效）与曝气能力 KLa（绿，退化时下降）；
     <b>下（15 分钟全分辨率）：</b>模型看到的健康分数（黄）与判据阈值（红虚线）。注意看：<b>健康运行也有零星尖峰越过阈值，但因为不满足"连续 4 个采样点（1 小时）越阈"，所以不报警</b>——这就是我们文档里说的"刀锋边缘"；退化运行时越阈脉冲变长，事件机才触发报警。
   </div>
   <div class="warn" id="sc_note"></div>
@@ -122,7 +127,7 @@ th,td{border-bottom:1px solid #22303f;padding:5px 8px;text-align:left}th{color:#
   <table>
   <tr><th>问题</th><th>我们的回答</th><th>不能说</th></tr>
   <tr><td>你们凭什么说能<b>预判设备维修/报废</b>？</td>
-      <td>我们不预测"某天会坏"，而是预测"离越过危险线还有多少天"：先把失效定义为可测量的阈值（出水指标持续越限 / 机理量越过危险线），再给剩余寿命。在数字孪生里，机理-溶解氧外推误差 <b>4.04 天</b>（真值剩余 7.27 天），通用健康指数误差 20.55 天 —— 这就是"必须挂机理指标"的证据。</td>
+      <td>我们不预测"某天会坏"，而是预测"离越过危险线还有多少天"：先把失效定义为可测量的阈值（反应池溶解氧（DO）持续越限 / 机理量越过危险线），再给剩余寿命。在数字孪生里，机理-溶解氧外推误差 <b>4.04 天</b>（真值剩余 7.27 天），通用健康指数误差 20.55 天 —— 这就是"必须挂机理指标"的证据。</td>
       <td>不说"准确率 100%""已上线""省多少钱"。</td></tr>
   <tr><td>这些是<b>真实污水厂</b>的数据吗？</td>
       <td>检测方法在<b>真实公开工业数据</b>上验证（SKAB 真实水泵台架、MetroPT-3 地铁空压机 5.8 个月、CWRU 轴承、C-MAPSS 涡扇退化）；退化过程与工况泛化在 <b>IWA BSM1 标准模型仿真</b>里验证。我们要的现场数据是"接入后跑一遍基线标定"，这也是我们最需要厂区配合的一件事。</td>
@@ -131,7 +136,7 @@ th,td{border-bottom:1px solid #22303f;padding:5px 8px;text-align:left}th{color:#
       <td>给区间，不给口号：在 MetroPT-3 上同召回下我方误报事件比对照路线少 2.8 倍；但官方只有 4 个故障窗、召回步长 25%，且阈值是标签辅助选点后的同集表现（无标签工作点为 0/4）。在数字孪生 6 个工况里，健康运行误报 0-26 次不等 —— 所以我们结论是"阈值必须按工况自身基线标定"。</td>
       <td>不说"零误报"。</td></tr>
   </table>
-  <div class="warn good"><b>一句话总结：</b>我们做的不是"又一个报警器"，而是把<b>设备退化的可测量后果</b>（出水指标）+ <b>机理量</b>（溶解氧/曝气能力）+ <b>剩余寿命 + 维护窗口</b>串成一条可复现的软件链，并且把自己试过但<b>被实验否证</b>的方案也写进材料（比如"滚动中位数越限判据"）。</div>
+  <div class="warn good"><b>一句话总结：</b>我们做的不是"又一个报警器"，而是把<b>设备退化的可测量后果</b>（反应池溶解氧（DO））+ <b>机理量</b>（溶解氧/曝气能力）+ <b>剩余寿命 + 维护窗口</b>串成一条可复现的软件链，并且把自己试过但<b>被实验否证</b>的方案也写进材料（比如"滚动中位数越限判据"）。</div>
 </div>
 </div>
 <script>
@@ -153,7 +158,7 @@ function draw(){
   function Y(v){ return 12+ph*(1-Math.min(v,smax)/smax); }
   [0,1,2,3,4,5,6].forEach(function(v){ g.fillStyle='#5c728a'; g.fillText(v.toFixed(1), 4, Y(v)+4); });
   g.beginPath(); g.moveTo(pad, Y(0.5)); g.lineTo(W-12, Y(0.5)); g.strokeStyle='#c00000'; g.setLineDash([5,4]); g.stroke();
-  g.fillStyle='#c00000'; g.fillText('失效线 SO3=0.5', W-120, Y(0.5)-4);
+  g.fillStyle='#c00000'; g.fillText('曝气功能失效线 DO=0.5（持续 1 天）', W-120, Y(0.5)-4);
   g.setLineDash([]);
   g.beginPath(); for(var k=0;k<cur.so3.length;k++){ var xx=X(cur.days[k]), yy=Y(cur.so3[k]); k? g.lineTo(xx,yy): g.moveTo(xx,yy); }
   g.strokeStyle='#4ea3ff'; g.lineWidth=1.4; g.stroke();
@@ -229,5 +234,5 @@ function select(id){
 })();
 </script></body></html>"""
 
-io.open('demo/lanmai_twin.html','w',encoding='utf-8').write(PAGE.replace('__PAYLOAD__', payload))
-print('已生成 demo/lanmai_twin.html %.0f KB' % (os.path.getsize('demo/lanmai_twin.html')/1024))
+io.open('demo/lanmai_twin_anim.html','w',encoding='utf-8').write(PAGE.replace('__PAYLOAD__', payload))
+print('已生成 demo/lanmai_twin_anim.html（动画版）%.0f KB' % (os.path.getsize('demo/lanmai_twin_anim.html')/1024))
