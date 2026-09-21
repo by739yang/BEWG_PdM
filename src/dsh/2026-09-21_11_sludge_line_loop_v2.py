@@ -45,8 +45,10 @@ def detect(H, G, deg_start):
         ev=make_events(pd.Series(score), thr if tag=='frozen' else float(np.quantile(sx(Bh,True)[ (np.asarray(H.t_day)>=30)&(np.asarray(H.t_day)<45)],0.999)))
         pre=sum(1 for s,e in ev if dD[s]<=deg_start); post=[(float(dD[s]),s) for s,e in ev if dD[s]>deg_start]
         out[tag]=dict(阈值=round(float(thr if tag=='frozen' else np.quantile(sx(Bh,True)[(np.asarray(H.t_day)>=30)&(np.asarray(H.t_day)<45)],0.999)),3),
-                      告警数=len(ev), 退化前告警=pre, 退化后首报=(round(post[0][0],2) if post else None), 事件=ev, 分数=score)
+                      告警数=len(ev), 退化前告警=pre, 退化后首报=(round(post[0][0],2) if post else None),
+                      退化后首报索引=(int(post[0][1]) if post else None), 事件=ev, 分数=score)
     return out
+KEY = '退化后首报索引'
 R={}
 for tag,(ds,ramp) in [('退化起始第60天',(60.0,60.0)), ('退化起始第20天',(20.0,60.0))]:
     G=build(ds,ramp); H=build(None,60.0)
@@ -60,7 +62,7 @@ for tag,(ds,ramp) in [('退化起始第60天',(60.0,60.0)), ('退化起始第20�
         d=DET[chn]; f=d['退化后首报']
         ruls={}
         if f:
-            i0=int(f*96)
+            i0=int(d[KEY])   # 真实事件样本索引（Codex 批次4 Q16：此前 int(首报天*96) 有圆整偏差）
             for wd in (5,2,1):
                 lo=max(0,i0-wd*96); y=np.asarray(G.泥饼含固率.values[lo:i0+1],dtype=float)
                 b_,a_=np.polyfit(np.arange(len(y),dtype=float),y,1)
@@ -90,7 +92,7 @@ ax[0,0].plot(H.t_day,H.泥饼含固率,color=BL,lw=1,label='健康（28%）'); a
 ax[0,0].axhline(20,color=GO,ls='--',lw=1); ax[0,0].text(2,20.3,'处置要求 20%',color=GO,fontsize=8)
 ax[0,0].axvline(60,color='#7f7f7f',ls=':',lw=1); ax[0,0].set_title('① 泥饼含固率（机理量）'); ax[0,0].set_ylabel('%'); ax[0,0].legend(fontsize=8); ax[0,0].grid(alpha=.3)
 ax[0,1].plot(H.t_day,H.湿泥饼产量,color=BL,lw=1,label='健康'); ax[0,1].plot(G.t_day,G.湿泥饼产量,color=RD,lw=1,label='退化')
-ax[0,1].axvline(60,color='#7f7f7f',ls=':',lw=1); ax[0,1].set_title('② 湿泥饼产量（可测间接量，+62%）'); ax[0,1].set_ylabel('m³/d'); ax[0,1].legend(fontsize=8); ax[0,1].grid(alpha=.3)
+ax[0,1].axvline(60,color='#7f7f7f',ls=':',lw=1); ax[0,1].set_title('② 湿泥饼产量（可测间接量，理论 +55.6%）'); ax[0,1].set_ylabel('m³/d'); ax[0,1].legend(fontsize=8); ax[0,1].grid(alpha=.3)
 ax[1,0].plot(H.t_day,H.滤液TSS,color=BL,lw=1,label='健康'); ax[1,0].plot(G.t_day,G.滤液TSS,color=RD,lw=1,label='退化')
 ax[1,0].axvline(60,color='#7f7f7f',ls=':',lw=1); ax[1,0].set_title('③ 滤液 TSS（回流负荷）'); ax[1,0].set_xlabel('天'); ax[1,0].set_ylabel('mg/L'); ax[1,0].legend(fontsize=8); ax[1,0].grid(alpha=.3)
 DET=detect(H,G,60.0)
@@ -106,7 +108,7 @@ W('**退化注入**：脱水机目标泥饼含固率 28%→18%（60 天斜坡）
 W('**被监测**：只用真实厂可测的间接量（湿泥饼产量、滤液量、滤液 TSS、干固体产率、上清液 TSS）；泥饼含固率留给 RUL 作机理锚。'+NL)
 W('## 1. 结果（两份 JSON 明细）'+NL+'    '+json.dumps(R,ensure_ascii=False,indent=1).replace(chr(10),chr(10)+'    ')+NL)
 W('## 2. 结论'+NL)
-W('- 脱水机退化在间接量上**有清晰签名**：湿泥饼产量 +62%（13.0→21.2 m³/d）、滤液 TSS 由 1854 降到 1782（z=-30，超分数上限）、滤液量上升；干固体产率基本不变（说明是"泥饼变湿"而不是"固体流失"）。'+NL)
+W('- 脱水机退化在间接量上**有清晰签名**：湿泥饼产量上升 —— **理论 +55.6%（= 28/18−1；干固体守恒时含固率与湿泥饼体积成反比）**，同刻配对实测 +52.1%（末 5 日均值）至 +55.5%（末点配对）、滤液 TSS 由 1854 降到 1782（z=-30，超分数上限）、滤液量上升；干固体产率同刻配对差异 0.0000%（说明是"泥饼变湿"而不是"固体流失"）。'+NL)
 W('- 双基线检测在该工况下报警（见上表：冻结/自适应各自的阈值、告警数、退化前告警、退化后首报、提前量）。'+NL)
 W('- **因果 RUL 的窗口长度至关重要**：用 5 天窗会**严重稀释斜率**（退化刚起步时，窗内只有 1-2 天在下降）→ 估出 273 天（真值 47.7 天）；改成 2 天窗后误差降到约 2 天，1 天窗相近。**结论：对线性斜坡型退化，RUL 的机理拟合窗必须短（≤2 天），否则等于给旧斜率做平均。**'+NL)
 W('## 3. 与 v1 的差别（方法学记录）'+NL)

@@ -47,13 +47,13 @@ for tag,ds_end,ramp in SCEN:
     fail=(float(dD[idx[0]]) if idx else None)
     def first_after(score,thr):
         ev=make_events(pd.Series(score),thr)
-        vv=[float(dD[s]) for s,e in ev if dD[s]>DEG_START]
-        return (ev, (min(vv) if vv else None), sum(1 for s,e in ev if dD[s]<=DEG_START))
-    evf,ff,pref=first_after(sf,THR); eva,fa,prea=first_after(sa,ADAPT_THR)
+        vv=[(float(dD[s]),s) for s,e in ev if dD[s]>DEG_START]
+        return (ev, (min(vv)[0] if vv else None), sum(1 for s,e in ev if dD[s]<=DEG_START), (min(vv)[1] if vv else None))
+    evf,ff,pref,fidx=first_after(sf,THR); eva,fa,prea,_=first_after(sa,ADAPT_THR)
     al=min([x for x in [ff,fa] if x is not None], default=None)
     rul=None
     if ff:
-        i0=int(ff*96); lo=max(0,i0-96); y=np.asarray(g[lo:i0+1],dtype=float)
+        i0=int(fidx); lo=max(0,i0-96); y=np.asarray(g[lo:i0+1],dtype=float)
         b,a=np.polyfit(np.arange(len(y),dtype=float),y,1)
         rul=(None if b>=-1e-9 else float(max((FAIL-a)/b-(len(y)-1),0.0)/96.0))
     ana=(None if ds_end>=FAIL else round(DEG_START+ramp*(DS0-FAIL)/(DS0-ds_end),2))
@@ -98,7 +98,7 @@ NL=chr(10)+chr(10)
 f=io.open(os.path.join(D21,'sludge_sweep_report.md'),'w',encoding='utf-8'); W=f.write
 W('# 污泥线幅值/速率扫描（DSH，2026-09-21）'+NL)
 W('退化均起始第 60 天（避开投运暂态，见 25 节）。速率轴：最终含固率固定 18%，斜坡 30/60/120/240 天；幅值轴：斜坡固定 60 天，最终 25/22/20/18%。'+NL)
-W('检测用冻结通道（参考域=健康第 30-45 天，阈值 %.3f）与自适应通道（阈值 %.3f）；RUL 用泥饼含固率 1 天窗线性外推到 20%%。' % (THR, ADAPT_THR)+NL)
+W('检测用冻结通道（参考域=健康第 30-45 天，阈值 %.3f）与自适应通道（阈值 %.3f）；RUL 用泥饼含固率 1 天窗（以真实事件样本索引为起点）线性外推到 20%%。' % (THR, ADAPT_THR)+NL)
 W('## 1. 结果'+NL+T.to_markdown(index=False)+NL)
 W('## 2. 结论'+NL)
 W('- **速率轴**：斜坡 30/60/120/240 天的检出延迟与提前量见上表 —— 退化越慢，检出越晚、失效前提前量越小（与 18.2 节 BSM1 的结论同向）。'+NL)

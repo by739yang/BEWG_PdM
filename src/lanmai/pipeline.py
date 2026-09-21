@@ -108,6 +108,26 @@ def watch(df, base, warmup=None):
                    首报=(str(A['起点'].iloc[0]) if len(A) else None))
     return A, summary
 
+def regression_checks():
+    """回归检查（2026-09-22 新增，针对我们真实踩过的两个坑）：
+    ① 分号分隔 + 名为 TSS_eff 的通道不能被误判成时间列；
+    ② --channels 白名单必须真的生效（inspect 路径）。"""
+    import tempfile, os as _os
+    from .core import load_table
+    d = _os.path.join(tempfile.gettempdir(), 'lanmai_regression.csv')
+    rows = ['datetime;Current;Pressure;TSS_eff;state']
+    for i in range(200):
+        rows.append('2026-01-01 %02d:%02d:00;%.3f;%.3f;%.3f;%s' % (i // 60, i % 60, 10 + i * .01, 5 + i * .02,
+                                                                 500 + i, 'loaded' if i % 2 else 'idle'))
+    io.open(d, 'w', encoding='utf-8').write(chr(10).join(rows))
+    full = load_table(d)
+    assert 'TSS_eff' in full.columns, 'TSS_eff 被误当成时间列（回归失败）'
+    assert 'state' in full.columns and str(full['state'].iloc[0]) == 'idle', '工况列被破坏（回归失败）'
+    sub = load_table(d, channels=['TSS_eff'])
+    assert list(sub.columns) == ['TSS_eff'], '通道白名单未生效：%s' % list(sub.columns)
+    print('  [回归] 分号分隔 / TSS_eff 不当时间列 / 工况列保留 / 通道白名单 —— 全部通过')
+    return True
+
 def selftest(seed=0):
     rng = np.random.default_rng(seed)
     idx = pd.date_range('2026-01-01', periods=20000, freq='1min')
@@ -120,4 +140,5 @@ def selftest(seed=0):
         b = calibrate(d.iloc[:5000], ['chA', 'chB', 'chC'], ref_frac=(0, .3))
         A, sm = watch(d, b)
         print('  [自检] %s：告警 %d 个，分级 %s，首报 %s' % (nm, sm['告警总数'], sm['分级'], sm['首报']))
+    regression_checks()
     return True

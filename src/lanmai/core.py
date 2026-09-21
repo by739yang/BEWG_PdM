@@ -49,10 +49,10 @@ def load_table(path, time_col=None, resample=None, channels=None, sep=None):
     d = pd.DataFrame(keep, index=d.index)
     d.index = t
     d = d[~d.index.isna()].sort_index()
+    if channels:                                  # 过滤必须在重采样之前：否则工况列（字符串）会被 .mean() 撞上
+        d = d[[c for c in channels if c in d.columns]]
     if resample:
         d = d.resample(resample).mean()
-    if channels:
-        d = d[[c for c in channels if c in d.columns]]
     return d
 
 def _pick_time_col(df):

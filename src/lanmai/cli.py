@@ -8,16 +8,20 @@
 """
 import argparse, json, io, sys, os, pandas as pd
 
-def _read(args):
+def _read(args, use_channels=False):
     from .core import load_table
-    return load_table(args.data, args.time, getattr(args, 'resample', None), None)   # 保留全部列（含工况列）
+    ch = None
+    if use_channels and getattr(args, 'channels', None):
+        ch = [c.strip() for c in args.channels.split(',') if c.strip()]
+    # 注意：calibrate/watch 不能按通道过滤，否则会把工况列（state）删掉
+    return load_table(args.data, args.time, getattr(args, 'resample', None), ch)
 
 def _json(obj, path):
     io.open(path, 'w', encoding='utf-8').write(json.dumps(obj, ensure_ascii=False, indent=1))
 
 def cmd_inspect(args):
     from .pipeline import inspect
-    df = _read(args)
+    df = _read(args, use_channels=True)     # inspect 尊重 --channels（2026-09-22 修：此前被忽略）
     info = inspect(df)
     print(json.dumps({k: v for k, v in info.items() if k != '通道统计'}, ensure_ascii=False, indent=1))
     for c, st in info['通道统计'].items():
