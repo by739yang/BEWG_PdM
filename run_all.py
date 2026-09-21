@@ -19,6 +19,7 @@ STAGES=[
  dict(name='rul',        title='C-MAPSS RUL 基线（精确斜率版）', script='src/dsh/2026-09-17_05_rul_baseline.py', full=True),
  dict(name='diag_cross', title='诊断跨记录验证（多尺寸）', script='src/dsh/2026-09-18_15_cwru_multiseverity.py', full=True),
  dict(name='diag_norm',  title='诊断归一化策略对照', script='src/dsh/2026-09-19_02_cwru_domain_adapt.py', full=True),
+ dict(name='ablation_two_regimes', title='消融两套阈值口径重跑', script='src/dsh/2026-09-21_05_ablation_two_regimes.py', full=True),
  dict(name='multitraj_bsm1', title='BSM1 多轨迹稳健性分析', script='src/dsh/2026-09-21_03_bsm1_multitraj.py', full=True),
  dict(name='lanmai_cli', title='接入标定工具自检（lanmai CLI）', script='src/dsh/2026-09-21_04_lanmai_selftest.py', full=False),
  dict(name='demo_twin', title='交互式数字孪生演示台', script='src/dsh/2026-09-20_15_demo_twin.py', full=True),
