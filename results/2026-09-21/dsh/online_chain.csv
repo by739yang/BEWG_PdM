@@ -1,0 +1,8 @@
+﻿轨迹,首报通道,告警天,S1,M1,门禁挂RUL,分布位置比,机理比,在线RUL,真值RUL,误差,事后RUL
+基准（第 20 天起）,adaptive,40.24,True,True,True,1.37,0.529,4.86,7.1,2.24,4.59
+起始第 40 天,adaptive,40.22,True,True,True,1.25,0.797,,31.15,,45.56
+起始第 60 天,adaptive,60.61,True,False,False,2.11,1.507,,20.68,,
+进水平移 3 天,frozen,37.28,True,True,True,1.36,0.541,,12.05,,9.36
+进水平移 7 天,adaptive,33.21,False,True,False,0.81,0.586,,28.12,,
+标准进水 -40%,frozen,57.45,True,False,False,1.34,0.921,,35.89,,
+快退化 -80%/40d,adaptive,27.33,False,True,False,0.76,0.457,,2.05,,
