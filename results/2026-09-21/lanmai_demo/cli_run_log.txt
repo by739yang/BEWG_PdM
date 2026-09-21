@@ -1,0 +1,116 @@
+### 0
+{
+ "行数": 9405,
+ "起始": "2020-02-08 13:30:47",
+ "结束": "2020-02-08 16:16:47",
+ "采样间隔中位秒": 1.0,
+ "通道数": 8,
+ "零方差通道": []
+}
+  Accelerometer1RMS  缺失 0.0    均值 0.2126     标准差 0.0047     零方差 False
+  Accelerometer2RMS  缺失 0.0    均值 0.2684     标准差 0.004      零方差 False
+  Current            缺失 0.0    均值 2.403      标准差 0.4865     零方差 False
+  Pressure           缺失 0.0    均值 0.1113     标准差 0.2533     零方差 False
+  Temperature        缺失 0.0    均值 89.4723    标准差 0.6671     零方差 False
+  Thermocouple       缺失 0.0    均值 28.4743    标准差 0.7307     零方差 False
+  Voltage            缺失 0.0    均值 228.6472   标准差 10.9806    零方差 False
+  Volume Flow RateRMS 缺失 0.0    均值 125.2375   标准差 1.6053     零方差 False
+
+### 1
+参考窗：2020-02-08 13:30:47 → 2020-02-08 14:21:03（2821 行）
+判据阈值（冻结分数 0.999 分位）= 3.560
+  ⚠ 参考窗内通道 Temperature 有显著趋势（相对变化 -2.83）→ 该段可能不是稳态，按设计原则③应更换参考窗
+  ⚠ 参考窗内通道 Accelerometer1RMS 有显著趋势（相对变化 3.00）→ 该段可能不是稳态，按设计原则③应更换参考窗
+  ⚠ 参考窗内通道 Volume Flow RateRMS 有显著趋势（相对变化 2.11）→ 该段可能不是稳态，按设计原则③应更换参考窗
+基线已写入 results/2026-09-21/lanmai_demo\skab_baseline.json
+
+### 2
+告警 3 个（P1 立即处置 0 / P2 复核排计划 2 / P3 趋势观察 1）
+首报：2020-02-08 14:06:14
+                 起点                  结束  持续分钟     来源通道  峰值分数  判据阈值  分布位置比值  等级
+2020-02-08 14:06:14 2020-02-08 14:07:30     1 adaptive 6.990  3.56   0.989   2
+2020-02-08 14:53:47 2020-02-08 15:06:04    12    ratio 1.298  1.25   1.298   3
+2020-02-08 16:13:03 2020-02-08 16:13:31     0 adaptive 5.060  3.56   0.629   2
+明细已写入 results/2026-09-21/lanmai_demo\skab_alarms_healthy.csv
+
+### 3
+告警 1 个（P1 立即处置 0 / P2 复核排计划 1 / P3 趋势观察 0）
+首报：2020-02-08 18:04:49
+                 起点                  结束  持续分钟     来源通道  峰值分数  判据阈值  分布位置比值  等级
+2020-02-08 18:04:49 2020-02-08 18:06:24     1 adaptive  4.75  3.56     0.0   2
+明细已写入 results/2026-09-21/lanmai_demo\skab_alarms_fault.csv
+
+### 4
+Traceback (most recent call last):
+  File "<frozen runpy>", line 198, in _run_module_as_main
+  File "<frozen runpy>", line 88, in _run_code
+  File "C:\Users\boyi\Desktop\BEWG_PdM\src\lanmai\__main__.py", line 2, in <module>
+    main()
+  File "C:\Users\boyi\Desktop\BEWG_PdM\src\lanmai\cli.py", line 88, in main
+    a.func(a)
+  File "C:\Users\boyi\Desktop\BEWG_PdM\src\lanmai\cli.py", line 21, in cmd_inspect
+    info = inspect(df)
+           ^^^^^^^^^^^
+  File "C:\Users\boyi\Desktop\BEWG_PdM\src\lanmai\pipeline.py", line 12, in inspect
+    stats[c] = dict(缺失率=round(float(s.isna().mean()), 4), 均值=round(float(s.mean()), 4),
+                                                                              ^^^^^^^^
+  File "C:\Users\boyi\AppData\Local\Programs\Python\Python312\Lib\site-packages\pandas\util\_decorators.py", line 336, in wrapper
+    return func(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\boyi\AppData\Local\Programs\Python\Python312\Lib\site-packages\pandas\core\series.py", line 8113, in mean
+    return NDFrame.mean(
+           ^^^^^^^^^^^^^
+  File "C:\Users\boyi\AppData\Local\Programs\Python\Python312\Lib\site-packages\pandas\core\generic.py", line 11819, in mean
+    return self._stat_function(
+           ^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\boyi\AppData\Local\Programs\Python\Python312\Lib\site-packages\pandas\core\generic.py", line 11773, in _stat_function
+    return self._reduce(
+           ^^^^^^^^^^^^^
+  File "C:\Users\boyi\AppData\Local\Programs\Python\Python312\Lib\site-packages\pandas\core\series.py", line 7480, in _reduce
+    result = delegate._reduce(name, skipna=skipna, **kwds)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\boyi\AppData\Local\Programs\Python\Python312\Lib\site-packages\pandas\core\arrays\string_.py", line 968, in _reduce
+    raise TypeError(f"Cannot perform reduction '{name}' with string dtype")
+TypeError: Cannot perform reduction 'mean' with string dtype
+
+### 5
+参考窗：2020-02-01 00:00:00 → 2020-03-21 00:39:00（70600 行）
+判据阈值（冻结分数 0.999 分位）= 4.582
+  ⚠ 参考窗内通道 Oil_temperature 有显著趋势（相对变化 0.97）→ 该段可能不是稳态，按设计原则③应更换参考窗
+基线已写入 results/2026-09-21/lanmai_demo\metropt3_baseline.json
+
+### 6
+告警 105 个（P1 立即处置 56 / P2 复核排计划 30 / P3 趋势观察 19）
+首报：2020-02-02 07:45:00
+                 起点                  结束  持续分钟     来源通道   峰值分数  判据阈值  分布位置比值  等级
+2020-02-02 07:45:00 2020-02-02 07:54:00     9 adaptive  5.180 4.582   1.054   2
+2020-02-06 07:55:00 2020-02-06 08:10:00    15 adaptive  4.680 4.582   0.881   2
+2020-02-20 04:38:00 2020-02-20 04:48:00    10 adaptive  5.030 4.582   0.975   2
+2020-02-24 07:49:00 2020-02-24 08:05:00    16 adaptive  6.060 4.582   0.874   2
+2020-03-07 10:42:00 2020-03-07 10:53:00    11 adaptive  5.510 4.582   1.189   1
+2020-03-07 18:04:00 2020-03-07 18:15:00    11 adaptive  5.010 4.582   1.194   1
+2020-03-11 20:53:00 2020-03-12 02:43:00   350    ratio  1.272 1.250   1.272   3
+2020-03-12 12:07:00 2020-03-12 12:22:00    15 adaptive 10.800 4.582   1.210   1
+明细已写入 results/2026-09-21/lanmai_demo\metropt3_alarms.csv
+
+### 7
+参考窗：1970-01-31 00:00:00 → 1970-02-14 23:45:00（1440 行）
+判据阈值（冻结分数 0.999 分位）= 20.808
+  ⚠ 参考窗内通道 SO3 有显著趋势（相对变化 0.71）→ 该段可能不是稳态，按设计原则③应更换参考窗
+  ⚠ 参考窗内通道 SO4 有显著趋势（相对变化 0.75）→ 该段可能不是稳态，按设计原则③应更换参考窗
+  ⚠ 参考窗内通道 SO5 有显著趋势（相对变化 0.72）→ 该段可能不是稳态，按设计原则③应更换参考窗
+  ⚠ 参考窗内通道 SNH_eff 有显著趋势（相对变化 -1.02）→ 该段可能不是稳态，按设计原则③应更换参考窗
+  ⚠ 参考窗内通道 Ntot_eff 有显著趋势（相对变化 1.44）→ 该段可能不是稳态，按设计原则③应更换参考窗
+基线已写入 results/2026-09-21/lanmai_demo\bsm1_baseline.json
+
+### 8
+告警 6 个（P1 立即处置 3 / P2 复核排计划 0 / P3 趋势观察 3）
+首报：1970-01-27 19:15:00
+                 起点                  结束   持续分钟   来源通道   峰值分数   判据阈值  分布位置比值  等级
+1970-01-27 19:15:00 1970-02-04 01:00:00  10425  ratio  1.547  1.250   1.547   3
+1970-02-05 01:30:00 1970-02-05 23:30:00   1320  ratio  1.299  1.250   1.299   3
+1970-02-06 17:00:00 1970-04-30 23:45:00 119925  ratio  6.524  1.250   6.524   3
+1970-02-10 06:45:00 1970-02-10 13:00:00    375 frozen 21.080 20.808   3.015   1
+1970-03-02 15:45:00 1970-03-02 22:15:00    390 frozen 23.130 20.808   2.769   1
+1970-04-23 15:45:00 1970-04-23 22:30:00    405 frozen 23.060 20.808   3.826   1
+明细已写入 results/2026-09-21/lanmai_demo\bsm1_alarms.csv

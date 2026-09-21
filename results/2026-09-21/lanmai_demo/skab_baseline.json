@@ -1,0 +1,106 @@
+{
+ "meta": {
+  "时间起点": "2020-02-08 13:30:47",
+  "时间终点": "2020-02-08 16:16:47",
+  "行数": 9405,
+  "参考窗起点": "2020-02-08 13:30:47",
+  "参考窗终点": "2020-02-08 14:21:03",
+  "参考窗行数": 2821,
+  "source": "C:\\Users\\boyi\\Desktop\\BEWG_PdM\\data\\SKAB-master\\data\\anomaly-free\\anomaly-free.csv"
+ },
+ "channels": [
+  "Current",
+  "Pressure",
+  "Temperature",
+  "Accelerometer1RMS",
+  "Volume Flow RateRMS"
+ ],
+ "state": {
+  "kind": "hour",
+  "col": null,
+  "nbin": 4
+ },
+ "floor": {
+  "Current": 0.08776723498888067,
+  "Pressure": 0.048617790956263895,
+  "Temperature": 0.10446256486286128,
+  "Accelerometer1RMS": 0.0011836916234247577,
+  "Volume Flow RateRMS": 0.1979243884358775
+ },
+ "frozen": {
+  "Current": {
+   "13": {
+    "median": 2.56036,
+    "scale": 0.4385952557449962
+   },
+   "14": {
+    "median": 2.544605,
+    "scale": 0.43194773906597456
+   }
+  },
+  "Pressure": {
+   "13": {
+    "median": 0.054711,
+    "scale": 0.24308895478131948
+   },
+   "14": {
+    "median": 0.054711,
+    "scale": 0.24308895478131948
+   }
+  },
+  "Temperature": {
+   "13": {
+    "median": 90.535,
+    "scale": 0.42831727205337017
+   },
+   "14": {
+    "median": 89.8926,
+    "scale": 0.35685693106003974
+   }
+  },
+  "Accelerometer1RMS": {
+   "13": {
+    "median": 0.204097,
+    "scale": 0.0037902149740548807
+   },
+   "14": {
+    "median": 0.211679,
+    "scale": 0.0013754633061527132
+   }
+  },
+  "Volume Flow RateRMS": {
+   "13": {
+    "median": 123.0,
+    "scale": 0.9903632320237202
+   },
+   "14": {
+    "median": 124.0,
+    "scale": 0.9888806523350654
+   }
+  }
+ },
+ "adaptive": {
+  "win_days": 0.05
+ },
+ "threshold": {
+  "q": 0.999,
+  "value": 3.5601614957634946
+ },
+ "event": {
+  "enter": 4,
+  "exit_": 8,
+  "ratio": 0.8,
+  "cooldown": 8
+ },
+ "ratio": {
+  "window_days": 3.0,
+  "base_median": 1.1225788986805134,
+  "level1": 1.15,
+  "level3": 1.25
+ },
+ "warnings": [
+  "参考窗内通道 Temperature 有显著趋势（相对变化 -2.83）→ 该段可能不是稳态，按设计原则③应更换参考窗",
+  "参考窗内通道 Accelerometer1RMS 有显著趋势（相对变化 3.00）→ 该段可能不是稳态，按设计原则③应更换参考窗",
+  "参考窗内通道 Volume Flow RateRMS 有显著趋势（相对变化 2.11）→ 该段可能不是稳态，按设计原则③应更换参考窗"
+ ]
+}
