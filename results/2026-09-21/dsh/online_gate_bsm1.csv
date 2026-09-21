@@ -1,0 +1,9 @@
+﻿场景,首报通道,告警时刻,S1,M1,在线挂RUL,在线RUL估计,在线RUL真值,在线RUL误差
+慢 -20%/100d,adaptive,40.28,True,True,True,,70.06,
+慢 -40%/100d,adaptive,40.24,True,True,True,5.73,7.1,1.37
+慢 -60%/100d,adaptive,40.26,True,True,True,,31.39,
+慢 -80%/100d,adaptive,34.35,False,True,False,,9.98,
+快 -60%/40d,adaptive,27.35,False,True,False,,3.97,
+快 -80%/40d,adaptive,27.33,False,True,False,1.24,2.05,0.81
+雨暴雨 -40%,frozen,20.04,False,False,False,,75.28,
+标准进水 -40%,frozen,57.45,True,False,False,,35.89,
