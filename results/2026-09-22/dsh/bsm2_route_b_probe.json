@@ -1,0 +1,11 @@
+{
+ "days": 5.0,
+ "steps_run": 481,
+ "build_s": 1.59,
+ "run_s": 15.58,
+ "s_per_day": 3.117,
+ "ok": true,
+ "err": null,
+ "nan_y_eff": 0,
+ "nan_settler_eff": 0
+}
