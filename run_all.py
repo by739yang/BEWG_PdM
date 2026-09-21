@@ -20,7 +20,7 @@ STAGES=[
  dict(name='diag_cross', title='诊断跨记录验证（多尺寸）', script='src/dsh/2026-09-18_15_cwru_multiseverity.py', full=True),
  dict(name='diag_norm',  title='诊断归一化策略对照', script='src/dsh/2026-09-19_02_cwru_domain_adapt.py', full=True),
  dict(name='multitraj_bsm1', title='BSM1 多轨迹稳健性分析', script='src/dsh/2026-09-21_03_bsm1_multitraj.py', full=True),
- dict(name='lanmai_cli', title='接入标定工具自检（lanmai CLI）', script=None, full=False),
+ dict(name='lanmai_cli', title='接入标定工具自检（lanmai CLI）', script='src/dsh/2026-09-21_04_lanmai_selftest.py', full=False),
  dict(name='demo_twin', title='交互式数字孪生演示台', script='src/dsh/2026-09-20_15_demo_twin.py', full=True),
  dict(name='alarm_strategy_bsm1', title='组合报警策略评估', script='src/dsh/2026-09-20_14_alarm_strategy.py', full=True),
  dict(name='ratio_rule_bsm1', title='比值判据跨工况检验', script='src/dsh/2026-09-20_13_ratio_rule.py', full=True),
