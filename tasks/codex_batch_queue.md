@@ -123,3 +123,66 @@
   报出两套口径下的 timely / late / miss / 误报事件数，并回答：「无工况条件化 = 0 告警」「去派生特征 = timely 归零」在任何一套口径下是否成立
 - 产物：results/2026-09-20/codex/ablation_two_regimes.{csv,md}
 - 验收：两套口径数字齐全；对两条强结论给出「成立 / 不成立 / 取决于口径」的明确判定
+
+## 批次 4（2026-09-22 派发，等王家兴说「用 Codex」时整批发）
+**派发顺序与预算**：Q14（lanmai CLI 复核，约 15 分钟）→ Q13（消融两口径 + 标定期敏感性，约 40 分钟）→ Q16（污泥线闭环/扫描/决策，约 60 分钟）→ Q15（组合策略倍数敏感性，约 30 分钟）→ Q17（在线链路多轨迹，约 30 分钟，有余力再做）。
+全部基于**已入库产物**，不需要重新跑 BSM1 仿真、不需要下载数据。做不完按顺序停，未完成项留在这里。
+
+### Q14 复核 lanmai CLI（接入标定工具）
+- 读：docs/10_接入标定工具使用手册.md、src/lanmai/（core.py、pipeline.py、cli.py）
+- 数据：results/2026-09-21/lanmai_demo/（metropt3_prepared.csv.gz、bsm1_120d_baseline_ts.csv、bsm1_120d_degraded_ts.csv）、data/SKAB-master/data/anomaly-free/anomaly-free.csv
+- 做（自己跑，**不要改 src/lanmai/**）：
+  ① PYTHONPATH=src python -m lanmai selftest → 阶跃与慢漂移是否都能出告警（阶跃应全为 P2、慢漂移应出现 P1/P3）；
+  ② 用 SKAB 无故障记录标定 + watch → 核对分号分隔自动识别、通道白名单是否正常；
+  ③ 用 bsm1 两个 _ts.csv 复现：健康轨迹第 30-45 天标定、退化轨迹 watch → **核对冻结通道首报是否为第 40.28 天**（研究链路口径）；
+  ④ 多段标定：--ref-segments 三段 + --thr-policy median/upper → 核对输出的阈值范围（最小/中位/最大/极差比）是否自洽；
+  ⑤ 边界检查：故意把通道写成含 ts 的名字（如 TSS_eff）→ 核对工具**不会把它误判成时间列**（我们修过这个 bug）。
+- 产物：results/2026-09-22/codex/lanmai_cli_audit.md（命令 + 观察 + 结论）
+- 验收：①-⑤ 逐条给「通过/不通过 + 证据」；若发现 TSS_eff 被当时间列、或首报不是 40.28，必须给完整复现命令。
+
+### Q13 复核消融两套口径与标定期敏感性
+- 读：PROJECT_STATE.md 第 17.1 / 17.2 节；results/2026-09-19/dsh/ablation_two_regimes_report.md、calib_window_sensitivity_report.md
+- 数据：data/metropt3/metropt3.csv + results/2026-09-18/dsh/minute_mask_intersection.csv.gz + results/2026-09-16/dsh/metropt3_score_minutes_dsh.csv.gz
+- 做：用你自己的最小链路复核三条方向（可简化特征/标准化，但必须写明简化处与阈值口径）：
+  ① 把阈值来源从「标签辅助的 DET 工作点 2.395」换成「无标签标定期 q0.995」后，timely 命中是否崩塌（我们得到 0/4）；
+  ② 「无标签标定下 timely 全 0/4」在你的实现里是否也成立；
+  ③ 用 4 个官方故障窗之间的 5 段健康期分别标定 → 阈值是否随所选健康段大幅变化（我们得到极差 3.5-3.9 倍、误报 1-44 次）。
+- 产物：results/2026-09-22/codex/ablation_regime_repro.md
+- 验收：三条方向逐条结论；方向不一致必须给证据与反例。
+
+### Q16 复核污泥线闭环 / 幅值速率扫描 / 决策层
+- 读：PROJECT_STATE.md 第 25 / 25.1 / 25.2 节；results/2026-09-21/dsh/sludge_line2_report.md、sludge_sweep_report.md、sludge_decision_report.md
+- 数据：results/2026-09-21/dsh/sludge_flow_healthy.csv.gz（BSM1 剩余污泥流，w_* 21 维 + t_day）
+- 做（自己算，**不要改 src/dsh/**，可用包内 bsm2_python 的 Thickener/Dewatering）：
+  ① 复算污泥线：QW=385 m3/d、泥饼含固率 28%（即 280,000 mg/L）、湿泥饼产量、干固体产率 → 核对「湿泥饼产量 +62%（13.0→21.2 m3/d）、干固体产率基本不变」；
+  ② 按我们的口径（退化起始第 60 天、目标含固率 28%→18%/60 天、真值失效=含固率<20% 持续 1 天）复算真值失效天数（应为第 109 天）；
+  ③ 检测：只用间接量（湿泥饼产量/滤液量/滤液 TSS/干固体产率/上清液 TSS），参考域取健康运行第 30-45 天 → 核对**冻结通道首报是否为第 61.33 天**、**自适应通道是否漏检**；
+  ④ RUL：泥饼含固率线性外推到 20%，比较 5/2/1 天窗（我们得到 273.08 / 63.92 / 46.68 天，真值 47.67）；
+  ⑤ 决策层：用报告里的占位成本参数，重算「RUL 驱动 vs 固定周期 30/40/49/60 天」的单台年成本 → 核对 RUL 驱动是否更省、非计划失效是否为 0。
+- 产物：results/2026-09-22/codex/sludge_line_repro.md（可附 csv）
+- 验收：①-⑤ 逐条「一致/不一致 + 数值」；不一致要给复现命令与你的口径。
+
+### Q15 复核组合策略倍数敏感性
+- 读：PROJECT_STATE.md 第 18.5 / 18.6 / 18.7 节；results/2026-09-21/dsh/strategy_sensitivity_report.md
+- 数据：results/2026-09-20/dsh 下的 12 组 BSM1 轨迹（bsm1_120d_*、bsm1_winB/C_*、bsm1_sweep_*、bsm1_R1/R2/R3_*、bsm1std_*）
+- 做：自己实现「单点事件机 + 滚动中位数比值 + 与门/并集」最小链路，复核三条：
+  ① 健康运行上报：与门是否**几乎等于单点**（k_and 从 1.05 提到 1.40 无变化）；
+  ② 比值判据是否**只增加上报量**（k_ratio 1.15/1.25/1.40 → 76/83/96 段，单点 51；并集 127/134/147）；
+  ③ 检出：单点/与门/并集是否都是 12/12、延迟中位 20.3 天。
+- **硬性要求**：滚动窗必须用时间单位（rolling('3D')/('5D')），不能用裸点数 —— 我们曾因此把 5 天窗误写成 7200 点（=75 天）并得出相反结论。
+- 产物：results/2026-09-22/codex/strategy_sensitivity_repro.md
+- 验收：三条方向；不一致给证据。
+
+### Q17 复核在线链路多轨迹（有余力再做）
+- 读：PROJECT_STATE.md 第 21 / 22 / 23 节；results/2026-09-21/dsh/online_chain_report.md
+- 数据：results/2026-09-20/dsh/bsm1_120d_*.csv、results/2026-09-21/dsh/bsm1mt_*.csv、bsm1std_*.csv、results/2026-09-20/dsh/bsm1_sweep_keep20_ramp040.csv
+- 做：复核两条方向：① 因果门禁在 7 条轨迹上是否只判 3 条「挂 RUL」；② 在线 RUL 是否只在 1 条上可算（其余因告警前 5 天没有可测的机理下降段）。
+- 产物：results/2026-09-22/codex/online_chain_repro.md
+- 验收：方向一致；不一致给证据。
+
+### 派发时的统一要求
+- 先读 PROJECT_STATE.md 第 00 节冷启动清单与 协作约定.md 第 7、8、9 节（第 9 节是文件写入纪律）
+- 每个 Q 自包含：读什么、做什么、产物路径、验收标准、禁止事项
+- 不要改 src/dsh/、src/lanmai/、results/*/dsh/；不要动 data/
+- 成本参数为占位值，任何产物里不得把它当真实金额
+- 收工：logs/实验日志.md 追加一条（五段式）+ handoff/2026-09-22_codex_to_dsh.md（只把文件名告诉人）
