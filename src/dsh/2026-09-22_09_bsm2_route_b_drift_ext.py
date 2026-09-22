@@ -14,9 +14,28 @@ import route_b_common as R
 
 D = R.DIR
 NL = chr(10)
-spec = importlib.util.spec_from_file_location('drift06', os.path.join(os.path.dirname(os.path.abspath(__file__)), '2026-09-22_06_bsm2_route_b_drift.py'))
-d6 = importlib.util.module_from_spec(spec); spec.loader.exec_module(d6)
-H, G, DEG, FAIL = d6.H, d6.G, d6.DEG, d6.FAIL
+H = R.load('healthy')
+G = R.load('degraded')
+DEG = 60.0
+FAIL = R.truth_failure(G, DEG)
+
+def bias_series(t, kind, amp, rng):
+    """与 2026-09-22_06 完全一致的偏差结构（此处就地复制，避免执行整段 06 脚本）。"""
+    t = np.asarray(t, dtype=float)
+    if amp == 0:
+        return np.zeros_like(t)
+    if kind == '线性慢漂移':
+        return amp * (t / max(1e-9, t[-1]))
+    if kind == '阶跃偏置(第100天)':
+        return amp * (t >= 100.0)
+    if kind == '周期6.3天':
+        return amp * np.sin(t)
+    if kind == '周期30天':
+        return amp * np.sin(2 * np.pi * t / 30.0)
+    if kind == '随机游走':
+        step = rng.normal(0, amp / np.sqrt(max(1.0, t[-1])), len(t)); return np.cumsum(step)
+    raise ValueError(kind)
+
 
 
 def bias_ar1(t, amp, rng, rho=0.99):
@@ -34,12 +53,12 @@ def make_ext(df, kind, amp, seed, mitigate='M1 无补偿', rel=0.02, lab_rel=0.0
     if kind == 'AR1相关漂移':
         b = bias_ar1(t, amp, np.random.default_rng(seed + 5))
     else:
-        b = d6.bias_series(t, kind, amp, np.random.default_rng(seed + 3))
+        b = bias_series(t, kind, amp, np.random.default_rng(seed + 3))
     if mitigate == 'M3 双测量平均':
         if kind == 'AR1相关漂移':
             b = 0.5 * (bias_ar1(t, amp, np.random.default_rng(seed + 21)) + bias_ar1(t, amp, np.random.default_rng(seed + 23)))
         else:
-            b = 0.5 * (d6.bias_series(t, kind, amp, np.random.default_rng(seed + 11)) + d6.bias_series(t, kind, amp, np.random.default_rng(seed + 13)))
+            b = 0.5 * (bias_series(t, kind, amp, np.random.default_rng(seed + 11)) + bias_series(t, kind, amp, np.random.default_rng(seed + 13)))
     d[R.RATIO] = d[R.RATIO] * (1.0 + b)
     return d
 

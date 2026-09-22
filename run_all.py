@@ -40,6 +40,9 @@ STAGES=[
  dict(name='route_b_sweep', title='路线 B 幅值/速率扫描（6 场景，各约 64 秒）', script='src/dsh/2026-09-22_04_bsm2_route_b_sweep.py', full=True),
  dict(name='route_b_cond', title='路线 B 补强①：工况条件化 + 同工况对拍差分', script='src/dsh/2026-09-22_05_bsm2_route_b_conditioned.py', full=True),
  dict(name='route_b_drift', title='路线 B 补强②：标定漂移专项', script='src/dsh/2026-09-22_06_bsm2_route_b_drift.py', full=True),
+ dict(name='route_b_seasons', title='路线 B 跨相位稳健性（缺哪个相位补哪个，之后汇总）', script='src/dsh/2026-09-22_07_bsm2_route_b_seasons.py', full=True),
+ dict(name='route_b_drift_ext', title='路线 B 漂移扩展（10% 幅度 + AR(1) + 对拍样本量）', script='src/dsh/2026-09-22_09_bsm2_route_b_drift_ext.py', full=True),
+ dict(name='route_b_freeze_check', title='冻结前数字总检（数字↔结果文件↔文档 + 文件名自检）', script='src/dsh/2026-09-22_08_freeze_check.py', full=True),
  dict(name='figures',    title='材料四图', script='src/dsh/2026-09-18_16_figures.py', full=True),
 ]
 DATA=[

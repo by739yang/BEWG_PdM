@@ -1,0 +1,112 @@
+{
+  "q24": {
+    "truth_failure": 109.0,
+    "q999": 13.149,
+    "zero_fa": 19.56,
+    "raw_alarm": 146.11,
+    "raw_delay": 86.11,
+    "freeze_check_pass": [
+      29,
+      29
+    ]
+  },
+  "q27": {
+    "expected_checks": {
+      "rw3": true,
+      "rw5": true,
+      "rw10": true,
+      "ar3": true,
+      "ar5": true,
+      "ar5avg": true
+    },
+    "n_base": 28,
+    "n_ext": 6
+  },
+  "q25": {
+    "rows": [
+      {
+        "phase": 0,
+        "fail_recalc": 109.0,
+        "raw_delay": 86.11,
+        "ratio_median": 9.8
+      },
+      {
+        "phase": 200,
+        "fail_recalc": 109.0,
+        "raw_delay": 81.58,
+        "ratio_median": 9.8
+      },
+      {
+        "phase": 400,
+        "fail_recalc": 109.0,
+        "raw_delay": 81.16,
+        "ratio_median": 9.8
+      }
+    ]
+  },
+  "q26": {
+    "pairdiff_no_smooth_threshold": 2.433789021026609,
+    "pairdiff_smooth_threshold": 2.4337890210266018,
+    "raw5_no_smooth_threshold": 17.191519154517067,
+    "raw5_smooth_threshold": 0.8299774225187775,
+    "no_smooth_delay_median": 10.03125,
+    "smooth_delay_median": 11.380208333333329
+  },
+  "q28": {
+    "registered": [
+      "env",
+      "data",
+      "metropt3",
+      "pipeline",
+      "check",
+      "demo",
+      "dual_baseline",
+      "skab",
+      "rul",
+      "diag_cross",
+      "diag_norm",
+      "sludge_sweep",
+      "sludge_decision",
+      "sludge_line",
+      "online_chain",
+      "calib_window_sensitivity",
+      "strategy_sensitivity",
+      "ablation_two_regimes",
+      "multitraj_bsm1",
+      "lanmai_cli",
+      "demo_twin",
+      "alarm_strategy_bsm1",
+      "ratio_rule_bsm1",
+      "rain_storm_bsm1",
+      "influent_bsm1",
+      "sweep_bsm1",
+      "figures_bsm1",
+      "route_b_sim",
+      "route_b_detect",
+      "route_b_sweep",
+      "route_b_cond",
+      "route_b_drift",
+      "figures"
+    ],
+    "missing_route_b_stages": [
+      "route_b_seasons",
+      "freeze_check",
+      "route_b_drift_ext"
+    ],
+    "nonascii_count": 1,
+    "text_hits": {
+      "PROJECT_STATE.md": 59,
+      "docs\\07_BP四栏大纲.md": 9,
+      "docs\\08_成果验收清单.md": 13,
+      "docs\\09_评委视角_五分钟看懂.md": 5,
+      "demo\\lanmai_demo.html": 1,
+      "run_all.py": 6
+    }
+  },
+  "q29": {
+    "current_state_hits": 34,
+    "legacy_r2_hits": 1,
+    "legacy_r3_hits": 2,
+    "status": "conditional-pass"
+  }
+}

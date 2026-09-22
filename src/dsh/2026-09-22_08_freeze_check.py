@@ -101,6 +101,16 @@ for f in ['results/2026-09-18/dsh/decision_policy_v6.csv', 'results/2026-09-18/d
     if os.path.exists(f):
         weak_check('决策层（%s）' % os.path.basename(f), 1.0, f, note='弱校验：文件存在且可读')
 
+# ---------- 产物文件名自检（Codex 批次 6：中文名跨平台风险）----------
+bad_names = []
+for root, dirs, files in os.walk('results'):
+    for f in files:
+        if any(ord(ch) > 127 for ch in f):
+            bad_names.append(os.path.join(root, f))
+items.append(dict(检查项='产物文件名非 ASCII 自检（results/）', 数值=None, 结果文件='results/**',
+                  文档命中=(bad_names[:5] if bad_names else []), 通过=(len(bad_names) == 0),
+                  备注='docs/ logs/ 协作约定.md 的中文名是给人看的、允许；results/ 下的产物名应为 ASCII'))
+
 # ---------- 反向检查：已作废旧值不得出现在对外文档 ----------
 STALE = [('+62%', '污泥线旧增幅'), ('273.08', '污泥线旧 RUL（点索引口径）'), ('0.99 天', '污泥线旧 RUL 误差')]
 for s, desc in STALE:

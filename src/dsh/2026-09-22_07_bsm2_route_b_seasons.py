@@ -21,6 +21,15 @@ ONLY = None
 if len(_sys.argv) > 1 and _sys.argv[1] != 'report':
     ONLY = [float(_sys.argv[1])]
     PHASES = [p for p in PHASES if p == ONLY[0]]
+else:
+    # 无参：只补跑缺失的相位，然后走 report（保证 run_all 一键可复现且幂等）
+    _miss = [p for p in PHASES if not os.path.exists(os.path.join(D, 'seasons_part%d.json' % int(p)))]
+    if _miss:
+        PHASES = _miss
+        ONLY = list(_miss)
+        print('需要补跑的相位：%s' % _miss)
+    else:
+        _sys.argv = [_sys.argv[0], 'report']
 
 
 def smooth_day(s, days=1.0, ppd=96):
