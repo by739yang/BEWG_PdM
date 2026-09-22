@@ -1,0 +1,387 @@
+{
+ "检查项数": 29,
+ "通过": 29,
+ "未通过": 0,
+ "未通过清单": [],
+ "文档集合": [
+  "PROJECT_STATE.md",
+  "docs/07_BP四栏大纲.md",
+  "docs/08_成果验收清单.md",
+  "docs/09_评委视角_五分钟看懂.md",
+  "demo/lanmai_demo.html"
+ ],
+ "明细": [
+  {
+   "检查项": "路线B 真值失效天",
+   "数值": 109.0,
+   "结果文件": "bsm2_route_b_detect.json",
+   "文档命中": [
+    "07_BP四栏大纲.md:109",
+    "07_BP四栏大纲.md:109.0",
+    "07_BP四栏大纲.md:109.00",
+    "08_成果验收清单.md:109",
+    "08_成果验收清单.md:109.0",
+    "08_成果验收清单.md:109.00",
+    "PROJECT_STATE.md:109",
+    "PROJECT_STATE.md:109.0",
+    "PROJECT_STATE.md:109.00",
+    "lanmai_demo.html:109",
+    "lanmai_demo.html:109.0",
+    "lanmai_demo.html:109.00"
+   ],
+   "通过": true,
+   "备注": ""
+  },
+  {
+   "检查项": "路线B q999 阈值",
+   "数值": 13.149,
+   "结果文件": "bsm2_route_b_detect.json",
+   "文档命中": [
+    "PROJECT_STATE.md:13.1",
+    "PROJECT_STATE.md:13.149",
+    "lanmai_demo.html:13.1"
+   ],
+   "通过": true,
+   "备注": ""
+  },
+  {
+   "检查项": "路线B 零误报阈值",
+   "数值": 19.56,
+   "结果文件": "bsm2_route_b_detect.json",
+   "文档命中": [
+    "PROJECT_STATE.md:19.56",
+    "PROJECT_STATE.md:19.560",
+    "PROJECT_STATE.md:19.6"
+   ],
+   "通过": true,
+   "备注": ""
+  },
+  {
+   "检查项": "路线B 原始量零误报延迟",
+   "数值": 86.11,
+   "结果文件": "bsm2_route_b_detect.json",
+   "文档命中": [
+    "07_BP四栏大纲.md:86.1",
+    "07_BP四栏大纲.md:86.11",
+    "08_成果验收清单.md:86.1",
+    "08_成果验收清单.md:86.11",
+    "PROJECT_STATE.md:86.1",
+    "PROJECT_STATE.md:86.11"
+   ],
+   "通过": true,
+   "备注": "负结果：晚于失效"
+  },
+  {
+   "检查项": "路线B 原始量首报（q999）",
+   "数值": 66.11,
+   "结果文件": "bsm2_route_b_detect.json",
+   "文档命中": [
+    "PROJECT_STATE.md:66.1",
+    "PROJECT_STATE.md:66.11"
+   ],
+   "通过": true,
+   "备注": "误报抢跑"
+  },
+  {
+   "检查项": "路线B 比值通道含噪延迟中位",
+   "数值": 9.8,
+   "结果文件": "bsm2_route_b_detect.json",
+   "文档命中": [
+    "07_BP四栏大纲.md:9.8",
+    "08_成果验收清单.md:9.8",
+    "09_评委视角_五分钟看懂.md:9.8",
+    "PROJECT_STATE.md:9.8",
+    "PROJECT_STATE.md:9.80",
+    "lanmai_demo.html:9.8",
+    "lanmai_demo.html:9.80"
+   ],
+   "通过": true,
+   "备注": ""
+  },
+  {
+   "检查项": "路线B 比值通道提前量中位",
+   "数值": 37.47,
+   "结果文件": "bsm2_route_b_detect.json",
+   "文档命中": [
+    "07_BP四栏大纲.md:37.5",
+    "08_成果验收清单.md:37.5",
+    "09_评委视角_五分钟看懂.md:37.5",
+    "PROJECT_STATE.md:37.47",
+    "lanmai_demo.html:37.5"
+   ],
+   "通过": true,
+   "备注": ""
+  },
+  {
+   "检查项": "路线B RUL 1 天窗误差",
+   "数值": 26.47,
+   "结果文件": "bsm2_route_b_detect.json",
+   "文档命中": [
+    "PROJECT_STATE.md:26.47",
+    "lanmai_demo.html:26.47"
+   ],
+   "通过": true,
+   "备注": ""
+  },
+  {
+   "检查项": "路线B RUL 10 天窗误差",
+   "数值": 13.85,
+   "结果文件": "bsm2_route_b_detect.json",
+   "文档命中": [
+    "PROJECT_STATE.md:13.8",
+    "PROJECT_STATE.md:13.85",
+    "lanmai_demo.html:13.8",
+    "lanmai_demo.html:13.85"
+   ],
+   "通过": true,
+   "备注": ""
+  },
+  {
+   "检查项": "路线B 速率轴延迟（30/60/120 天）",
+   "数值": 5.53,
+   "结果文件": "bsm2_route_b_sweep.csv",
+   "文档命中": [
+    "07_BP四栏大纲.md:5.5",
+    "PROJECT_STATE.md:5.5",
+    "PROJECT_STATE.md:5.53",
+    "lanmai_demo.html:5.5"
+   ],
+   "通过": true,
+   "备注": "另两点 9.80/18.53"
+  },
+  {
+   "检查项": "路线B 湿泥饼量增幅（18%% 终值）",
+   "数值": 55.53,
+   "结果文件": "bsm2_route_b_sweep.csv",
+   "文档命中": [
+    "PROJECT_STATE.md:55.5",
+    "PROJECT_STATE.md:55.53",
+    "lanmai_demo.html:55.5"
+   ],
+   "通过": true,
+   "备注": ""
+  },
+  {
+   "检查项": "路线B 120 天斜坡实际终值",
+   "数值": 19.67,
+   "结果文件": "bsm2_route_b_sweep.csv",
+   "文档命中": [
+    "PROJECT_STATE.md:19.67",
+    "PROJECT_STATE.md:19.7"
+   ],
+   "通过": true,
+   "备注": ""
+  },
+  {
+   "检查项": "补强① 对拍差分（原始量）延迟",
+   "数值": 34.48,
+   "结果文件": "bsm2_route_b_pairdiff.csv",
+   "文档命中": [
+    "07_BP四栏大纲.md:34.48",
+    "08_成果验收清单.md:34.48",
+    "PROJECT_STATE.md:34.48",
+    "lanmai_demo.html:34.5"
+   ],
+   "通过": true,
+   "备注": ""
+  },
+  {
+   "检查项": "补强① 对拍差分（比值）延迟",
+   "数值": 13.37,
+   "结果文件": "bsm2_route_b_pairdiff.csv",
+   "文档命中": [
+    "07_BP四栏大纲.md:13.37",
+    "08_成果验收清单.md:13.37",
+    "PROJECT_STATE.md:13.37",
+    "lanmai_demo.html:13.4"
+   ],
+   "通过": true,
+   "备注": ""
+  },
+  {
+   "检查项": "补强② 随机游走 3%% 延迟",
+   "数值": 46.99,
+   "结果文件": "bsm2_route_b_drift.csv",
+   "文档命中": [
+    "PROJECT_STATE.md:46.99"
+   ],
+   "通过": true,
+   "备注": ""
+  },
+  {
+   "检查项": "补强② 随机游走 5%% 延迟",
+   "数值": 72.72,
+   "结果文件": "bsm2_route_b_drift.csv",
+   "文档命中": [
+    "PROJECT_STATE.md:72.7",
+    "PROJECT_STATE.md:72.72"
+   ],
+   "通过": true,
+   "备注": ""
+  },
+  {
+   "检查项": "补强② 双测量平均（随机游走 3%%）",
+   "数值": 30.03,
+   "结果文件": "bsm2_route_b_drift.csv",
+   "文档命中": [
+    "PROJECT_STATE.md:30.0",
+    "PROJECT_STATE.md:30.03",
+    "lanmai_demo.html:30.0"
+   ],
+   "通过": true,
+   "备注": ""
+  },
+  {
+   "检查项": "污泥线 真值失效天",
+   "数值": 109.0,
+   "结果文件": "sludge_line2.json",
+   "文档命中": [
+    "07_BP四栏大纲.md:109",
+    "07_BP四栏大纲.md:109.0",
+    "07_BP四栏大纲.md:109.00",
+    "08_成果验收清单.md:109",
+    "08_成果验收清单.md:109.0",
+    "08_成果验收清单.md:109.00",
+    "PROJECT_STATE.md:109",
+    "PROJECT_STATE.md:109.0",
+    "PROJECT_STATE.md:109.00",
+    "lanmai_demo.html:109",
+    "lanmai_demo.html:109.0",
+    "lanmai_demo.html:109.00"
+   ],
+   "通过": true,
+   "备注": ""
+  },
+  {
+   "检查项": "污泥线 冻结首报",
+   "数值": 61.33,
+   "结果文件": "sludge_line2.json",
+   "文档命中": [
+    "07_BP四栏大纲.md:61.3",
+    "07_BP四栏大纲.md:61.33",
+    "08_成果验收清单.md:61.3",
+    "08_成果验收清单.md:61.33",
+    "PROJECT_STATE.md:61.3",
+    "PROJECT_STATE.md:61.33",
+    "lanmai_demo.html:61.3",
+    "lanmai_demo.html:61.33"
+   ],
+   "通过": true,
+   "备注": ""
+  },
+  {
+   "检查项": "污泥线 提前量",
+   "数值": 47.67,
+   "结果文件": "sludge_line2.json",
+   "文档命中": [
+    "07_BP四栏大纲.md:47.67",
+    "08_成果验收清单.md:47.7",
+    "09_评委视角_五分钟看懂.md:47.67",
+    "PROJECT_STATE.md:47.67",
+    "lanmai_demo.html:47.67",
+    "lanmai_demo.html:47.7"
+   ],
+   "通过": true,
+   "备注": ""
+  },
+  {
+   "检查项": "污泥线 RUL 1 天窗误差",
+   "数值": 1.0,
+   "结果文件": "sludge_line2.json",
+   "文档命中": [
+    "07_BP四栏大纲.md:1",
+    "07_BP四栏大纲.md:1.0",
+    "07_BP四栏大纲.md:1.00",
+    "08_成果验收清单.md:1",
+    "08_成果验收清单.md:1.0",
+    "08_成果验收清单.md:1.00",
+    "09_评委视角_五分钟看懂.md:1",
+    "09_评委视角_五分钟看懂.md:1.0",
+    "09_评委视角_五分钟看懂.md:1.00",
+    "PROJECT_STATE.md:1",
+    "PROJECT_STATE.md:1.0",
+    "PROJECT_STATE.md:1.00",
+    "PROJECT_STATE.md:1.000",
+    "lanmai_demo.html:1",
+    "lanmai_demo.html:1.0",
+    "lanmai_demo.html:1.00"
+   ],
+   "通过": true,
+   "备注": ""
+  },
+  {
+   "检查项": "MetroPT-3 无标签阈值 13.139",
+   "数值": 13.139,
+   "结果文件": "results/2026-09-18/dsh/metropt3_metrics_frozen_dsh.json",
+   "文档命中": [
+    "(弱校验通过)"
+   ],
+   "通过": true,
+   "备注": "弱校验：结果文件文本含该值"
+  },
+  {
+   "检查项": "C-MAPSS RMSE 15.27",
+   "数值": 15.27,
+   "结果文件": "results/2026-09-17/dsh/rul_baseline_metrics.csv",
+   "文档命中": [
+    "(弱校验通过)"
+   ],
+   "通过": true,
+   "备注": "弱校验：结果文件文本含该值"
+  },
+  {
+   "检查项": "C-MAPSS PHM08 434",
+   "数值": 434.0,
+   "结果文件": "results/2026-09-17/dsh/rul_baseline_metrics.csv",
+   "文档命中": [
+    "(弱校验通过)"
+   ],
+   "通过": true,
+   "备注": "弱校验：结果文件文本含该值"
+  },
+  {
+   "检查项": "决策层（decision_policy_v6.csv）",
+   "数值": 1.0,
+   "结果文件": "results/2026-09-18/dsh/decision_policy_v6.csv",
+   "文档命中": [
+    "(弱校验通过)"
+   ],
+   "通过": true,
+   "备注": "弱校验：文件存在且可读"
+  },
+  {
+   "检查项": "决策层（decision_sensitivity_v6.csv）",
+   "数值": 1.0,
+   "结果文件": "results/2026-09-18/dsh/decision_sensitivity_v6.csv",
+   "文档命中": [
+    "(弱校验通过)"
+   ],
+   "通过": true,
+   "备注": "弱校验：文件存在且可读"
+  },
+  {
+   "检查项": "旧值残留检查：+62%（污泥线旧增幅）",
+   "数值": NaN,
+   "结果文件": "—",
+   "文档命中": [],
+   "通过": true,
+   "备注": ""
+  },
+  {
+   "检查项": "旧值残留检查：273.08（污泥线旧 RUL（点索引口径））",
+   "数值": NaN,
+   "结果文件": "—",
+   "文档命中": [],
+   "通过": true,
+   "备注": ""
+  },
+  {
+   "检查项": "旧值残留检查：0.99 天（污泥线旧 RUL 误差）",
+   "数值": NaN,
+   "结果文件": "—",
+   "文档命中": [],
+   "通过": true,
+   "备注": ""
+  }
+ ]
+}

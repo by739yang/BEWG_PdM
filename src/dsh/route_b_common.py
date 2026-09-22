@@ -95,17 +95,23 @@ COLS = ['t_day', '目标含固率', '泥饼含固率', '泥饼流量', '干固�
         '回流污泥TSS', '浓缩池底TSS', '曝气能耗', '泵能耗', '搅拌能耗']
 
 
-def _influent(n):
+def _influent(n, offset_days=0.0):
     d = np.genfromtxt(os.path.join(PKG, 'data', 'dyninfluent_bsm2.csv'), delimiter=',', skip_header=1)
+    k = int(round(offset_days / DT))            # 多相位：从官方 609 天序列的第 offset 天起截取
+    if k > 0:
+        while len(d) < k + n:
+            d = np.vstack([d, d])
+        d = d[k:]
     while len(d) < n:
         d = np.vstack([d, d])
     return d[:n]
 
 
-def run_plant(deg_start=None, ramp=RAMP, ts0=TS0, ts1=TS1, days=160.0, verbose=True):
-    """官方整厂 BSM2Base + 脱水机 dw_par[0] 退化注入（deg_start=None 表示健康轨迹）。"""
+def run_plant(deg_start=None, ramp=RAMP, ts0=TS0, ts1=TS1, days=160.0, verbose=True, offset_days=0.0):
+    """官方整厂 BSM2Base + 脱水机 dw_par[0] 退化注入（deg_start=None 表示健康轨迹）。
+    offset_days：从官方 609 天动态进水的第 offset 天起截取，用于多季节/多相位稳健性检验。"""
     n = int(round(days / DT)) + 1
-    arr = _influent(n)
+    arr = _influent(n, offset_days)
     data = np.column_stack([np.arange(len(arr)) * DT, arr[:, 1:]])
     t0 = time.time()
     p = BSM2Base(data_in=data, timestep=DT, endtime=days)
