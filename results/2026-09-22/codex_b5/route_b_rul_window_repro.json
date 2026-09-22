@@ -1,0 +1,74 @@
+[
+  {
+    "window_days": 1,
+    "smoothing": "none",
+    "median_error_days": 26.467781744723297,
+    "valid": 12
+  },
+  {
+    "window_days": 1,
+    "smoothing": "3_sample_legacy",
+    "median_error_days": 25.346225650889604,
+    "valid": 12
+  },
+  {
+    "window_days": 1,
+    "smoothing": "3D_time",
+    "median_error_days": 32.57784604397796,
+    "valid": 12
+  },
+  {
+    "window_days": 2,
+    "smoothing": "none",
+    "median_error_days": 29.614987496277983,
+    "valid": 8
+  },
+  {
+    "window_days": 2,
+    "smoothing": "3_sample_legacy",
+    "median_error_days": 29.499335925611682,
+    "valid": 8
+  },
+  {
+    "window_days": 2,
+    "smoothing": "3D_time",
+    "median_error_days": 19.657453314055925,
+    "valid": 8
+  },
+  {
+    "window_days": 5,
+    "smoothing": "none",
+    "median_error_days": 18.056826072217333,
+    "valid": 10
+  },
+  {
+    "window_days": 5,
+    "smoothing": "3_sample_legacy",
+    "median_error_days": 18.01915713781615,
+    "valid": 10
+  },
+  {
+    "window_days": 5,
+    "smoothing": "3D_time",
+    "median_error_days": 19.4250411701203,
+    "valid": 9
+  },
+  {
+    "window_days": 10,
+    "smoothing": "none",
+    "median_error_days": 13.85170504289102,
+    "valid": 11
+  },
+  {
+    "window_days": 10,
+    "smoothing": "3_sample_legacy",
+    "median_error_days": 13.736934213140099,
+    "valid": 11
+  },
+  {
+    "window_days": 10,
+    "smoothing": "3D_time",
+    "median_error_days": 15.336496250040433,
+    "valid": 11
+  }
+]

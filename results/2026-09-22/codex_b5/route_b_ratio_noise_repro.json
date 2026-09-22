@@ -1,0 +1,219 @@
+{
+  "identity_max_abs_error": 1.0658141036401503e-14,
+  "ratio_baseline": {
+    "mode": "day",
+    "rel": 0.02,
+    "lab_rel": 0.03,
+    "lab_bias": 0.0,
+    "seeds": 8,
+    "delay_median": 9.802083333333329,
+    "delay_min": 5.03125,
+    "delay_max": 11.03125,
+    "lead_median": 37.46354166666666,
+    "false_alarm_runs": 0,
+    "rows": [
+      {
+        "seed": 0,
+        "delay": 10.854166666666657,
+        "lead": 36.13541666666666,
+        "threshold": 2.657392666577135,
+        "false_alarm": 0,
+        "alarm": 70.85416666666666
+      },
+      {
+        "seed": 1,
+        "delay": 9.572916666666657,
+        "lead": 38.41666666666666,
+        "threshold": 2.728541523753167,
+        "false_alarm": 0,
+        "alarm": 69.57291666666666
+      },
+      {
+        "seed": 2,
+        "delay": 5.03125,
+        "lead": 40.958333333333314,
+        "threshold": 2.0176457356683533,
+        "false_alarm": 0,
+        "alarm": 65.03125
+      },
+      {
+        "seed": 3,
+        "delay": 10.03125,
+        "lead": 41.083333333333314,
+        "threshold": 3.0199374542178474,
+        "false_alarm": 0,
+        "alarm": 70.03125
+      },
+      {
+        "seed": 4,
+        "delay": 9.03125,
+        "lead": 35.958333333333314,
+        "threshold": 2.2524002107063033,
+        "false_alarm": 0,
+        "alarm": 69.03125
+      },
+      {
+        "seed": 5,
+        "delay": 11.03125,
+        "lead": 32.958333333333314,
+        "threshold": 2.446965686636181,
+        "false_alarm": 0,
+        "alarm": 71.03125
+      },
+      {
+        "seed": 6,
+        "delay": 9.479166666666657,
+        "lead": 36.51041666666666,
+        "threshold": 3.8538040558460285,
+        "false_alarm": 0,
+        "alarm": 69.47916666666666
+      },
+      {
+        "seed": 7,
+        "delay": 10.03125,
+        "lead": 38.958333333333314,
+        "threshold": 4.380891509202339,
+        "false_alarm": 0,
+        "alarm": 70.03125
+      }
+    ]
+  },
+  "raw_baseline": {
+    "mode": "day",
+    "rel": 0.02,
+    "lab_rel": 0.03,
+    "lab_bias": 0.0,
+    "seeds": 8,
+    "delay_median": 86.11458333333331,
+    "delay_min": 86.11458333333331,
+    "delay_max": 86.13541666666666,
+    "lead_median": -39.625,
+    "false_alarm_runs": 0,
+    "rows": [
+      {
+        "seed": 0,
+        "delay": 86.11458333333331,
+        "lead": -39.125,
+        "threshold": 21.481613169786247,
+        "false_alarm": 0,
+        "alarm": 146.11458333333331
+      },
+      {
+        "seed": 1,
+        "delay": 86.11458333333331,
+        "lead": -38.125,
+        "threshold": 20.369642544122403,
+        "false_alarm": 0,
+        "alarm": 146.11458333333331
+      },
+      {
+        "seed": 2,
+        "delay": 86.11458333333331,
+        "lead": -40.125,
+        "threshold": 20.931767645285493,
+        "false_alarm": 0,
+        "alarm": 146.11458333333331
+      },
+      {
+        "seed": 3,
+        "delay": 86.11458333333331,
+        "lead": -35.0,
+        "threshold": 18.96558148529521,
+        "false_alarm": 0,
+        "alarm": 146.11458333333331
+      },
+      {
+        "seed": 4,
+        "delay": 86.11458333333331,
+        "lead": -41.125,
+        "threshold": 18.459327009857954,
+        "false_alarm": 0,
+        "alarm": 146.11458333333331
+      },
+      {
+        "seed": 5,
+        "delay": 86.11458333333331,
+        "lead": -42.125,
+        "threshold": 18.913066806340034,
+        "false_alarm": 0,
+        "alarm": 146.11458333333331
+      },
+      {
+        "seed": 6,
+        "delay": 86.11458333333331,
+        "lead": -40.125,
+        "threshold": 19.905718930455617,
+        "false_alarm": 0,
+        "alarm": 146.11458333333331
+      },
+      {
+        "seed": 7,
+        "delay": 86.13541666666666,
+        "lead": -37.14583333333334,
+        "threshold": 19.58058542806105,
+        "false_alarm": 0,
+        "alarm": 146.13541666666666
+      }
+    ]
+  },
+  "variants": [
+    {
+      "mode": "day",
+      "rel": 0.02,
+      "lab_rel": 0.03,
+      "lab_bias": 0.0,
+      "seeds": 8,
+      "delay_median": 9.802083333333329,
+      "delay_min": 5.03125,
+      "delay_max": 11.03125,
+      "lead_median": 37.46354166666666,
+      "false_alarm_runs": 0
+    },
+    {
+      "mode": "hour",
+      "rel": 0.02,
+      "lab_rel": 0.03,
+      "lab_bias": 0.0,
+      "seeds": 8,
+      "delay_median": 8.593749999999993,
+      "delay_min": 1.3645833333333286,
+      "delay_max": 15.947916666666657,
+      "lead_median": 45.208333333333336,
+      "false_alarm_runs": 0
+    },
+    {
+      "mode": "day",
+      "rel": 0.05,
+      "lab_rel": 0.03,
+      "lab_bias": 0.0,
+      "seeds": 8,
+      "delay_median": 9.802083333333329,
+      "delay_min": 5.03125,
+      "delay_max": 11.03125,
+      "lead_median": 37.46354166666666,
+      "false_alarm_runs": 0
+    },
+    {
+      "mode": "drift",
+      "rel": 0.02,
+      "lab_rel": 0.03,
+      "lab_bias": 0.03,
+      "seeds": 8,
+      "delay_median": 31.072916666666657,
+      "delay_min": 28.28125,
+      "delay_max": 33.94791666666666,
+      "lead_median": 21.46875,
+      "false_alarm_runs": 0
+    }
+  ],
+  "expected_baseline": {
+    "delay_median": 9.8,
+    "delay_range": [
+      5.03,
+      11.03
+    ],
+    "lead_median": 37.47,
+    "false_alarm_runs": 0
+  },
+  "interpretation": "The direction is supported in these finite simulated variants when all variants retain a measured solids proxy and the drift is modest; it is not immunity to arbitrary bias drift or a field-performance claim."
+}

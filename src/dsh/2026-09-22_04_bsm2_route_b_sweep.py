@@ -16,12 +16,14 @@ DEG = 60.0
 DAYS = 160.0
 SC = [('速率 30 天', 30.0, 18.0), ('速率 60 天', 60.0, 18.0), ('速率 120 天', 120.0, 18.0),
       ('幅值 22%', 60.0, 22.0), ('幅值 20%', 60.0, 20.0), ('幅值 18%', 60.0, 18.0)]
+SLUG = {'速率 30 天': 'rate30d', '速率 60 天': 'rate60d', '速率 120 天': 'rate120d',
+        '幅值 22%': 'amp22', '幅值 20%': 'amp20', '幅值 18%': 'amp18'}   # ASCII 文件名（Codex 批次 5：中文名有跨平台/归档风险）
 
 H = R.load('healthy')
 base_flow = float(H[H.t_day >= 150]['泥饼流量'].mean())
 rows = []
 for k, (tag, ramp, ts1) in enumerate(SC):
-    fp = os.path.join(D, 'bsm2_route_b_sweep_%d_%s.csv.gz' % (k, tag.replace(' ', '')))
+    fp = os.path.join(D, 'bsm2_route_b_sweep_%d_%s.csv.gz' % (k, SLUG[tag]))
     if os.path.exists(fp):
         print('[%s] 复用已落盘轨迹 %s' % (tag, os.path.basename(fp)))
         G = pd.read_csv(fp)
@@ -50,7 +52,8 @@ T.to_csv(os.path.join(D, 'bsm2_route_b_sweep.csv'), index=False, encoding='utf-8
 
 NL = chr(10)
 L = ['# 路线 B：幅值 / 速率扫描（DSH，2026-09-22）' + NL,
-     '退化均起始第 60 天；每个场景跑一遍官方整厂（160 天、约 0.4 秒/模拟天、零 NaN），轨迹已落盘。' + NL,
+     '退化均起始第 60 天；每个场景跑一遍官方整厂（160 天、约 0.4 秒/模拟天、零 NaN），轨迹已落盘（ASCII 文件名 bsm2_route_b_sweep_<i>_<slug>.csv.gz）。' + NL,
+     '注意：速率轴的 18% 是**目标终值**，120 天斜坡在 160 天仿真内只走到约 19.67%，未达到 18%。' + NL,
      '通道集 A = 5 个原始可测量（泥饼流量、滤液量、滤液 TSS、干固体产率、浓缩池底 TSS）；通道集 B = 设备级比值通道「干固体产率 / 湿泥饼量」。' + NL,
      '阈值口径均为**零误报**（阈值 = 健康轨迹分数最大值 × 1.02）；比值通道另加 2%% 仪表 + 3%% 日粒度实验室噪声、8 个噪声实现取中位。' + NL,
      '## 1. 结果' + NL, T.to_markdown(index=False) + NL, '## 2. 结论' + NL]

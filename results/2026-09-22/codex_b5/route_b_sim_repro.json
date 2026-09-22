@@ -1,0 +1,23 @@
+{
+  "official_package": "C:\\Users\\boyi\\AppData\\Local\\Programs\\Python\\Python312\\Lib\\site-packages\\bsm2_python",
+  "days": 160.0,
+  "timestep_days": 0.010416666666666666,
+  "steps": 15359,
+  "healthy_seconds": 69.72,
+  "degraded_seconds": 60.3,
+  "nan_count": 0,
+  "truth_failure_day": 109.0,
+  "target_end": 18.0,
+  "healthy_late_cake_flow": 9.540683,
+  "degraded_late_cake_flow": 14.838804,
+  "late_flow_increase_pct": 55.5319,
+  "healthy_end_solids": 28.0,
+  "degraded_end_solids": 18.0,
+  "simplified_model": [
+    "official BSM2Base",
+    "official dynamic influent",
+    "official Dewatering",
+    "dw_par[0] ramps 28->18% from day 60 over 60 days"
+  ],
+  "caveat": "This is an idealized unit-model route-B simulation; it contains no blockage or dewatering dynamics."
+}

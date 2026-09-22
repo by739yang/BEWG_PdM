@@ -1,0 +1,56 @@
+{
+  "q999_threshold": 13.148997334317308,
+  "zero_false_alarm_threshold": 19.55987569049929,
+  "q999_health_event_count": 6,
+  "q999_first_post_alarm": 66.11458333333333,
+  "zero_health_event_count": 0,
+  "zero_first_post_alarm": 146.11458333333331,
+  "zero_delay": 86.11458333333331,
+  "failure_day": 109.0,
+  "zero_lead": -37.114583333333314,
+  "q999_health_events": [
+    [
+      13.947916666666666,
+      14.041666666666666
+    ],
+    [
+      15.90625,
+      16.072916666666664
+    ],
+    [
+      66.11458333333333,
+      66.36458333333333
+    ],
+    [
+      94.11458333333331,
+      94.40625
+    ],
+    [
+      146.11458333333331,
+      146.40625
+    ],
+    [
+      147.11458333333331,
+      147.23958333333331
+    ]
+  ],
+  "zero_health_events": [],
+  "diagnosis": {
+    "health_max_day": 66.11458333333333,
+    "health_max_score": 19.176348716175774,
+    "influent_ref_mean": 21494.31497777778,
+    "influent_at_max_mean": 26639.207440364582,
+    "influent_change_pct": 23.936061548860366,
+    "cake_flow_at_max": 18.948234619501346,
+    "cake_flow_ref_median": 8.590462577321325
+  },
+  "same_as_health_false_alarm_q999": true,
+  "same_as_health_false_alarm_zero_fa": false,
+  "event_parameters": {
+    "enter": 4,
+    "exit_samples": 8,
+    "exit_ratio": 0.8,
+    "cooldown_samples": 8
+  },
+  "note": "Event persistence/cooldown is expressed in samples because the source sampling interval is fixed at 15 minutes; all rolling windows in this independent reproduction use timestamp durations."
+}

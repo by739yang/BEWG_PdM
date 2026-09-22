@@ -144,7 +144,7 @@ def with_ratio(df):
     return d
 
 
-def add_noise(df, rel=0.02, seed=0, lab_rel=0.03, lab_per_day=True):
+def add_noise(df, rel=0.02, seed=0, lab_rel=0.03, lab_per_day=True, lab_bias=0.0, lab_mode='linear'):
     """仪表噪声：流量类连续白噪声（相对 rel）；泥饼含固率为实验室日报（日粒度，相对 lab_rel）。
     干固体产率按 含固率 × 湿泥饼量 重算，因此比值通道只继承实验室噪声、免疫流量计噪声。"""
     rng = np.random.default_rng(seed)
@@ -160,6 +160,12 @@ def add_noise(df, rel=0.02, seed=0, lab_rel=0.03, lab_per_day=True):
         e = ulab[day.astype(int)]
     else:
         e = rng.normal(0, lab_rel, n)
+    if lab_bias:
+        tt = np.asarray(d['t_day'], dtype=float)
+        if lab_mode == 'sin_day':    # 周期性日间偏差（Codex 批次 5 口径：振幅 × sin(天)）
+            e = e + lab_bias * np.sin(tt)
+        else:                          # 缓慢单调标定漂移（DSH 口径：0 → 振幅 线性）
+            e = e + lab_bias * (tt / max(1e-9, float(tt[-1])))
     d['泥饼含固率'] = d['泥饼含固率'] * (1.0 + e)
     d['干固体产率'] = d['泥饼含固率'] * d['泥饼流量'] * 10.0
     d[RATIO] = d['干固体产率'] / d['泥饼流量'] / 10.0
@@ -225,12 +231,12 @@ def detect_with(df, H_ref, cols=None, thr_mode='q999', margin=1.02, deg_start=60
                 分数=scG, 健康分数=scH)
 
 
-def noise_median(H, G, cols, rel=0.02, lab_rel=0.03, seeds=10, thr_mode='zero_fa', deg_start=60.0):
+def noise_median(H, G, cols, rel=0.02, lab_rel=0.03, seeds=10, thr_mode='zero_fa', deg_start=60.0, lab_bias=0.0, lab_mode='linear'):
     """多次加噪取中位（把"某一条噪声实现恰好触发误报"的影响压掉）。"""
     rows = []
     for s in range(seeds):
-        Hn = add_noise(H, rel=rel, lab_rel=lab_rel, seed=100 + s)
-        Gn = add_noise(G, rel=rel, lab_rel=lab_rel, seed=1000 + s)
+        Hn = add_noise(H, rel=rel, lab_rel=lab_rel, seed=100 + s, lab_bias=lab_bias, lab_mode=lab_mode)
+        Gn = add_noise(G, rel=rel, lab_rel=lab_rel, seed=1000 + s, lab_bias=lab_bias, lab_mode=lab_mode)
         r = detect_with(Gn, Hn, cols=cols, thr_mode=thr_mode, deg_start=deg_start)
         rows.append(r)
     import numpy as _np
