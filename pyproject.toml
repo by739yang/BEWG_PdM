@@ -1,0 +1,20 @@
+[build-system]
+requires = ["setuptools>=61"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "lanmai"
+version = "1.1.0"
+description = "澜脉（AquaPulse）· 污水厂设备 AI 预测性维护 · 接入标定与报告工具"
+requires-python = ">=3.9"
+dependencies = ["numpy", "pandas"]
+
+[project.optional-dependencies]
+figures = ["matplotlib"]
+
+[project.scripts]
+lanmai = "lanmai.cli:main"
+
+[tool.setuptools]
+package-dir = {"" = "src"}
+packages = ["lanmai"]
