@@ -123,7 +123,7 @@ def _figs(df, base, sa, sf, rr, alarms, max_pts=2500):
 
 
 def build_report(data, baseline, out, time_col=None, resample=None, warmup=None,
-                 title=None, max_alarms=40, no_fig=False):
+                 title=None, max_alarms=40, no_fig=False, return_summary=False):
     from .core import load_table
     from .pipeline import inspect, watch
     df = load_table(data, time_col, resample, None)
@@ -278,4 +278,9 @@ def build_report(data, baseline, out, time_col=None, resample=None, warmup=None,
     A_('<div class=sub>报告由 lanmai 生成；检测判据与阈值口径见 docs/10 使用手册与 PROJECT_STATE.md。</div>')
     A_('</div></body></html>')
     io.open(out, 'w', encoding='utf-8').write(''.join(H))
+    if return_summary:
+        return out, dict(行数=int(info['行数']), 通道数=int(info['通道数']), 相对时间=bool(rel),
+                         时间跨度天=round(float(span_days), 2), 告警总数=int(sm['告警总数']),
+                         分级={int(k): int(v) for k, v in sm['分级'].items()}, 首报=first_alarm_txt,
+                         参考窗='%s → %s' % (m['参考窗起点'], m['参考窗终点']))
     return out

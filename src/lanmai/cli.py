@@ -78,6 +78,11 @@ def cmd_report(args):
                         warmup=args.warmup, title=args.title, max_alarms=args.max_alarms, no_fig=args.no_fig)
     print("报告已生成：%s（自包含单文件，可离线双击打开）" % path)
 
+def cmd_serve(args):
+    from .server import serve
+    demo = args.demo_dir or os.path.join("results", "2026-09-21", "lanmai_demo")
+    serve(args.host, args.port, args.out_dir, demo if os.path.isdir(demo) else None, args.open)
+
 def cmd_selftest(args):
     from .pipeline import selftest
     selftest(); print('自检完成')
@@ -85,9 +90,9 @@ def cmd_selftest(args):
 def main(argv=None):
     p = argparse.ArgumentParser(prog='lanmai', description='澜脉 · 设备健康接入与标定工具')
     sub = p.add_subparsers(dest='cmd', required=True)
-    for name, fn in [('inspect', cmd_inspect), ('calibrate', cmd_calibrate), ('watch', cmd_watch), ('report', cmd_report), ('selftest', cmd_selftest)]:
+    for name, fn in [('inspect', cmd_inspect), ('calibrate', cmd_calibrate), ('watch', cmd_watch), ('report', cmd_report), ('serve', cmd_serve), ('selftest', cmd_selftest)]:
         sp = sub.add_parser(name)
-        if name != 'selftest':
+        if name not in ('selftest', 'serve'):
             sp.add_argument('--data', required=True)
             sp.add_argument('--time', default=None, help='时间列名（不填则自动识别）')
             sp.add_argument('--resample', default=None, help='重采样，如 1min / 15min')
@@ -104,6 +109,13 @@ def main(argv=None):
             sp.add_argument('--win-days', type=float, default=2.0); sp.add_argument('--q', type=float, default=0.999)
             sp.add_argument('--enter', type=int, default=4); sp.add_argument('--exit', type=int, default=8, dest='exit')
             sp.add_argument('--ratio', type=float, default=0.8); sp.add_argument('--cooldown', type=int, default=8)
+        if name == 'serve':
+            sp.add_argument('--host', default='127.0.0.1')
+            sp.add_argument('--port', type=int, default=8765)
+            sp.add_argument('--out-dir', default='lanmai_out', dest='out_dir')
+            sp.add_argument('--demo-dir', default=None, dest='demo_dir')
+            sp.add_argument('--open', action='store_true')
+
         if name == 'report':
             sp.add_argument('--baseline', required=True)
             sp.add_argument('--out', required=True)
