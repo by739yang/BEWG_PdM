@@ -35,6 +35,9 @@ STAGES=[
  dict(name='influent_bsm1', title='BSM1 进水工况泛化分析', script='src/dsh/2026-09-20_11_bsm1_influent_robustness.py', full=True),
  dict(name='sweep_bsm1', title='BSM1 退化幅值-斜率扫描分析', script='src/dsh/2026-09-20_10_bsm1_sweep_analysis.py', full=True),
  dict(name='figures_bsm1', title='BSM1 数字孪生闭环四图', script='src/dsh/2026-09-20_08_bsm1_figure.py', full=True),
+ dict(name='route_b_sim', title='路线 B 整厂仿真（BSM2 + 脱水机退化）', script='src/dsh/2026-09-22_02_bsm2_route_b_sim.py', full=True),
+ dict(name='route_b_detect', title='路线 B 检测/RUL/噪声/旁证', script='src/dsh/2026-09-22_03_bsm2_route_b_detect.py', full=True),
+ dict(name='route_b_sweep', title='路线 B 幅值/速率扫描（6 场景，各约 64 秒）', script='src/dsh/2026-09-22_04_bsm2_route_b_sweep.py', full=True),
  dict(name='figures',    title='材料四图', script='src/dsh/2026-09-18_16_figures.py', full=True),
 ]
 DATA=[
