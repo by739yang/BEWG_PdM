@@ -9,9 +9,14 @@ def inspect(df):
     stats = {}
     for c in df.columns:
         s = df[c]
+        if not pd.api.types.is_numeric_dtype(s):
+            # 分类/状态列（如 MetroPT-3 的 state）：只报缺失率与取值数，不参与均值/零方差判定
+            stats[c] = dict(缺失率=round(float(s.isna().mean()), 4), 均值=None, 标准差=None, 最小值=None,
+                            最大值=None, 零方差=False, 类型='非数值', 取值数=int(s.nunique()))
+            continue
         stats[c] = dict(缺失率=round(float(s.isna().mean()), 4), 均值=round(float(s.mean()), 4),
                         标准差=round(float(s.std()), 4), 最小值=round(float(s.min()), 4), 最大值=round(float(s.max()), 4),
-                        零方差=bool(float(s.std()) < 1e-12))
+                        零方差=bool(float(s.std()) < 1e-12), 类型='数值', 取值数=None)
     return dict(行数=int(len(df)), 起始=str(df.index[0]), 结束=str(df.index[-1]),
                 采样间隔中位秒=(None if not np.isfinite(step) else float(step)),
                 通道数=int(df.shape[1]), 零方差通道=[c for c in df.columns if stats[c]['零方差']],

@@ -72,6 +72,12 @@ def cmd_watch(args):
     else:
         print('无告警')
 
+def cmd_report(args):
+    from .report import build_report
+    path = build_report(args.data, args.baseline, args.out, time_col=args.time, resample=args.resample,
+                        warmup=args.warmup, title=args.title, max_alarms=args.max_alarms, no_fig=args.no_fig)
+    print("报告已生成：%s（自包含单文件，可离线双击打开）" % path)
+
 def cmd_selftest(args):
     from .pipeline import selftest
     selftest(); print('自检完成')
@@ -79,7 +85,7 @@ def cmd_selftest(args):
 def main(argv=None):
     p = argparse.ArgumentParser(prog='lanmai', description='澜脉 · 设备健康接入与标定工具')
     sub = p.add_subparsers(dest='cmd', required=True)
-    for name, fn in [('inspect', cmd_inspect), ('calibrate', cmd_calibrate), ('watch', cmd_watch), ('selftest', cmd_selftest)]:
+    for name, fn in [('inspect', cmd_inspect), ('calibrate', cmd_calibrate), ('watch', cmd_watch), ('report', cmd_report), ('selftest', cmd_selftest)]:
         sp = sub.add_parser(name)
         if name != 'selftest':
             sp.add_argument('--data', required=True)
@@ -98,6 +104,14 @@ def main(argv=None):
             sp.add_argument('--win-days', type=float, default=2.0); sp.add_argument('--q', type=float, default=0.999)
             sp.add_argument('--enter', type=int, default=4); sp.add_argument('--exit', type=int, default=8, dest='exit')
             sp.add_argument('--ratio', type=float, default=0.8); sp.add_argument('--cooldown', type=int, default=8)
+        if name == 'report':
+            sp.add_argument('--baseline', required=True)
+            sp.add_argument('--out', required=True)
+            sp.add_argument('--warmup', default=None, help='预热期（如 1D / 6H），该期间告警不计入')
+            sp.add_argument('--title', default=None)
+            sp.add_argument('--max-alarms', type=int, default=40, dest='max_alarms')
+            sp.add_argument('--no-fig', action='store_true', dest='no_fig', help='不出图（机器没装 matplotlib 时用）')
+
         if name == 'watch':
             sp.add_argument('--baseline', required=True); sp.add_argument('--out', required=True)
             sp.add_argument('--warmup', default=None, help='预热期（如 1D / 6H），该期间告警不计入')
