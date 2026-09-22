@@ -63,7 +63,8 @@ def truth_failure(G, deg_start, run_days=1.0):
 def first_alarm(G, score, thr, deg_start):
     dD = np.asarray(G['t_day'])
     ev = make_events(pd.Series(score), thr, **EVENTKW)
-    pre = [(float(dD[s]), float(dD[e])) for s, e in ev if dD[s] <= deg_start]
+    n = len(dD)
+    pre = [(float(dD[s]), float(dD[min(e, n - 1)])) for s, e in ev if dD[s] <= deg_start]   # make_events 的结束下标可能等于序列长度
     post = [(float(dD[s]), int(s)) for s, e in ev if dD[s] > deg_start]
     return ev, pre, post
 

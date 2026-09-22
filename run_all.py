@@ -38,6 +38,8 @@ STAGES=[
  dict(name='route_b_sim', title='路线 B 整厂仿真（BSM2 + 脱水机退化）', script='src/dsh/2026-09-22_02_bsm2_route_b_sim.py', full=True),
  dict(name='route_b_detect', title='路线 B 检测/RUL/噪声/旁证', script='src/dsh/2026-09-22_03_bsm2_route_b_detect.py', full=True),
  dict(name='route_b_sweep', title='路线 B 幅值/速率扫描（6 场景，各约 64 秒）', script='src/dsh/2026-09-22_04_bsm2_route_b_sweep.py', full=True),
+ dict(name='route_b_cond', title='路线 B 补强①：工况条件化 + 同工况对拍差分', script='src/dsh/2026-09-22_05_bsm2_route_b_conditioned.py', full=True),
+ dict(name='route_b_drift', title='路线 B 补强②：标定漂移专项', script='src/dsh/2026-09-22_06_bsm2_route_b_drift.py', full=True),
  dict(name='figures',    title='材料四图', script='src/dsh/2026-09-18_16_figures.py', full=True),
 ]
 DATA=[
