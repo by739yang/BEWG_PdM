@@ -25,3 +25,5 @@ tmp/
 # 本地工作台（lanmai serve）产物目录
 lanmai_out*/
 _serve_smoke.log
+~$*
+*.tmp
