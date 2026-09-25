@@ -8,16 +8,15 @@
 |---|---|---|
 | 澜脉_项目说明书.html | **项目说明书 / 技术报告**（自包含单文件，**内嵌 38 张图**，按章节插入） | 浏览器打开 → Ctrl+P → 另存为 PDF（A4 样式已适配） |
 | （正文）docs/11_项目说明书.md | 说明书正文源文件（242 行；改字改这里） | 改完跑：python src/dsh/2026-09-22_12_manual_html.py |
-| ppt/澜脉_商业计划书.pptx | **商业计划书 PPT（48 页 = 36 页内容 + 12 页配图）**，可编辑 | PowerPoint / WPS / Keynote 打开；备注里有讲稿要点 |
-| ppt/澜脉_商业计划书.html | 同一份的网页放映版（← → 翻页 · F 全屏 · G 总览 · S 备注 · P 打印） | 现场演示、录屏素材（注意：网页版未插图） |
-| ppt/澜脉_商业计划书.json | 结构化 manifest（每页标题与要点） | 二次编辑或转格式 |
+| ppt/澜脉_商业计划书.pptx | **商业计划书 PPT（29 页 = 内容页 + 配图页）**，可编辑 | PowerPoint / WPS / Keynote 打开；备注里有讲稿要点 |
 | figs/figA..figE *.png | 5 张自制示意图：系统架构 / 四段链路 / 判据机制 / 部署形态 / POC 四步 | BP、说明书、视频分镜 |
 | shots/s1..s13 *.png | 13 张真实截图：落地页 / 十节看板（3 段）/ 交互台 / 动画台 / 企业版报告（4 段）/ 本地工作台 | 同上 |
 
 ## 二、怎么重新生成
 
     python src/dsh/2026-09-22_12_manual_html.py     # 说明书 HTML（按章节插图，内嵌 38 图）
-    python src/dsh/2026-09-22_13_deck_figures.py    # 往 PPTX 里注入 12 页配图
+    # PPT：先用 dsh-ppt 生成到 deliverables/_tmp_deck/，再跑 python src/dsh/2026-09-22_14_deck_finalize.py
+    #     （该脚本只把 pptx 落到 deliverables/ppt/、注入 4 页关键配图、去重复收尾页，并强制页数 <= 30）
     python run_all.py --only manual                 # 或走一键复现的 manual 阶段
     # 重新拍截图 / 画示意图：见 _figs_shots.py 的做法（Edge 无头 + matplotlib）
 
