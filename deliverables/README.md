@@ -6,17 +6,17 @@
 
 | 文件 | 说明 | 怎么用 |
 |---|---|---|
-| 澜脉_项目说明书.docx | **项目说明书 / 技术报告（Word，A4，内嵌 38 张图、12 张表）** | Word / WPS 直接编辑；如需 PDF：另存为 PDF |
+| 澜脉_项目说明书.docx | **技术报告 / 项目说明书（Word）**：按往届《技术报告》格式 —— A4、边距上下 2.5cm 左右 3.2cm、正文 Times New Roman 12pt + 宋体、H1 22pt 黑体、H2 Arial 16pt 加粗、**封面（大赛名 + 技术报告 + 作品名称/作者/组别）**、**目录域（Word 里 F9 更新）**、**图按章编号（图 2-1…）**，内嵌 38 图 12 表 | Word / WPS 打开 → 先按 F9 更新目录 → 填封面信息 → 另存 PDF |
 | （正文）docs/11_项目说明书.md | 说明书正文源文件（242 行；改字改这里） | 改完跑：python src/dsh/2026-09-22_15_manual_docx.py |
-| ppt/澜脉_商业计划书.pptx | **商业计划书 PPT（29 页 = 内容页 + 配图页）**，可编辑 | PowerPoint / WPS / Keynote 打开；备注里有讲稿要点 |
+| ppt/澜脉_商业计划书.pptx | **商业计划书 PPT（30 页）**：**在组委会官方模板上填内容**（保留模板版式、配色与装饰图），21 个板块 + 5 张插图 | PowerPoint / WPS 打开；按官方模板目录顺序讲述 |
 | figs/figA..figE *.png | 5 张自制示意图：系统架构 / 四段链路 / 判据机制 / 部署形态 / POC 四步 | BP、说明书、视频分镜 |
 | shots/s1..s13 *.png | 13 张真实截图：落地页 / 十节看板（3 段）/ 交互台 / 动画台 / 企业版报告（4 段）/ 本地工作台 | 同上 |
 
 ## 二、怎么重新生成
 
     python src/dsh/2026-09-22_15_manual_docx.py     # 说明书 Word（A4，按章节插图，内嵌 38 图 + 12 表）
-    # PPT：先用 dsh-ppt 生成到 deliverables/_tmp_deck/，再跑 python src/dsh/2026-09-22_14_deck_finalize.py
-    #     （该脚本只把 pptx 落到 deliverables/ppt/、注入 4 页关键配图、去重复收尾页，并强制页数 <= 30）
+    python src/dsh/2026-09-22_16_deck_template_fill.py   # 商业计划书 PPT：在官方模板上填内容（30 页）
+    #     （脚本从组委会模板读取版式，替换提示文字为我们内容并插入 5 张图；模板文件路径写在脚本头部）
     python run_all.py --only manual                 # 或走一键复现的 manual 阶段
     # 重新拍截图 / 画示意图：见 _figs_shots.py 的做法（Edge 无头 + matplotlib）
 

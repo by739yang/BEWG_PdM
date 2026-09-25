@@ -29,6 +29,7 @@ STAGES=[
  dict(name='multitraj_bsm1', title='BSM1 多轨迹稳健性分析', script='src/dsh/2026-09-21_03_bsm1_multitraj.py', full=True),
  dict(name='lanmai_cli', title='接入标定工具自检（lanmai CLI）', script='src/dsh/2026-09-21_04_lanmai_selftest.py', full=False),
  dict(name='lanmai_report', title='企业版样例报告（离线单文件 HTML ×2）', script='src/dsh/2026-09-22_10_lanmai_report_demo.py', full=False),
+ dict(name='deck', title='商业计划书 PPT（在官方模板上填内容，30 页）', script='src/dsh/2026-09-22_16_deck_template_fill.py', full=True),
  dict(name='manual', title='生成项目说明书 Word（内嵌 38 张图）', script='src/dsh/2026-09-22_15_manual_docx.py', full=False),
  dict(name='lanmai_serve_smoke', title='本地工作台（lanmai serve）冒烟：首页/样例/上传/标定', script='src/dsh/2026-09-22_11_lanmai_serve_smoketest.py', full=False),
  dict(name='demo_twin', title='交互式数字孪生演示台', script='src/dsh/2026-09-20_15_demo_twin.py', full=True),
