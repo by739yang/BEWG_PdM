@@ -14,7 +14,6 @@
     handoff/                            两个助手之间的口径确认与差异报告
     docs/PROTOCOL_v1.5.md               SKAB 当前冻结协议
     docs/metropt3_fault_windows.json    MetroPT-3 官方故障窗口
-    docs/02_倒排工期到10-07.md          里程碑与材料准备倒排
     logs/实验日志.md                     只追加的实验记录
     data/                               本地数据集，不进入版本库
 
