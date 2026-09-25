@@ -12,6 +12,7 @@
     results/YYYY-MM-DD/dsh/             DSH 产物
     results/YYYY-MM-DD/codex/           Codex 产物
     handoff/                            两个助手之间的口径确认与差异报告
+    deliverables/                       可直接交出去的材料：说明书 HTML、商业计划书 PPT、页面截图
     docs/                               对外文档：01 速览 / 02 倒排与检查点 / 05 交付物与风险 / 06 复现指南 /
                                         07 BP 四栏 / 08 验收清单 / 09 五分钟看懂 / 10 使用手册 / 12 数据申请话术
     docs/PROTOCOL_v1.5.md               SKAB 当前冻结协议
