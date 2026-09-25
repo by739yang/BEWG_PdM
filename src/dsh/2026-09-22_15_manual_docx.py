@@ -1,7 +1,8 @@
 # -*- coding: utf-8 -*-
 """把 docs/11_项目说明书.md 渲染成 Word，格式对齐往届《技术报告》：
-A4 / 边距 上下2.5cm 左右3.2cm ｜ 正文 Times New Roman 12pt + 宋体 ｜ H1 22pt 黑体 ｜ H2 Arial 16pt 加粗 黑体 ｜ H3 14pt 加粗
-封面（大赛名 + 技术报告 + 作品名称/作者/组别）｜ 目录域 TOC ｜ 图按章编号（图 2-1 …）｜ 图片按章节插入
+A4 ｜ 边距 上下 2.5cm / 左右 3.2cm ｜ 正文 Times New Roman 12pt + 宋体
+H1 22pt 黑体（章）｜ H2 Arial 16pt 加粗 黑体（x.y）｜ H3 14pt 加粗（x.y.z）
+封面（大赛名 + 技术报告 + 作品名称/作者/组别/日期）｜ 目录域 TOC ｜ 图按章编号（图 1-1、图 2-1 …）
 用法：python src/dsh/2026-09-22_15_manual_docx.py
 """
 import io, os, re, datetime
@@ -17,8 +18,6 @@ MD = 'docs/11_项目说明书.md'
 OUT = 'deliverables/澜脉_项目说明书.docx'
 NL = chr(10)
 SONG, HEI, ARIAL, MONO = '宋体', '黑体', 'Arial', 'Consolas'
-CN = '第{}章'
-CN_NUM = '一二三四五六七八九十'
 
 FIGS = {
  'deliverables/figs/figA_arch.png': '系统架构：数据 → 算法 → 服务 → 交付四层（全部可离线运行）',
@@ -26,19 +25,19 @@ FIGS = {
  'deliverables/figs/figC_criterion.png': '检测判据机制示意：双基线 + 事件机 + P1/P2/P3 分级',
  'deliverables/figs/figD_deploy.png': '三种部署形态与数据流向（默认离线、数据不出厂）',
  'deliverables/figs/figE_poc.png': '现场试点（POC）四步走',
+ 'deliverables/shots/s1_landing.png': '线上落地页：作品入口与三条主线',
  'deliverables/shots/s2_demo_dashboard.png': '十节演示看板全貌（检测到决策的全部结果与口径）',
- 'deliverables/shots/s10_demo_detect.png': '看板·检测节：双基线分数、阈值与告警等级',
- 'deliverables/shots/s11_demo_twin.png': '看板·数字孪生节：退化轨迹与检测/RUL',
- 'deliverables/shots/s12_demo_routeb.png': '看板·整厂闭环节（路线 B）：原始量 vs 设备级比值通道',
  'deliverables/shots/s3_twin.png': '交互式数字孪生演示台（静态版）',
- 'deliverables/shots/s13_twin_anim.png': '动画演示台：健康/退化两条轨迹回放',
- 'deliverables/shots/s6_workbench.png': '本地工作台：上传 CSV → 标定基线 → 出报告（数据不出本机）',
  'deliverables/shots/s4_report_metropt3.png': '企业版报告（真实空压机 MetroPT-3）首屏：KPI 与数据体检',
+ 'deliverables/shots/s5_report_bsm1.png': '企业版报告（BSM1 仿真）：相对时间按「第 X 天」呈现',
+ 'deliverables/shots/s6_workbench.png': '本地工作台：上传 CSV → 标定基线 → 出报告（数据不出本机）',
  'deliverables/shots/s7_report_metro_kpi.png': '报告·体检与标定摘要（含参考窗健康度提示）',
  'deliverables/shots/s8_report_metro_alarms.png': '报告·分级告警明细（P1/P2/P3）',
  'deliverables/shots/s9_report_metro_tail.png': '报告·图表与口径局限',
- 'deliverables/shots/s5_report_bsm1.png': '企业版报告（BSM1 仿真）：相对时间按「第 X 天」呈现',
- 'deliverables/shots/s1_landing.png': '线上落地页：作品入口与三条主线',
+ 'deliverables/shots/s10_demo_detect.png': '看板·检测节：双基线分数、阈值与告警等级',
+ 'deliverables/shots/s11_demo_twin.png': '看板·数字孪生节：退化轨迹与检测/RUL',
+ 'deliverables/shots/s12_demo_routeb.png': '看板·整厂闭环节（路线 B）：原始量 vs 设备级比值通道',
+ 'deliverables/shots/s13_twin_anim.png': '动画演示台：健康/退化两条轨迹回放',
  'results/2026-09-18/dsh/figures_4in1.png': '真实数据四图：误报-召回 / 策略成本 / 敏感性 / RUL 散点',
  'results/2026-09-16/dsh/det_curve_skab.png': 'SKAB 检测误差权衡（DET）曲线：三种方法',
  'results/2026-09-19/dsh/ablation_two_regimes.png': '消融两套阈值口径：共用硬编码阈值 vs 各自无标签标定',
@@ -48,7 +47,7 @@ FIGS = {
  'results/2026-09-20/dsh/bsm1_influent_robustness.png': '进水工况泛化：绝对阈值跨工况失效',
  'results/2026-09-20/dsh/bsm1_rain_storm.png': '雨/暴雨冲击工况：工况事件必须单独处理',
  'results/2026-09-20/dsh/bsm1_ratio_rule.png': '比值判据跨工况检验',
- 'results/2026-09-20/dsh/multitraj.png': '多轨迹稳健性：不同退化起始与速率的检出表现',
+ 'results/2026-09-21/dsh/multitraj.png': '多轨迹稳健性：不同退化起始与速率的检出表现',
  'results/2026-09-21/dsh/online_gate.png': '在线因果 RUL 门禁：判据与误挂率',
  'results/2026-09-21/dsh/online_chain.png': '在线链路多轨迹：门禁挂载与在线 RUL 可算性',
  'results/2026-09-20/dsh/alarm_strategy.png': '组合报警策略（单点/比值/并集/与门）对比',
@@ -61,15 +60,17 @@ FIGS = {
  'results/2026-09-22/dsh/bsm2_route_b_seasons.png': '跨相位稳健性：三个进水相位结论一致',
  'results/2026-09-22/dsh/bsm2_route_b_drift.png': '补强②：标定漂移的结构 × 幅度 × 缓解手段',
 }
+
 GROUPS = [
- ('第 1 章', ['deliverables/figs/figA_arch.png', 'deliverables/figs/figB_pipeline.png', 'deliverables/figs/figC_criterion.png']),
+ ('第 1 章', ['deliverables/figs/figA_arch.png', 'deliverables/figs/figB_pipeline.png',
+              'deliverables/figs/figC_criterion.png', 'deliverables/shots/s1_landing.png']),
  ('2.2 可行性分析', ['deliverables/figs/figD_deploy.png']),
  ('2.3 本项目的特色与创新之处', ['results/2026-09-18/dsh/figures_4in1.png', 'results/2026-09-16/dsh/det_curve_skab.png',
                                  'results/2026-09-19/dsh/ablation_two_regimes.png', 'results/2026-09-19/dsh/calib_window_sensitivity.png']),
  ('2.4 预测内容与预期成效', ['results/2026-09-20/dsh/bsm1_4in1.png', 'results/2026-09-20/dsh/bsm1_sweep_3in1.png',
                               'results/2026-09-20/dsh/bsm1_influent_robustness.png', 'results/2026-09-20/dsh/bsm1_rain_storm.png',
                               'results/2026-09-20/dsh/bsm1_ratio_rule.png']),
- ('3.1 系统架构', ['results/2026-09-20/dsh/multitraj.png', 'results/2026-09-21/dsh/online_gate.png', 'results/2026-09-21/dsh/online_chain.png']),
+ ('3.1 系统架构', ['results/2026-09-21/dsh/multitraj.png', 'results/2026-09-21/dsh/online_gate.png', 'results/2026-09-21/dsh/online_chain.png']),
  ('3.2 核心模块设计', ['results/2026-09-20/dsh/alarm_strategy.png', 'results/2026-09-21/dsh/sludge_line2.png',
                         'results/2026-09-21/dsh/sludge_sweep.png', 'results/2026-09-21/dsh/sludge_decision.png']),
  ('3.4 实验与验证手段', ['results/2026-09-22/dsh/bsm2_route_b_detect.png', 'results/2026-09-22/dsh/bsm2_route_b_sweep.png']),
@@ -78,16 +79,15 @@ GROUPS = [
  ('3.6 实现形态与使用说明', ['deliverables/shots/s6_workbench.png', 'deliverables/shots/s8_report_metro_alarms.png',
                               'deliverables/shots/s7_report_metro_kpi.png', 'deliverables/shots/s9_report_metro_tail.png',
                               'deliverables/shots/s5_report_bsm1.png', 'deliverables/shots/s4_report_metropt3.png',
+                              'deliverables/shots/s2_demo_dashboard.png', 'deliverables/shots/s10_demo_detect.png',
+                              'deliverables/shots/s11_demo_twin.png', 'deliverables/shots/s12_demo_routeb.png',
+                              'deliverables/shots/s3_twin.png', 'deliverables/shots/s13_twin_anim.png',
                               'deliverables/figs/figE_poc.png']),
- ('附录 D 文件与复现地图', ['deliverables/shots/s1_landing.png', 'deliverables/shots/s2_demo_dashboard.png',
-                             'deliverables/shots/s10_demo_detect.png', 'deliverables/shots/s11_demo_twin.png',
-                             'deliverables/shots/s12_demo_routeb.png', 'deliverables/shots/s3_twin.png',
-                             'deliverables/shots/s13_twin_anim.png']),
 ]
 
 
-def set_run(run, size=12, bold=False, color=None, latin='Times New Roman', ea=SONG, italic=False):
-    run.font.size = Pt(size); run.bold = bold; run.italic = italic
+def set_run(run, size=12, bold=False, color=None, latin='Times New Roman', ea=SONG):
+    run.font.size = Pt(size); run.bold = bold
     if color:
         run.font.color.rgb = RGBColor.from_string(color)
     rPr = run._element.get_or_add_rPr()
@@ -180,14 +180,12 @@ def build():
         cap.element.rPr.rFonts.set(qn('w:eastAsia'), HEI)
     except KeyError:
         pass
-    # ---- 封面（对齐往届技术报告写法）----
-    for txt, size, bold, space in [
-        ('北控水务杯第九届中国国际生态环境创新大赛', 16, True, 6),
-        ('技　术　报　告', 22, True, 18),
-        ('（项目说明书）', 14, False, 24)]:
+    for txt, size, bold, after in [('北控水务杯第九届中国国际生态环境创新大赛', 16, True, 6),
+                                   ('技　术　报　告', 22, True, 18),
+                                   ('（项目说明书）', 14, False, 24)]:
         p = doc.add_paragraph(); p.alignment = WD_ALIGN_PARAGRAPH.CENTER
         set_run(p.add_run(txt), size, bold, '1B2733', 'Times New Roman', HEI)
-        p.paragraph_format.space_after = Pt(space)
+        p.paragraph_format.space_after = Pt(after)
     for txt in ['作品名称：澜脉（AquaPulse）· 污水厂设备 AI 预测性维护系统',
                 '命题方向：2-6　基于 AI 设备预测性维护与管理技术与解决方案',
                 '参赛组别：创意转化组',
@@ -195,58 +193,61 @@ def build():
                 '指导教师：<请填写>',
                 '所在院校：<请填写>',
                 '日期：%s' % datetime.datetime.now().strftime('%Y 年 %m 月 %d 日')]:
-        p = doc.add_paragraph(); p.alignment = WD_ALIGN_PARAGRAPH.LEFT
-        set_run(p.add_run(txt), 14, False); p.paragraph_format.space_after = Pt(8)
+        p = doc.add_paragraph(); set_run(p.add_run(txt), 14); p.paragraph_format.space_after = Pt(8)
     doc.add_page_break()
-    # ---- 目录 ----
     p = doc.add_paragraph(); p.alignment = WD_ALIGN_PARAGRAPH.CENTER
     set_run(p.add_run('目　录'), 18, True, '1B2733', 'Times New Roman', HEI)
     add_toc_field(doc)
     doc.add_page_break()
 
-    toks = parse(io.open(MD, encoding='utf-8').read())
-    n_img, n_tbl, chap, fignum = 0, 0, 0, {}
-    W = Cm(14.6)   # 正文宽度 21 - 3.2*2
+    md_text = io.open(MD, encoding='utf-8').read()
+    refs = sorted(set(re.findall(r'图\s*(\d+-\d+)', md_text)))
+    toks = parse(md_text)
+    n_img = n_tbl = chap = 0
+    fignum = {}
+    produced = []
+    W = Cm(14.6)
     for idx, (kind, val) in enumerate(toks):
-        if kind == 'h1':
-            if idx > 3:
-                doc.add_page_break()
-            m = re.match(r'第\s*(\d+)\s*章', val)
-            chap = int(m.group(1)) if m else chap + 1
-            fignum.setdefault(chap, 0)
-            doc.add_heading(val, level=1)
-        elif kind in ('h2', 'h3', 'h4'):
-            doc.add_heading(val, level=int(kind[1]))
+        if kind in ('h1', 'h2', 'h3', 'h4'):
+            m = re.match(r'^\s*第\s*(\d+)\s*章', val or '')
+            if kind == 'h1':
+                continue
+            elif m:
+                chap = int(m.group(1)); fignum.setdefault(chap, 0)
+                if chap > 1:
+                    doc.add_page_break()
+                doc.add_heading(val, level=1)
+            elif kind == 'h2':
+                doc.add_page_break(); doc.add_heading(val, level=1)
+            elif kind == 'h3':
+                doc.add_heading(val, level=2)
+            else:
+                doc.add_heading(val, level=3)
         elif kind == 'p':
-            p = doc.add_paragraph(); p.paragraph_format.first_line_indent = Pt(24)
-            add_runs(p, val)
+            p = doc.add_paragraph(); p.paragraph_format.first_line_indent = Pt(24); add_runs(p, val)
         elif kind == 'quote':
             p = doc.add_paragraph(); shade(p, 'F2F2F2'); add_runs(p, val, 10.5, '31465A')
         elif kind == 'pre':
             for ln in val.split(NL):
-                p = doc.add_paragraph()
-                set_run(p.add_run(ln if ln else ' '), 9, False, None, MONO, MONO)
+                p = doc.add_paragraph(); set_run(p.add_run(ln if ln else ' '), 9, False, None, MONO, MONO)
         elif kind in ('ul', 'ol'):
             for item in val:
-                p = doc.add_paragraph(style='List Bullet' if kind == 'ul' else 'List Number')
-                add_runs(p, item)
+                p = doc.add_paragraph(style='List Bullet' if kind == 'ul' else 'List Number'); add_runs(p, item)
         elif kind == 'table':
             head, rows = val
             t = doc.add_table(rows=1, cols=len(head)); t.style = 'Table Grid'; n_tbl += 1
             for j, h in enumerate(head):
                 c = t.rows[0].cells[j]; c.text = ''
-                p = c.paragraphs[0]; add_runs(p, h, 10.5, None, ARIAL, HEI)
-                for r_ in p.runs:
+                pp = c.paragraphs[0]; add_runs(pp, h, 10.5, None, ARIAL, HEI)
+                for r_ in pp.runs:
                     r_.bold = True
                 shade(c, 'F0F6FB')
             for r in rows:
                 cells = t.add_row().cells
                 for j, x in enumerate(r[:len(head)]):
-                    cells[j].text = ''
-                    add_runs(cells[j].paragraphs[0], x, 10.5)
+                    cells[j].text = ''; add_runs(cells[j].paragraphs[0], x, 10.5)
         elif kind == 'hr':
             doc.add_paragraph()
-        # 章节末尾插图（按章编号：图 2-1、图 2-2 …）
         if kind in ('h2', 'h3'):
             for anchor, paths in GROUPS:
                 if anchor not in (val or ''):
@@ -263,11 +264,16 @@ def build():
                     except KeyError:
                         pass
                     cp.alignment = WD_ALIGN_PARAGRAPH.CENTER
-                    add_runs(cp, '图 %d-%d　%s' % (chap, fignum[chap], FIGS.get(ip, os.path.basename(ip))), 10, '404040', ARIAL, HEI)
+                    label = '%d-%d' % (chap, fignum[chap])
+                    produced.append(label)
+                    add_runs(cp, '图 %s　%s' % (label, FIGS.get(ip, os.path.basename(ip))), 10, '404040', ARIAL, HEI)
                     n_img += 1
+    miss = sorted(set(refs) - set(produced))
+    print('引用自检：正文引用 %d 个 ｜ 图注 %d 个 ｜ 缺图注的引用：%s' % (len(refs), len(produced), miss or '无'))
     doc.save(OUT)
     print('已生成 %s（%.1f MB）｜ 插图 %d 张 ｜ 表格 %d 个 ｜ 段落 %d 个' % (
         OUT, os.path.getsize(OUT) / 1048576.0, n_img, n_tbl, len(doc.paragraphs)))
+    return miss
 
 
 if __name__ == '__main__':
