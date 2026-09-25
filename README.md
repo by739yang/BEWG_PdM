@@ -12,16 +12,20 @@
     results/YYYY-MM-DD/dsh/             DSH 产物
     results/YYYY-MM-DD/codex/           Codex 产物
     handoff/                            两个助手之间的口径确认与差异报告
+    docs/                               对外文档：01 速览 / 02 倒排与检查点 / 05 交付物与风险 / 06 复现指南 /
+                                        07 BP 四栏 / 08 验收清单 / 09 五分钟看懂 / 10 使用手册 / 12 数据申请话术
     docs/PROTOCOL_v1.5.md               SKAB 当前冻结协议
     docs/metropt3_fault_windows.json    MetroPT-3 官方故障窗口
     logs/实验日志.md                     只追加的实验记录
     data/                               本地数据集，不进入版本库
 
-## 当前状态（2026-09-16）
+## 当前状态（2026-09-22 晚；细节见 docs/01_项目速览.md）
 
-- SKAB 已按 `PROTOCOL_v1.5` 收口；冻结结果见 `PROJECT_STATE.md` 第 12 节。
-- MetroPT-3 仍是探索性验证；迟到命中和健康时长分母正在冻结，未对齐数字不得用于 BP。
-- 2026-09-17 的后续任务见 `tasks/2026-09-17_codex.md`。
+- **技术侧已冻结待命**：检测 → 诊断 → RUL → 决策四段链路 + 数字孪生（BSM1 闭环 / BSM2 整厂 / 污泥线脱水机）+ 两块补强（工况条件化与同工况对拍、标定漂移专项）全部完成，四轮跨实现复核台账齐备。
+- **可复现**：`python run_all.py`（快速 9 阶段约 20 秒）｜`python run_all.py --full`（全量 39 阶段）。
+- **可上手**：双击 `start_lanmai.cmd` 或 `python run_lanmai.py serve --open` 打开本地工作台（上传 CSV → 标定基线 → 出企业版报告）；也可 `python -m lanmai report ...` 直接生成单文件报告。
+- **在线样例**：落地页 index.html、十节演示看板、交互式数字孪生演示台、两份真实样例报告（GitHub Pages）。
+- **边界**：污水厂侧均为机理仿真（材料标「仿真」）；成本参数为占位值；设备级退化需靠设备本体物料平衡量发现。
 
 ## 环境安装
 

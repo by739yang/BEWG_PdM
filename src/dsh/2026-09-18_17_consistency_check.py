@@ -18,7 +18,7 @@ def check_paths(files):
         if c.startswith(('results','src','docs','tasks','handoff','logs')) and not os.path.exists(c):
             miss.append(c)
     return sorted(set(miss))
-miss=check_paths(['PROJECT_STATE.md','协作约定.md','docs/01_项目速览.md','docs/12_向北控水务申请数据_话术与清单.md'])
+miss=check_paths(['PROJECT_STATE.md','协作约定.md','docs/01_项目速览.md','docs/02_倒排工期与检查点.md'])
 if miss: issues.append(('引用但不存在的文件', miss[:12]))
 else: ok.append('PROJECT_STATE/协作文档引用的路径全部存在')
 # ---------- ② 日志里的脚本 ----------

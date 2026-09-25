@@ -23,7 +23,7 @@ def norm(p):
     if any(x in p for x in ['<','>','YYYY','（',' ','日期','当天','agent','当天日期']): return None
     return p
 txt=''
-for f in ['PROJECT_STATE.md','协作约定.md','docs/01_项目速览.md','docs/12_向北控水务申请数据_话术与清单.md']:
+for f in ['PROJECT_STATE.md','协作约定.md','docs/01_项目速览.md','docs/02_倒排工期与检查点.md']:
     if os.path.exists(f): txt+=io.open(f,encoding='utf-8').read()
 cands=set()
 for m in re.finditer(r'(?:results|src|docs|tasks|handoff|logs)/[A-Za-z0-9_\-\u4e00-\u9fff./]+', txt):
