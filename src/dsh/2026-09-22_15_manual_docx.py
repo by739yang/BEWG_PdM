@@ -1,17 +1,24 @@
 # -*- coding: utf-8 -*-
-"""把 docs/11_项目说明书.md 渲染成自包含可打印 HTML（图按章节插入；全图内嵌 base64）。
-产物：deliverables/澜脉_项目说明书.html
-用法：python src/dsh/2026-09-22_12_manual_html.py
+"""把 docs/11_项目说明书.md 渲染成 Word（.docx）：A4、中文样式、表格、代码块、按章节插入 38 张图。
+产物：deliverables/澜脉_项目说明书.docx
+用法：python src/dsh/2026-09-22_15_manual_docx.py
 """
-import io, os, re, base64, datetime
+import io, os, re, datetime
+from docx import Document
+from docx.shared import Pt, Cm, RGBColor
+from docx.enum.text import WD_ALIGN_PARAGRAPH
+from docx.oxml.ns import qn
+from docx.oxml import OxmlElement
+from PIL import Image
 
 ROOT = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 os.chdir(ROOT)
 MD = 'docs/11_项目说明书.md'
-OUT = 'deliverables/澜脉_项目说明书.html'
+OUT = 'deliverables/澜脉_项目说明书.docx'
 NL = chr(10)
+BLUE, DARK = '12507B', '1B2733'
 
-# 图库：路径 -> 图注
+# 图与章节映射（与说明书正文的【图 X】引用一致）
 FIGS = {
  'deliverables/figs/figA_arch.png': '图 A　系统架构：数据 → 算法 → 服务 → 交付四层（全部可离线运行）',
  'deliverables/figs/figB_pipeline.png': '图 B　四段技术链路与每段的关键数字',
@@ -53,7 +60,6 @@ FIGS = {
  'results/2026-09-22/dsh/bsm2_route_b_seasons.png': '图 33　跨相位稳健性：三个进水相位结论一致',
  'results/2026-09-22/dsh/bsm2_route_b_drift.png': '图 34　补强②：标定漂移的结构 × 幅度 × 缓解手段',
 }
-# 章节锚点 -> 该节末尾插入哪些图（顺序即展示顺序）
 GROUPS = [
  ('第 1 章 作品简介', ['deliverables/figs/figA_arch.png', 'deliverables/figs/figB_pipeline.png', 'deliverables/figs/figC_criterion.png']),
  ('2.2 可行性分析', ['deliverables/figs/figD_deploy.png']),
@@ -79,111 +85,152 @@ GROUPS = [
 ]
 
 
-def esc(s):
-    return s.replace('&', '&amp;').replace('<', '&lt;').replace('>', '&gt;')
+def shade(cell_or_par, fill):
+    el = cell_or_par._tc.get_or_add_tcPr() if hasattr(cell_or_par, '_tc') else cell_or_par._p.get_or_add_pPr()
+    shd = OxmlElement('w:shd'); shd.set(qn('w:val'), 'clear'); shd.set(qn('w:fill'), fill); el.append(shd)
 
 
-def inline(s):
-    s = esc(s)
-    s = re.sub(r'\*\*(.+?)\*\*', r'<b>\1</b>', s)
-    s = re.sub(r'(?<!\*)\*(?!\s)(.+?)(?<!\s)\*(?!\*)', r'<i>\1</i>', s)
-    return s
+def set_cjk(run, name='Microsoft YaHei'):
+    run.font.name = name
+    rpr = run._element.get_or_add_rPr()
+    rf = rpr.find(qn('w:rFonts'))
+    if rf is None:
+        rf = OxmlElement('w:rFonts'); rpr.append(rf)
+    rf.set(qn('w:eastAsia'), name)
 
 
-def md2html(md):
-    out, lines, i = [], md.split(NL), 0
+def add_runs(p, text, size=10.5, color=None):
+    for seg in re.split(r'(\*\*.+?\*\*)', text):
+        if not seg:
+            continue
+        bold = seg.startswith('**') and seg.endswith('**')
+        r = p.add_run(seg[2:-2] if bold else seg)
+        r.bold = bold; r.font.size = Pt(size)
+        if color:
+            r.font.color.rgb = RGBColor.from_string(color)
+        set_cjk(r)
+    return p
+
+
+def parse(md):
+    toks, lines, i = [], md.split(NL), 0
     while i < len(lines):
         l = lines[i]
         if not l.strip():
             i += 1; continue
         if re.match(r'^---+$', l.strip()):
-            out.append('<hr>'); i += 1; continue
+            toks.append(('hr', None)); i += 1; continue
         m = re.match(r'^(#{1,4})\s+(.*)$', l)
         if m:
-            out.append('<h%d>%s</h%d>' % (len(m.group(1)), inline(m.group(2)), len(m.group(1)))); i += 1; continue
+            toks.append(('h%d' % len(m.group(1)), m.group(2).strip())); i += 1; continue
         if l.strip().startswith('>'):
             buf = []
             while i < len(lines) and lines[i].strip().startswith('>'):
-                buf.append(inline(lines[i].strip()[1:].strip())); i += 1
-            out.append('<div class=quote>%s</div>' % '<br>'.join(buf)); continue
+                buf.append(lines[i].strip()[1:].strip()); i += 1
+            toks.append(('quote', ' '.join(buf))); continue
         if l.lstrip().startswith('|') and i + 1 < len(lines) and re.match(r'^\s*\|[\s:|-]+\|\s*$', lines[i + 1]):
-            head = [c.strip() for c in l.strip().strip('|').split('|')]
-            i += 2; rows = []
+            head = [c.strip() for c in l.strip().strip('|').split('|')]; i += 2; rows = []
             while i < len(lines) and lines[i].lstrip().startswith('|'):
                 rows.append([c.strip() for c in lines[i].strip().strip('|').split('|')]); i += 1
-            t = ['<table><thead><tr>' + ''.join('<th>%s</th>' % inline(h) for h in head) + '</tr></thead><tbody>']
-            for r in rows:
-                t.append('<tr>' + ''.join('<td>%s</td>' % inline(c) for c in r) + '</tr>')
-            t.append('</tbody></table>'); out.append(''.join(t)); continue
+            toks.append(('table', (head, rows))); continue
         if re.match(r'^\s{4,}\S', l):
             buf = []
             while i < len(lines) and (re.match(r'^\s{4,}\S', lines[i]) or not lines[i].strip()):
                 if lines[i].strip():
-                    buf.append(esc(lines[i][4:]))
+                    buf.append(lines[i][4:])
                 i += 1
-            out.append('<pre>%s</pre>' % NL.join(buf)); continue
+            toks.append(('pre', NL.join(buf))); continue
         if re.match(r'^\s*[-*]\s+', l):
             buf = []
             while i < len(lines) and re.match(r'^\s*[-*]\s+', lines[i]):
-                buf.append('<li>%s</li>' % inline(re.sub(r'^\s*[-*]\s+', '', lines[i]))); i += 1
-            out.append('<ul>%s</ul>' % ''.join(buf)); continue
+                buf.append(re.sub(r'^\s*[-*]\s+', '', lines[i])); i += 1
+            toks.append(('ul', buf)); continue
         if re.match(r'^\s*\d+\.\s+', l):
             buf = []
             while i < len(lines) and re.match(r'^\s*\d+\.\s+', lines[i]):
-                buf.append('<li>%s</li>' % inline(re.sub(r'^\s*\d+\.\s+', '', lines[i]))); i += 1
-            out.append('<ol>%s</ol>' % ''.join(buf)); continue
-        out.append('<p>%s</p>' % inline(l.strip())); i += 1
-    return NL.join(out)
+                buf.append(re.sub(r'^\s*\d+\.\s+', '', lines[i])); i += 1
+            toks.append(('ol', buf)); continue
+        toks.append(('p', l.strip())); i += 1
+    return toks
 
 
-def fig_block(path):
-    cap = FIGS.get(path)
-    if not os.path.exists(path):
-        return '<div class=fig><div class=cap>（缺图：%s）</div></div>' % esc(path)
-    b64 = base64.b64encode(io.open(path, 'rb').read()).decode()
-    return '<div class=fig><img src="data:image/png;base64,%s"><div class=cap>%s</div></div>' % (b64, esc(cap or os.path.basename(path)))
+def build():
+    doc = Document()
+    s = doc.sections[0]
+    s.page_width, s.page_height = Cm(21), Cm(29.7)
+    s.left_margin = s.right_margin = Cm(2.2); s.top_margin = s.bottom_margin = Cm(2.2)
+    st = doc.styles['Normal']; st.font.name = 'Microsoft YaHei'; st.font.size = Pt(10.5)
+    st.element.rPr.rFonts.set(qn('w:eastAsia'), 'Microsoft YaHei')
+    for lvl, size, color in [(1, 16, BLUE), (2, 13.5, BLUE), (3, 12, DARK), (4, 11, DARK)]:
+        h = doc.styles['Heading %d' % lvl]
+        h.font.name = 'Microsoft YaHei'; h.font.size = Pt(size); h.font.bold = True
+        h.font.color.rgb = RGBColor.from_string(color)
+        h.element.rPr.rFonts.set(qn('w:eastAsia'), 'Microsoft YaHei')
+
+    # 封面
+    p = doc.add_paragraph(); p.alignment = WD_ALIGN_PARAGRAPH.CENTER
+    add_runs(p, '**澜脉（AquaPulse）· 污水厂设备 AI 预测性维护系统**', 20, BLUE)
+    p = doc.add_paragraph(); p.alignment = WD_ALIGN_PARAGRAPH.CENTER
+    add_runs(p, '北控水务杯第九届中国国际生态环境创新大赛 ｜ 创意转化组 ｜ 命题方向 2-6', 11)
+    p = doc.add_paragraph(); p.alignment = WD_ALIGN_PARAGRAPH.CENTER
+    add_runs(p, '「基于 AI 设备预测性维护与管理技术与解决方案」', 11)
+    p = doc.add_paragraph(); p.alignment = WD_ALIGN_PARAGRAPH.CENTER
+    add_runs(p, '项目说明书 / 技术报告　｜　生成时间 %s　｜　内嵌 %d 张图' % (
+        datetime.datetime.now().strftime('%Y-%m-%d'), len(FIGS)), 10)
+    doc.add_paragraph()
+
+    toks = parse(io.open(MD, encoding='utf-8').read())
+    n_img = 0; n_tbl = 0
+    for idx, (kind, val) in enumerate(toks):
+        if kind == 'h1':
+            if idx > 3:
+                doc.add_page_break()
+            doc.add_heading(val, level=1)
+        elif kind in ('h2', 'h3', 'h4'):
+            doc.add_heading(val, level=int(kind[1]))
+        elif kind == 'p':
+            add_runs(doc.add_paragraph(val.replace('**', '**')), val)
+        elif kind == 'quote':
+            pp = doc.add_paragraph(); shade(pp, 'F0F6FB')
+            add_runs(pp, val, 9.5, '31465A')
+        elif kind == 'pre':
+            for ln in val.split(NL):
+                pp = doc.add_paragraph(); rr = pp.add_run(ln if ln else ' ')
+                rr.font.name = 'Consolas'; rr.font.size = Pt(8.5); set_cjk(rr, 'Consolas')
+        elif kind in ('ul', 'ol'):
+            for item in val:
+                add_runs(doc.add_paragraph(style='List Bullet' if kind == 'ul' else 'List Number'), item)
+        elif kind == 'table':
+            head, rows = val
+            t = doc.add_table(rows=1, cols=len(head)); t.style = 'Table Grid'; n_tbl += 1
+            for j, h in enumerate(head):
+                c = t.rows[0].cells[j]; c.text = ''
+                add_runs(c.paragraphs[0], h, 9.5, DARK); shade(c, 'F0F6FB')
+                for rr in c.paragraphs[0].runs:
+                    rr.bold = True
+            for r in rows:
+                cells = t.add_row().cells
+                for j, x in enumerate(r[:len(head)]):
+                    cells[j].text = ''
+                    add_runs(cells[j].paragraphs[0], x, 9)
+        elif kind == 'hr':
+            doc.add_paragraph()
+        # 章节末尾插图
+        title = val if isinstance(val, str) else ''
+        for anchor, paths in GROUPS:
+            if kind == 'h2' and anchor in title or (kind == 'h3' and anchor in title):
+                for ip in paths:
+                    if not os.path.exists(ip):
+                        continue
+                    doc.add_picture(ip, width=Cm(15.5))
+                    doc.paragraphs[-1].alignment = WD_ALIGN_PARAGRAPH.CENTER
+                    cp = doc.add_paragraph(); cp.alignment = WD_ALIGN_PARAGRAPH.CENTER
+                    add_runs(cp, FIGS.get(ip, os.path.basename(ip)), 8.5, '5B6B7C')
+                    n_img += 1
+    doc.save(OUT)
+    print('已生成 %s（%.1f MB）｜ 插图 %d 张 ｜ 表格 %d 个 ｜ 段落 %d 个' % (
+        OUT, os.path.getsize(OUT) / 1048576.0, n_img, n_tbl, len(doc.paragraphs)))
 
 
-CSS = ('body{margin:0;background:#f2f4f7;color:#1b2733;font-family:Microsoft YaHei,Helvetica,Arial,sans-serif;font-size:13.5px;line-height:1.75}'
-       '.page{max-width:900px;margin:0 auto;background:#fff;padding:40px 46px 60px;box-shadow:0 2px 14px rgba(0,0,0,.06)}'
-       '.cover{border-bottom:3px solid #12507b;padding-bottom:16px;margin-bottom:22px}'
-       '.cover h1{font-size:26px;margin:0 0 6px}.cover .meta{font-size:12.5px;color:#5b6b7c}'
-       'h1{font-size:21px;margin:26px 0 8px}h2{font-size:17px;margin:24px 0 8px;padding-left:9px;border-left:4px solid #12507b}'
-       'h3{font-size:15px;margin:18px 0 6px}h4{font-size:14px;margin:14px 0 6px}'
-       'table{width:100%;border-collapse:collapse;margin:10px 0;font-size:12.5px}'
-       'th,td{border:1px solid #d8dfe7;padding:6px 8px;text-align:left;vertical-align:top}th{background:#f0f6fb}'
-       'pre{background:#f7f9fb;border:1px solid #e3e8ee;border-radius:6px;padding:10px 12px;font-size:12.5px;overflow-x:auto}'
-       'ul,ol{margin:8px 0 8px 22px}li{margin:3px 0}'
-       '.quote{background:#f0f6fb;border-left:4px solid #9dc3e6;padding:8px 12px;margin:10px 0;font-size:12.5px;color:#31465a}'
-       '.fig{margin:16px 0;page-break-inside:avoid}.fig img{width:100%;border:1px solid #e3e8ee;border-radius:6px}'
-       '.fig .cap{font-size:12px;color:#5b6b7c;margin-top:4px}'
-       'hr{border:0;border-top:1px solid #e3e8ee;margin:22px 0}'
-       '@media print{body{background:#fff}.page{box-shadow:none;max-width:none;padding:0 8mm}h2{page-break-after:avoid}table,pre,.fig{page-break-inside:avoid}}')
-
-html = md2html(io.open(MD, encoding='utf-8').read())
-missed = []
-for anchor, paths in GROUPS:
-    blk = ''.join(fig_block(p) for p in paths)
-    i = html.find(anchor)
-    if i < 0:
-        missed.append(anchor); continue
-    j = html.find('<h', i + len(anchor))
-    if j < 0:
-        j = len(html)
-    html = html[:j] + blk + html[j:]
-
-H = []
-A = H.append
-A('<!DOCTYPE html><html lang=zh-CN><head><meta charset=utf-8>')
-A('<meta name=viewport content="width=device-width,initial-scale=1">')
-A('<title>澜脉 · 项目说明书 / 技术报告</title><style>%s</style></head><body><div class=page>' % CSS)
-A('<div class=cover><h1>澜脉（AquaPulse）· 污水厂设备 AI 预测性维护系统</h1>')
-A('<div class=meta>北控水务杯第九届中国国际生态环境创新大赛 ｜ 创意转化组 ｜ 命题方向 2-6「基于 AI 设备预测性维护与管理技术与解决方案」<br>')
-A('项目说明书 / 技术报告 ｜ 生成时间 %s ｜ 内嵌 %d 张图（自制示意图 + 真实界面截图 + 结果图）｜ 全部数字可在项目仓库复现</div></div>' % (
-    datetime.datetime.now().strftime('%Y-%m-%d %H:%M'), len(FIGS)))
-A(html)
-A('<hr><div class=meta>正文源文件 docs/11_项目说明书.md ｜ 本页由 src/dsh/2026-09-22_12_manual_html.py 生成 ｜ 打印：Ctrl+P → 另存为 PDF（A4）</div>')
-A('</div></body></html>')
-io.open(OUT, 'w', encoding='utf-8').write(NL.join(H))
-n_img = io.open(OUT, encoding='utf-8').read().count('data:image/png;base64,')
-print('已生成 %s（%.1f MB）｜ 内嵌图 %d 张 ｜ 未匹配章节：%s' % (OUT, os.path.getsize(OUT) / 1048576.0, n_img, missed or '无'))
+if __name__ == '__main__':
+    build()
