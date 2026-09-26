@@ -98,7 +98,8 @@ def _page(msg='', msgkind='ok', out_dir='.', demo_dir=None, files_list=()):
         a('<h2>③ 用仓库自带样例直接试（不需上传）</h2><div class=card>')
         for k, (d, b, desc) in DEMO_FILES.items():
             if os.path.exists(os.path.join(demo_dir, d)) and os.path.exists(os.path.join(demo_dir, b)):
-                a('<form method=post action="/report" style="display:inline-block;margin-right:10px">'
+                a('<form method=post action="/report" enctype="multipart/form-data" '
+                  'style="display:inline-block;margin-right:10px">'
                   '<input type=hidden name=demo value="%s"><button class=ghost type=submit>%s</button></form>' % (k, desc))
         a('<div class=sub style="margin-top:8px">样例说明：BSM1 是仿真（相对时间，显示为「第 X 天」）；MetroPT-3 是真实空压机（真实日期）。</div></div>')
     a('<h2>④ 本机已生成的产物</h2>')
@@ -205,10 +206,15 @@ class Handler(BaseHTTPRequestHandler):
     def do_POST(self):
         try:
             ctype = self.headers.get('Content-Type', '')
-            if 'multipart/form-data' not in ctype:
-                raise ValueError('只接受 multipart/form-data')
-            boundary = ctype.split('boundary=')[1].strip().strip('"').encode()
-            fields, files = _parse_multipart(self._read_body(), boundary)
+            body = self._read_body()
+            if 'multipart/form-data' in ctype:
+                boundary = ctype.split('boundary=')[1].strip().strip('"').encode()
+                fields, files = _parse_multipart(body, boundary)
+            elif 'application/x-www-form-urlencoded' in ctype or not ctype:
+                fields = {k: v[0] for k, v in parse_qs(body.decode('utf-8', 'replace')).items()}
+                files = {}
+            else:
+                raise ValueError('不支持的表单编码 %s（请在页面表单里提交）' % (ctype or '空'))
         except Exception as e:
             return self._send(400, _page(msg='请求解析失败：%s' % e, msgkind='warn', out_dir=self.out_dir,
                                          demo_dir=self.demo_dir, files_list=self._list_files()))
